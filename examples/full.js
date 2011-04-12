@@ -1,0 +1,26 @@
+var ffmpeg = require('../lib/fluent-ffmpeg');
+
+// make sure you set the correct path to your video file
+var proc = new ffmpeg('/path/to/your_movie.avi')
+  // set video bitrate
+  .withVideoBitrate(1024)
+  // set target codec
+  .withVideoCodec('divx')
+  // set aspect ratio
+  .withAspectRatio('16:9')
+  // set fps
+  .withFps(24)
+  // set audio bitrate
+  .withAudioBitrate('128k')
+  // set audio codec
+  .withAudioCodec('libmp3lame')
+  // set number of audio channels
+  .withAudioChannels(2)
+  // set custom option
+  .addOption('-vtag', 'DIVX')
+  // set output format to force
+  .toFormat('avi')
+  // save to file
+  .saveToFile('/path/to/your_target.avi', function(retcode, error){
+    console.log('file has been converted succesfully');
+  });
