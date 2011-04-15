@@ -1,5 +1,5 @@
 # Fluent ffmpeg-API for node.js
-This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264)
+This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264).
 ## Installation
 Via npm:
 `$ npm install fluent-ffmpeg`
@@ -8,6 +8,14 @@ Or as a submodule:
 `$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git`
 ## Usage
 You find a lot of usage examples (including a real-time streaming example using [flowplayer](http://www.flowplayer.org) and [express](https://github.com/visionmedia/express)!) in the `examples` folder.
+### Auto-calculation of video dimensions
+Since ffmpeg does not support dynamic sizing of your movies, fluent-ffmpeg can do this job for you (using it's internal metadata-discovery). The following size formats are allowed to be passed to `withSize`:
+
+  * `320x?` - Fixed width, calculate height
+  * `?x240` - Fixed height, calculate width
+  * `50%` - percental resizing
+  * `320x240` - fixed size (plain ffmpeg way)
+
 ### Simple conversion using preset
 This example loads up a predefined preset in the preset folder (currently, fluent-ffmpeg ships with presets for DIVX, Flashvideo and Podcast conversions)
 
