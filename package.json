@@ -1,6 +1,6 @@
 {
   "name": "fluent-ffmpeg",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [ "ffmpeg" ],
   "author": "Stefan Schaermeli <schaermu@gmail.com>",
