@@ -1,5 +1,7 @@
 # Fluent ffmpeg-API for node.js
 This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264).
+
+Now including input streaming support (means you can convert **on-the-fly** using an input- and an outputstream)!
 ## Installation
 Via npm:
 `$ npm install fluent-ffmpeg`
@@ -9,7 +11,7 @@ Or as a submodule:
 ## Tests
 To run unit tests, make sure have nodeunit installed on your system (currently, only npm-installed versions are supported).
 
-`$ nodeunit tests`
+`$ nodeunit test`
 
 Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
 ## Usage
