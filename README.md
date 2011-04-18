@@ -6,6 +6,12 @@ Via npm:
 
 Or as a submodule:
 `$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git`
+## Tests
+To run unit tests, make sure have nodeunit installed on your system (currently, only npm-installed versions are supported).
+
+`$ nodeunit tests`
+
+Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
 ## Usage
 You find a lot of usage examples (including a real-time streaming example using [flowplayer](http://www.flowplayer.org) and [express](https://github.com/visionmedia/express)!) in the `examples` folder.
 ### Auto-calculation of video dimensions
