@@ -4,7 +4,7 @@ var ffmpeg = require('../lib/fluent-ffmpeg'),
   exec = require('child_process').exec;
 
 module.exports = testCase({
-  setUp: function (callback) {
+  setUp: function(callback) {
     // check for ffmpeg installation
     this.testfile = __dirname + '/assets/testvideo.avi';
     var self = this;
