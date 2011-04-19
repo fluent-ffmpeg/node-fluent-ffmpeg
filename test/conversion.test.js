@@ -98,7 +98,7 @@ module.exports = testCase({
       var args = new ffmpeg(self.testfile)
         .withSize('150x?')
         .takeScreenshots(2, testFolder, function(err) {
-          test.ok(!err);
+          test.ok(err == null);
           fs.readdir(testFolder, function(err, files) {
             var tnCount = 0;
             files.forEach(function(file) {
@@ -107,7 +107,7 @@ module.exports = testCase({
                 fs.unlinkSync(testFolder + '/' + file);
               }
             });
-            test.ok(tnCount == 2);
+            test.ok(tnCount === 2);
             // remove folder
             fs.rmdirSync(testFolder);
             test.done();
