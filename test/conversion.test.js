@@ -114,5 +114,33 @@ module.exports = testCase({
           });
         });
     });
+  },
+  testTakeScreenshotsConfig: function(test) {
+    test.expect(2);
+    var testFolder = __dirname + '/assets/tntest_config';
+    var self = this;
+    fs.mkdir(testFolder, '0755', function(err) {
+      var args = new ffmpeg(self.testfile)
+        .withSize('150x?')
+        .takeScreenshots({
+          count: 2,
+          timemarks: [ '0.5', '1' ]
+        }, testFolder, function(err) {
+          test.ok(err == null);
+          fs.readdir(testFolder, function(err, files) {
+            var tnCount = 0;
+            files.forEach(function(file) {
+              if (file.indexOf('.jpg') > -1) {
+                tnCount++;
+                fs.unlinkSync(testFolder + '/' + file);
+              }
+            });
+            test.ok(tnCount === 2);
+            // remove folder
+            fs.rmdirSync(testFolder);
+            test.done();
+          });
+        });
+    });
   }
 });
