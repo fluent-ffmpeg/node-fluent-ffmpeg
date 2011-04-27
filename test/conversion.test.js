@@ -7,7 +7,8 @@ var ffmpeg = require('../lib/fluent-ffmpeg'),
 module.exports = testCase({
   setUp: function(callback) {
     // check for ffmpeg installation
-    this.testfile = __dirname + '/assets/testvideo.avi';
+    this.testfile = __dirname + '/assets/testvideo-43.avi';
+    this.testfilewide = __dirname + '/assets/testvideo-169.avi';
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {
       if (stdout != '') {
@@ -142,5 +143,51 @@ module.exports = testCase({
           });
         });
     });
+  },
+  testConvertAspectWithAutopaddingTo43: function(test) {
+    test.expect(5);
+    var testFile = __dirname + '/assets/testConvertAspectTo43.avi';
+    var args = new ffmpeg(this.testfilewide)
+      .withAspect('4:3')
+      .withSize('640x480')
+      .applyAutopadding(true, 'black')
+      .saveToFile(testFile, function(stdout, stderr, err) {
+        test.ok(!err);
+        path.exists(testFile, function(exist) {
+          test.ok(exist);
+          // check filesize to make sure conversion actually worked
+          fs.stat(testFile, function(err, stats) {
+            test.ok(!err);
+            test.ok(stats.size > 0);
+            test.ok(stats.isFile());
+            // unlink file
+            fs.unlinkSync(testFile);
+            test.done();
+          });
+        })
+      });
+  },
+  testConvertAspectWithAutopaddingTo169: function(test) {
+    test.expect(5);
+    var testFile = __dirname + '/assets/testConvertAspectTo169.avi';
+    var args = new ffmpeg(this.testfile)
+      .withAspect('16:9')
+      .withSize('720x?')
+      .applyAutopadding(true, 'black')
+      .saveToFile(testFile, function(stdout, stderr, err) {
+        test.ok(!err);
+        path.exists(testFile, function(exist) {
+          test.ok(exist);
+          // check filesize to make sure conversion actually worked
+          fs.stat(testFile, function(err, stats) {
+            test.ok(!err);
+            test.ok(stats.size > 0);
+            test.ok(stats.isFile());
+            // unlink file
+            fs.unlinkSync(testFile);
+            test.done();
+          });
+        })
+      });
   }
 });

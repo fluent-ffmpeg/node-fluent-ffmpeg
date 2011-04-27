@@ -5,7 +5,8 @@ var metadata = require('../lib/fluent-ffmpeg').Metadata,
 
 module.exports = testCase({
   setUp: function (callback) {
-    this.testfile = __dirname + '/assets/testvideo.avi';
+    this.testfile = __dirname + '/assets/testvideo-43.avi';
+    this.testfilewide = __dirname + '/assets/testvideo-169.avi';
     // check for ffmpeg installation
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {

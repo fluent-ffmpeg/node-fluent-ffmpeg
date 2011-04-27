@@ -7,7 +7,7 @@ Via npm:
 `$ npm install fluent-ffmpeg`
 
 Or as a submodule:
-`$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git`
+`$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git vendor/fluent-ffmpeg`
 ## Tests
 To run unit tests, make sure have nodeunit installed on your system (currently, only npm-installed versions are supported).
 
@@ -23,6 +23,20 @@ Since ffmpeg does not support dynamic sizing of your movies, fluent-ffmpeg can d
   * `?x240` - Fixed height, calculate width
   * `50%` - percental resizing
   * `320x240` - fixed size (plain ffmpeg way)
+
+### Auto-padding when converting aspect ratio
+Using fluent-ffmpeg, you can auto-pad any video output when converting the aspect ratio. When converting from 4:3 to 16:9, padding is added to the left/right, when converting from 16:9 to 4:3, padding is added to top/bottom.
+
+    var ffmpeg = require('fluent-ffmpeg');
+
+    var proc = new ffmpeg('/path/to/your_movie.avi')
+      .withAspect('4:3')
+      .withSize('640x480')
+      .applyPadding(true, 'white')
+      .saveToFile('/path/to/your_target.avi', function(retcode, error){
+        console.log('file has been converted succesfully');
+      });
+This command will auto-pad your 4:3 output video stream using a white background-color (default is black).
 
 ### Simple conversion using preset
 This example loads up a predefined preset in the preset folder (currently, fluent-ffmpeg ships with presets for DIVX, Flashvideo and Podcast conversions)

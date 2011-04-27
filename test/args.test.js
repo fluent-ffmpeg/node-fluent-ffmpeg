@@ -6,7 +6,9 @@ var ffmpeg = require('../lib/fluent-ffmpeg'),
 module.exports = testCase({
   setUp: function(callback) {
     // check for ffmpeg installation
-    this.testfile = __dirname + '/assets/testvideo.avi';
+    this.testfile = __dirname + '/assets/testvideo-43.avi';
+    this.testfilewide = __dirname + '/assets/testvideo-169.avi';
+    
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {
       if (stdout != '') {
@@ -85,31 +87,55 @@ module.exports = testCase({
   testSizeCalculationFixed: function(test) {
     test.expect(2);
     var f = new ffmpeg(this.testfile)
-    .withSize('?x140')
-    .getCommand('file', function(cmd, err) {
-      test.ok(!err);
-      test.ok(cmd.indexOf('-s 186x140') > -1, 'video frame size does not match');
-      test.done();
-    });
+      .withSize('?x140')
+      .getCommand('file', function(cmd, err) {
+        test.ok(!err);
+        test.ok(cmd.indexOf('-s 186x140') > -1, 'video frame size does not match');
+        test.done();
+      });
   },
   testSizeCalculationPercent: function(test) {
     test.expect(2);
     var f = new ffmpeg(this.testfile)
-    .withSize('50%')
-    .getCommand('file', function(cmd, err) {
-      test.ok(!err);
-      test.ok(cmd.indexOf('-s 512x384') > -1, 'video frame size does not match');
-      test.done();
-    });
+      .withSize('50%')
+      .getCommand('file', function(cmd, err) {
+        test.ok(!err);
+        test.ok(cmd.indexOf('-s 512x384') > -1, 'video frame size does not match');
+        test.done();
+      });
   },
   testSizeCalculationException: function(test) {
     test.expect(2);
     var f = new ffmpeg(this.testfile)
-    .withSize('120%')
-    .getCommand('file', function(cmd, err) {
-      test.ok(cmd == null, 'command was generated, although invalid video size was set');
-      test.ok(err, 'no error returned, although invalid video size was set');
-      test.done();
-    });
+      .withSize('120%')
+      .getCommand('file', function(cmd, err) {
+        test.ok(cmd == null, 'command was generated, although invalid video size was set');
+        test.ok(err, 'no error returned, although invalid video size was set');
+        test.done();
+      });
+  },
+  testAutopadding43to169: function(test) {
+    test.expect(2);
+    var f = new ffmpeg(this.testfile)
+      .withAspect('16:9')
+      .withSize('960x?')
+      .applyAutopadding(true)
+      .getCommand('file', function(cmd, err) {
+        test.ok(!err);
+        test.ok(cmd.indexOf('-vf pad=960:540') > -1, 'padding filter is missing');
+        test.done();
+      });
+  },
+  testAutopadding169to43: function(test) {
+    test.expect(2);
+    var f = new ffmpeg(this.testfilewide)
+      .withAspect('4:3')
+      .withSize('640x480')
+      .applyAutopadding(true)
+      .getCommand('file', function(cmd, err) {
+        test.ok(!err);
+        test.ok(cmd.indexOf('-vf pad=640:480') > -1, 'padding filter is missing');
+        test.done();
+      });
   }
 });
