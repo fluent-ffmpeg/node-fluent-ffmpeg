@@ -30,6 +30,7 @@ module.exports = testCase({
     var testFile = __dirname + '/assets/testConvertToFile.flv';
     var args = new ffmpeg(this.testfile)
       .usingPreset('flashvideo')
+      .renice(19)
       .saveToFile(testFile, function(stdout, stderr, err) {
         test.ok(!err);
         path.exists(testFile, function(exist) {
@@ -52,6 +53,7 @@ module.exports = testCase({
     var outstream = fs.createWriteStream(testFile);
     var args = new ffmpeg(this.testfile)
       .usingPreset('flashvideo')
+      .renice(19)
       .writeToStream(outstream, function(code, stderr) {
         path.exists(testFile, function(exist) {
           test.ok(exist);
@@ -73,6 +75,7 @@ module.exports = testCase({
     test.expect(3);
     var args = new ffmpeg(instream)
       .usingPreset('flashvideo')
+      .renice(19)
       .saveToFile(testFile, function(stderr, stdout, err) {
         path.exists(testFile, function(exist) {
           // check filesize to make sure conversion actually worked
@@ -98,6 +101,7 @@ module.exports = testCase({
     fs.mkdir(testFolder, '0755', function(err) {
       var args = new ffmpeg(self.testfile)
         .withSize('150x?')
+      	.renice(19)
         .takeScreenshots(2, testFolder, function(err) {
           test.ok(err == null);
           fs.readdir(testFolder, function(err, files) {
@@ -123,6 +127,7 @@ module.exports = testCase({
     fs.mkdir(testFolder, '0755', function(err) {
       var args = new ffmpeg(self.testfile)
         .withSize('150x?')
+      	.renice(19)
         .takeScreenshots({
           count: 2,
           timemarks: [ '0.5', '1' ]
@@ -151,6 +156,7 @@ module.exports = testCase({
       .withAspect('4:3')
       .withSize('640x480')
       .applyAutopadding(true, 'black')
+      .renice(19)
       .saveToFile(testFile, function(stdout, stderr, err) {
         test.ok(!err);
         path.exists(testFile, function(exist) {
@@ -174,6 +180,7 @@ module.exports = testCase({
       .withAspect('16:9')
       .withSize('720x?')
       .applyAutopadding(true, 'black')
+      .renice(19)
       .saveToFile(testFile, function(stdout, stderr, err) {
         test.ok(!err);
         path.exists(testFile, function(exist) {
