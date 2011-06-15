@@ -61,8 +61,8 @@ module.exports = testCase({
           fs.stat(testFile, function(err, stats) {
             test.ok(!err);
             test.ok(stats.size > 0);
-            test.ok(stats.isFile());
-            // unlink file
+            test.ok(stats.isFile());            
+            // unlink file after waiting half a second (delayed writedown when using customFds)
             fs.unlinkSync(testFile);
             test.done();
           });
@@ -72,25 +72,22 @@ module.exports = testCase({
   testConvertFromStream: function(test) {
     var instream = fs.createReadStream(this.testfile);
     var testFile = __dirname + '/assets/testConvertFromStream.flv';
-    test.expect(3);
+    test.expect(4);
     var args = new ffmpeg(instream)
       .usingPreset('flashvideo')
       .renice(19)
       .saveToFile(testFile, function(stderr, stdout, err) {
         path.exists(testFile, function(exist) {
           // check filesize to make sure conversion actually worked
-          if (exist) {
-            fs.stat(testFile, function(err, stats) {
-              test.ok(!err);
-              test.ok(stats.size > 0);
-              test.ok(stats.isFile());
-              // unlink file
-              fs.unlinkSync(testFile);
-              test.done();
-            });
-          } else {
+          test.ok(exist);
+          fs.stat(testFile, function(err, stats) {
+            test.ok(!err);
+            test.ok(stats.size > 0);
+            test.ok(stats.isFile());
+            // unlink file
+            fs.unlinkSync(testFile);
             test.done();
-          }
+          });
         })
       });
   },
