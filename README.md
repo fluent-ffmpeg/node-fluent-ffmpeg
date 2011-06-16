@@ -76,6 +76,20 @@ One pretty neat feature is the ability of fluent-ffmpeg to generate any amount o
       .takeScreenshots(5, '/path/to/thumbnail/folder', function(err) {
         console.log('screenshots were saved')
       });
+
+For more control, you can also set the timemarks for taking screenshots yourself (timemarks are always in seconds):
+
+    var ffmpeg = require('fluent-ffmpeg');
+    
+    var proc = new ffmpeg('/path/to/your_movie.avi')
+      .withSize('150x100')
+      .takeScreenshots({
+          count: 2,
+          timemarks: [ '0.5', '1' ]
+        }, '/path/to/thumbnail/folder', function(err) {
+        console.log('screenshots were saved')
+      });
+
 ### Reading video metadata
 Using a seperate object, you are able to access various metadata of your video file.
 
