@@ -85,7 +85,7 @@ Using a seperate object, you are able to access various metadata of your video f
     ffmpegmeta.get('/path/to/your_movie.avi', function(metadata) {
       console.log(require('util').inspect(metadata, false, null));
     });
-## Creating a custom preset
+### Creating a custom preset
 To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:
 
     exports.load = function(ffmpeg) {
@@ -93,6 +93,21 @@ To create a custom preset, you have to create a new file inside the `lib/presets
     }
 
 The `ffmpeg` parameter is a full fluent-ffmpeg object, you can use all the chaining-goodness from here on. For a good example for the possibilities using presets, check out `lib/presets/podcast.js`.
+
+
+### Setting custom child process niceness
+You can adjust the scheduling priority of the child process used by ffmpeg, using renice (http://manpages.ubuntu.com/manpages/intrepid/man1/renice.1.html), like so:
+
+    var ffmpeg = require('fluent-ffmpeg');
+    new ffmpeg('./source.mp3')
+    .renice(10)
+    .withAudioCodec('libvorbis')
+    .toFormat('ogg')
+    .saveToFile('./target.ogg', function(retcode, error){
+        console.log('file has been converted succesfully');
+    });
+
+Which will use a niceness of 10 (thus it has a lower scheduling priority than the node process and other processes, which default to a niceness of 0).
 
 ## Contributing
 Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!
