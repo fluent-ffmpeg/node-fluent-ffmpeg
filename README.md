@@ -126,7 +126,7 @@ Which will use a niceness of 10 (thus it has a lower scheduling priority than th
 ### Setting an optional processing timeout
 If you want to know for sure that the ffmpeg child process will not run for longer than a certain amount of time, you can set the optional second parameter of the ffmpeg object constructor to the timeout in milliseconds. An example of a process that will return an error string of 'timeout' if ffmpeg did not finish within 10 minutes:
 
-var ffmpeg = require('fluent-ffmpeg');
+    var ffmpeg = require('fluent-ffmpeg');
     new ffmpeg('./source.mp3', 10 * 60 * 1000)
     .withAudioCodec('libvorbis')
     .toFormat('ogg')
