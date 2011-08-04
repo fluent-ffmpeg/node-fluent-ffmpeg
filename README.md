@@ -90,6 +90,33 @@ For more control, you can also set the timemarks for taking screenshots yourself
         console.log('screenshots were saved')
       });
 
+### Showing Progress
+While FFMpeg is processing your request, progress can be output to a custom function.
+
+    var ffmpeg = require('fluent-ffmpeg');
+    
+    var proc = new ffmpeg('/path/to/your_movie.avi')
+      .withVideoBitrate(1024)
+      .withVideoCodec('divx')
+      .withAspectRatio('16:9')
+      .withFps(24)
+      .withAudioBitrate('128k')
+      .withAudioCodec('libmp3lame')
+      .withAudioChannels(2)
+      .addOption('-vtag', 'DIVX')
+      .toFormat('avi')
+      .onProgress(function(progress) {
+        console.log(progress)
+      })
+      .saveToFile('/path/to/your_target.avi', function(retcode, error){
+        console.log('file has been converted succesfully');
+      });
+
+      // outputs 
+      // { frame: 122, fps: 121, q: '31.0', size: '2349kB', time: '3.16' }
+      // { frame: 173, fps: 114, q: '31.0', size: '2370kB', time: '5.22' }
+
+
 ### Reading video metadata
 Using a seperate object, you are able to access various metadata of your video file.
 
