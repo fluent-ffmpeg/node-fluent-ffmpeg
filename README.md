@@ -129,7 +129,7 @@ In case you need to add additional inputs, like an audio track...
       })
       .saveToFile('/path/to/your_target.avi', function(retcode, error){
         console.log('file has been converted succesfully');
-      });
+      }); 
 
 
 ### Reading video metadata
