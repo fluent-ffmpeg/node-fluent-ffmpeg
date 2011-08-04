@@ -116,6 +116,21 @@ While FFMpeg is processing your request, progress can be output to a custom func
       // { frame: 122, fps: 121, q: '31.0', size: '2349kB', time: '3.16' }
       // { frame: 173, fps: 114, q: '31.0', size: '2370kB', time: '5.22' }
 
+### Additional Inputs
+In case you need to add additional inputs, like an audio track...
+
+    var ffmpeg = require('fluent-ffmpeg');
+    
+    var proc = new ffmpeg('images/frame%05d.png')
+      .addInput('soundtrack.mp3')
+      .withFps(24)
+      .onProgress(function(progress) {
+        process.stdout.write("\r" + oProgress.frame + ' frames in ' + oProgress.time + ' seconds');
+      })
+      .saveToFile('/path/to/your_target.avi', function(retcode, error){
+        console.log('file has been converted succesfully');
+      });
+
 
 ### Reading video metadata
 Using a seperate object, you are able to access various metadata of your video file.
