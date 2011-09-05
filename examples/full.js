@@ -7,7 +7,7 @@ var proc = new ffmpeg('/path/to/your_movie.avi')
   // set target codec
   .withVideoCodec('divx')
   // set aspect ratio
-  .withAspectRatio('16:9')
+  .withAspect('16:9')
   // set size in percent
   .withSize('50%')
   // set fps
