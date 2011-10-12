@@ -56,7 +56,7 @@ Using the chainable API, you are able to perform any operation using FFMPEG. the
     var proc = new ffmpeg('/path/to/your_movie.avi')
       .withVideoBitrate(1024)
       .withVideoCodec('divx')
-      .withAspectRatio('16:9')
+      .withAspect('16:9')
       .withFps(24)
       .withAudioBitrate('128k')
       .withAudioCodec('libmp3lame')
