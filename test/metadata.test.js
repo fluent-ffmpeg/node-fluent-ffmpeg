@@ -17,7 +17,7 @@ module.exports = testCase({
             callback();
           } else {
             callback(new Error('test video file does not exist, check path (' + self.testfile + ')'));
-          }          
+          }
         });
       } else {
         callback(new Error('cannot run test without ffmpeg installed, aborting test...'));
@@ -29,6 +29,24 @@ module.exports = testCase({
     var meta = metadata.get(this.testfile, function(meta, err) {
       test.ok(meta, 'meta data is missing');
       test.ok(!err, 'error was raised');
+      test.done();
+    });
+  },
+  testTitle: function(test) {
+    test.expect(3);
+    var meta = metadata.get(this.testfile, function(meta, err) {
+      test.ok(meta, 'meta data is missing');
+      test.ok(!err, 'error was raised');
+      test.ok(meta.title == "Test Title", "Cannot retrieve title");
+      test.done();
+    });
+  },
+  testTitleWhenEmpty: function(test) {
+    test.expect(3);
+    var meta = metadata.get(this.testfilewide, function(meta, err) {
+      test.ok(meta, 'meta data is missing');
+      test.ok(!err, 'error was raised');
+      test.ok(!meta.title, "Title not empty");
       test.done();
     });
   }
