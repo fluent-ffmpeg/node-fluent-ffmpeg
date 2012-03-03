@@ -37,7 +37,7 @@ module.exports = testCase({
           test.ok(exist);
           // check filesize to make sure conversion actually worked
           fs.stat(testFile, function(err, stats) {
-            test.ok(!err);
+            test.ok(!err && stats);
             test.ok(stats.size > 0);
             test.ok(stats.isFile());
             // unlink file

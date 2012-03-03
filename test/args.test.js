@@ -26,13 +26,14 @@ module.exports = testCase({
     });
   },
   testSimpleArgs: function(test) {
-    test.expect(4);
+    test.expect(5);
     var proc = new ffmpeg(this.testfile)
       .withVideoBitrate(1024)
       .withVideoCodec('divx')
       .withAudioBitrate('128k')
       .toFormat('avi')
-      .getCommand('file', function(cmd) {
+      .getCommand('file', function(cmd, err) {
+        test.ok(!err && cmd, 'execution for getCommand failed');
         test.ok(cmd.indexOf('-b 1024k') > -1, 'bitrate does not match');
         test.ok(cmd.indexOf('-ab 128k') > -1, 'audio bitrate does not match');
         test.ok(cmd.indexOf('-f avi') > -1, 'output format does not match');
@@ -41,7 +42,7 @@ module.exports = testCase({
       });
   },
   testComplexArgs: function(test) {
-    test.expect(9);
+    test.expect(10);
     var proc = new ffmpeg(this.testfile)
       .withVideoBitrate(1024)
       .withVideoCodec('divx')
@@ -50,7 +51,8 @@ module.exports = testCase({
       .addOption('-flags')
       .addOptions([ '+chroma', '+mixed_refs', '-qcomp 0.6' ])
       .toFormat('avi')
-      .getCommand('file', function(cmd) {
+      .getCommand('file', function(cmd, err) {
+        test.ok(!err && cmd, 'execution for getCommand failed');
         test.ok(cmd.indexOf('-b 1024k') > -1, 'bitrate does not match');
         test.ok(cmd.indexOf('-f avi') > -1, 'output format does not match');
         test.ok(cmd.indexOf('-vcodec divx') > -1, 'video codec does not match');
@@ -78,7 +80,7 @@ module.exports = testCase({
       .usingPreset('podcast')
       .withSize('1024x768')
       .getCommand('file', function(cmd, err) {   
-        test.ok(!err);
+        test.ok(!err && cmd, 'execution for getCommand failed');
         test.ok(cmd.indexOf('-s 1024x768') > -1, 'video frame size does not match');
         test.done();
       });
@@ -89,7 +91,7 @@ module.exports = testCase({
     var f = new ffmpeg(this.testfile)
       .withSize('?x140')
       .getCommand('file', function(cmd, err) {
-        test.ok(!err);
+        test.ok(!err && cmd, 'execution for getCommand failed');
         test.ok(cmd.indexOf('-s 186x140') > -1, 'video frame size does not match');
         test.done();
       });
@@ -99,7 +101,7 @@ module.exports = testCase({
     var f = new ffmpeg(this.testfile)
       .withSize('50%')
       .getCommand('file', function(cmd, err) {
-        test.ok(!err);
+        test.ok(!err && cmd, 'execution for getCommand failed');
         test.ok(cmd.indexOf('-s 512x384') > -1, 'video frame size does not match');
         test.done();
       });
@@ -121,7 +123,7 @@ module.exports = testCase({
       .withSize('960x?')
       .applyAutopadding(true)
       .getCommand('file', function(cmd, err) {
-        test.ok(!err);
+        test.ok(!err && cmd, 'execution for getCommand failed');
         test.ok(cmd.indexOf('-vf pad=960:540') > -1, 'padding filter is missing');
         test.done();
       });
@@ -133,7 +135,7 @@ module.exports = testCase({
       .withSize('640x480')
       .applyAutopadding(true)
       .getCommand('file', function(cmd, err) {
-        test.ok(!err);
+        test.ok(!err && cmd, 'execution for getCommand failed');
         test.ok(cmd.indexOf('-vf pad=640:480') > -1, 'padding filter is missing');
         test.done();
       });
