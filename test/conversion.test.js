@@ -193,5 +193,29 @@ module.exports = testCase({
           });
         })
       });
+  },
+  testCodecDataNotification: function(test) {
+    test.expect(5);
+    var testFile = __dirname + '/assets/testConvertToFile.flv';
+    var f = new ffmpeg(this.testfile)
+      .onCodecData(function(codecinfo) {
+        test.ok(codecinfo.video.indexOf('mpeg4') > -1);
+      })
+      .usingPreset('flashvideo')
+      .saveToFile(testFile, function(stdout, stderr, err) {
+        //console.log(stderr);
+        test.ok(!err);
+        path.exists(testFile, function(exist) {
+          test.ok(exist);
+          // check filesize to make sure conversion actually worked
+          fs.stat(testFile, function(err, stats) {
+            test.ok(!err);
+            test.ok(stats.size > 0);
+            // unlink file
+            fs.unlinkSync(testFile);
+            test.done();
+          });
+        })
+      });
   }
 });

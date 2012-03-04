@@ -99,6 +99,22 @@ Using a seperate object, you are able to access various metadata of your video f
     ffmpegmeta.get('/path/to/your_movie.avi', function(metadata) {
       console.log(require('util').inspect(metadata, false, null));
     });
+
+### Reading Codec information while processing
+Using the notification callback onCodecData, you can get informations about the input file's codecs being processed:
+
+    var ffmpeg = require('fluent-ffmpeg');
+
+    var proc = new ffmpeg('/path/to/your_movie.avi')
+      .withAspect('4:3')
+      .withSize('640x480')
+      .onCodecData(function(codecinfo) {
+        console.log(codecinfo);
+      })
+      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+        console.log('file has been converted succesfully');
+      });
+
 ### Creating a custom preset
 To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:
 
@@ -110,7 +126,7 @@ The `ffmpeg` parameter is a full fluent-ffmpeg object, you can use all the chain
 
 
 ### Setting custom child process niceness
-You can adjust the scheduling priority of the child process used by ffmpeg, using renice (http://manpages.ubuntu.com/manpages/intrepid/man1/renice.1.html), like so:
+You can adjust the scheduling priority of the child process used by ffmpeg, using renice (http://manpages.ubuntu.com/manpages/intrepid/man1/renice.1.html):
 
     var ffmpeg = require('fluent-ffmpeg');
     
