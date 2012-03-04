@@ -32,8 +32,8 @@ Using fluent-ffmpeg, you can auto-pad any video output when converting the aspec
     var proc = new ffmpeg('/path/to/your_movie.avi')
       .withAspect('4:3')
       .withSize('640x480')
-      .applyPadding(true, 'white')
-      .saveToFile('/path/to/your_target.avi', function(retcode, error){
+      .applyAutopadding(true, 'white')
+      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
         console.log('file has been converted succesfully');
       });
 This command will auto-pad your 4:3 output video stream using a white background-color (default is black).
@@ -45,7 +45,7 @@ This example loads up a predefined preset in the preset folder (currently, fluen
 
     var proc = new ffmpeg('/path/to/your_movie.avi')
       .usingPreset('podcast')
-      .saveToFile('/path/to/your_target.m4v', function(retcode, error){
+      .saveToFile('/path/to/your_target.m4v', function(retcode, error) {
         console.log('file has been converted succesfully');
       });
 ### Conversion using chainable API
@@ -63,7 +63,7 @@ Using the chainable API, you are able to perform any operation using FFMPEG. the
       .withAudioChannels(2)
       .addOption('-vtag', 'DIVX')
       .toFormat('avi')
-      .saveToFile('/path/to/your_target.avi', function(retcode, error){
+      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
         console.log('file has been converted succesfully');
       });
 ### Creating thumbnails from a video file
@@ -118,7 +118,7 @@ You can adjust the scheduling priority of the child process used by ffmpeg, usin
       .renice(10)
       .withAudioCodec('libvorbis')
       .toFormat('ogg')
-      .saveToFile('./target.ogg', function(retcode, error){
+      .saveToFile('./target.ogg', function(retcode, error) {
         console.log('file has been converted succesfully');
       });
 
@@ -132,7 +132,7 @@ If you want to know for sure that the ffmpeg child process will not run for long
     var proc = new ffmpeg('./source.mp3', 10 * 60 * 1000)
       .withAudioCodec('libvorbis')
       .toFormat('ogg')
-      .saveToFile('./target.ogg', function(retcode, error){
+      .saveToFile('./target.ogg', function(retcode, error) {
         if (retcode == ffmpeg.E_PROCESSTIMEOUT) {
           console.log('ffmpeg terminated because of timeout');
         }
