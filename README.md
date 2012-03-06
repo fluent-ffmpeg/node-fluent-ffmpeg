@@ -29,7 +29,7 @@ Using fluent-ffmpeg, you can auto-pad any video output when converting the aspec
 
     var ffmpeg = require('fluent-ffmpeg');
 
-    var proc = new ffmpeg('/path/to/your_movie.avi')
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withAspect('4:3')
       .withSize('640x480')
       .applyAutopadding(true, 'white')
@@ -43,7 +43,7 @@ This example loads up a predefined preset in the preset folder (currently, fluen
 
     var ffmpeg = require('fluent-ffmpeg');
 
-    var proc = new ffmpeg('/path/to/your_movie.avi')
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .usingPreset('podcast')
       .saveToFile('/path/to/your_target.m4v', function(retcode, error) {
         console.log('file has been converted succesfully');
@@ -53,7 +53,7 @@ Using the chainable API, you are able to perform any operation using FFMPEG. the
 
     var ffmpeg = require('fluent-ffmpeg');
     
-    var proc = new ffmpeg('/path/to/your_movie.avi')
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withVideoBitrate(1024)
       .withVideoCodec('divx')
       .withAspect('16:9')
@@ -71,7 +71,7 @@ One pretty neat feature is the ability of fluent-ffmpeg to generate any amount o
 
     var ffmpeg = require('fluent-ffmpeg');
     
-    var proc = new ffmpeg('/path/to/your_movie.avi')
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withSize('150x100')
       .takeScreenshots(5, '/path/to/thumbnail/folder', function(err) {
         console.log('screenshots were saved')
@@ -81,7 +81,7 @@ For more control, you can also set the timemarks for taking screenshots yourself
 
     var ffmpeg = require('fluent-ffmpeg');
     
-    var proc = new ffmpeg('/path/to/your_movie.avi')
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withSize('150x100')
       .takeScreenshots({
           count: 2,
@@ -105,7 +105,7 @@ Using the notification callback onCodecData, you can get informations about the 
 
     var ffmpeg = require('fluent-ffmpeg');
 
-    var proc = new ffmpeg('/path/to/your_movie.avi')
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withAspect('4:3')
       .withSize('640x480')
       .onCodecData(function(codecinfo) {
@@ -130,8 +130,7 @@ You can adjust the scheduling priority of the child process used by ffmpeg, usin
 
     var ffmpeg = require('fluent-ffmpeg');
     
-    var proc = new ffmpeg('./source.mp3')
-      .renice(10)
+    var proc = new ffmpeg({ source: './source.mp3', priority: 10 })
       .withAudioCodec('libvorbis')
       .toFormat('ogg')
       .saveToFile('./target.ogg', function(retcode, error) {
@@ -141,11 +140,11 @@ You can adjust the scheduling priority of the child process used by ffmpeg, usin
 Which will use a niceness of 10 (thus it has a lower scheduling priority than the node process and other processes, which default to a niceness of 0).
 
 ### Setting an optional processing timeout
-If you want to know for sure that the ffmpeg child process will not run for longer than a certain amount of time, you can set the optional second parameter of the ffmpeg object constructor to the timeout in milliseconds. An example of a process that will return an error string of 'timeout' if ffmpeg did not finish within 10 minutes:
+If you want to know for sure that the ffmpeg child process will not run for longer than a certain amount of time, you can optionally pass the key 'timeout' into the constructor of the ffmpeg command object. An example of a process that will return an error string of 'timeout' if ffmpeg did not finish within 10 minutes:
 
     var ffmpeg = require('fluent-ffmpeg');
     
-    var proc = new ffmpeg('./source.mp3', 10 * 60 * 1000)
+    var proc = new ffmpeg({ source: './source.mp3', timeout: 10 * 60 })
       .withAudioCodec('libvorbis')
       .toFormat('ogg')
       .saveToFile('./target.ogg', function(retcode, error) {

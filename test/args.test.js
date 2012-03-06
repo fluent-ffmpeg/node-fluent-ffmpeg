@@ -27,7 +27,7 @@ module.exports = testCase({
   },
   testSimpleArgs: function(test) {
     test.expect(5);
-    var proc = new ffmpeg(this.testfile)
+    var proc = new ffmpeg({ source: this.testfile })
       .withVideoBitrate(1024)
       .withVideoCodec('divx')
       .withAudioBitrate('128k')
@@ -43,7 +43,7 @@ module.exports = testCase({
   },
   testComplexArgs: function(test) {
     test.expect(10);
-    var proc = new ffmpeg(this.testfile)
+    var proc = new ffmpeg({ source: this.testfile })
       .withVideoBitrate(1024)
       .withVideoCodec('divx')
       .withAudioBitrate(256)
@@ -67,7 +67,7 @@ module.exports = testCase({
   },
   testPreset: function(test) {
     test.expect(1);
-    var args = new ffmpeg(this.testfile)
+    var args = new ffmpeg({ source: this.testfile })
       .usingPreset('podcast')
       .getArgs(function(args) {
         test.ok(args.length > 1, 'preset yielded no arguments');
@@ -76,7 +76,7 @@ module.exports = testCase({
   },
   testPresetOverride: function(test) {
     test.expect(2);
-    var proc = new ffmpeg(this.testfile)
+    var proc = new ffmpeg({ source: this.testfile })
       .usingPreset('podcast')
       .withSize('1024x768')
       .getCommand('file', function(cmd, err) {   
@@ -88,7 +88,7 @@ module.exports = testCase({
   },
   testSizeCalculationFixed: function(test) {
     test.expect(2);
-    var f = new ffmpeg(this.testfile)
+    var f = new ffmpeg({ source: this.testfile })
       .withSize('?x140')
       .getCommand('file', function(cmd, err) {
         test.ok(!err && cmd, 'execution for getCommand failed');
@@ -98,7 +98,7 @@ module.exports = testCase({
   },
   testSizeCalculationPercent: function(test) {
     test.expect(2);
-    var f = new ffmpeg(this.testfile)
+    var f = new ffmpeg({ source: this.testfile })
       .withSize('50%')
       .getCommand('file', function(cmd, err) {
         test.ok(!err && cmd, 'execution for getCommand failed');
@@ -108,7 +108,7 @@ module.exports = testCase({
   },
   testSizeCalculationException: function(test) {
     test.expect(2);
-    var f = new ffmpeg(this.testfile)
+    var f = new ffmpeg({ source: this.testfile })
       .withSize('120%')
       .getCommand('file', function(cmd, err) {
         test.ok(cmd == null, 'command was generated, although invalid video size was set');
@@ -118,7 +118,7 @@ module.exports = testCase({
   },
   testAutopadding43to169: function(test) {
     test.expect(2);
-    var f = new ffmpeg(this.testfile)
+    var f = new ffmpeg({ source: this.testfile })
       .withAspect('16:9')
       .withSize('960x?')
       .applyAutopadding(true)
@@ -130,7 +130,7 @@ module.exports = testCase({
   },
   testAutopadding169to43: function(test) {
     test.expect(2);
-    var f = new ffmpeg(this.testfilewide)
+    var f = new ffmpeg({ source: this.testfilewide })
       .withAspect('4:3')
       .withSize('640x480')
       .applyAutopadding(true)
