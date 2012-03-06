@@ -16,6 +16,24 @@ To run unit tests, make sure have nodeunit installed on your system (currently, 
 Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
 ## Usage
 You find a lot of usage examples (including a real-time streaming example using [flowplayer](http://www.flowplayer.org) and [express](https://github.com/visionmedia/express)!) in the `examples` folder.
+## Basics
+fluent-ffmpeg is always initialized using the returned class of your initial (and only) require call. You have to supply an config object to the constructor containing at least the input source (either a ReadableStream or a filepath).
+
+    var ffmpeg = require('fluent-ffmpeg');
+
+    var proc = new ffmpeg({
+      // input source, required
+      source: '/path/to/your_movie.avi',
+      // timout of the spawned ffmpeg sub-processes in seconds (optional, defaults to 30)
+      timeout: 30,
+      // default priority for all ffmpeg sub-processes (optional, defaults to 0 which is no priorization)
+      priority: 0,
+      // set a custom [winston](https://github.com/flatiron/winston) logging instance (optional, default null which will cause fluent-ffmpeg to spawn a winston console logger)
+      logger: null,
+      // completely disable logging (optional, defaults to false)
+      nolog: false
+    });
+
 ### Auto-calculation of video dimensions
 Since ffmpeg does not support dynamic sizing of your movies, fluent-ffmpeg can do this job for you (using it's internal metadata-discovery). The following size formats are allowed to be passed to `withSize`:
 
