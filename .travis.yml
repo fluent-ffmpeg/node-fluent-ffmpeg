@@ -1,4 +1,6 @@
-before_script: "sudo aptitude -y -q install ffmpeg libvpx-dev libvpx0 x264 libx264-85 libx264-dev"
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install ffmpeg libvpx-dev libvpx0 x264 libx264-85 libx264-dev
 language: node_js
 node_js:
   - 0.4
