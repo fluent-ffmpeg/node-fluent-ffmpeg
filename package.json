@@ -11,5 +11,8 @@
   "repository": "git://github.com/schaermu/node-fluent-ffmpeg.git",
   "devDependencies": { "nodeunit": ">= 0.6.4" },
   "engines" : { "node" : ">=0.4.0" },
-  "main": "./lib/fluent-ffmpeg"
+  "main": "./lib/fluent-ffmpeg",
+  "scripts": {
+    "test": "nodeunit test"
+  }
 }
