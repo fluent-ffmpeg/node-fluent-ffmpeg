@@ -13,6 +13,6 @@
   "engines" : { "node" : ">=0.4.0" },
   "main": "./lib/fluent-ffmpeg",
   "scripts": {
-    "test": "nodeunit test"
+    "test": "nodeunit test/args.test.js"
   }
 }
