@@ -10,12 +10,18 @@ module.exports = testCase({
     this.testfilewide = __dirname + '/assets/testvideo-169.avi';
     
     var self = this;
-    // check if file exists
-    path.exists(self.testfile, function(exists) {
-      if (exists) {
-        callback();
+    exec('which ffmpeg', function(err, stdout, stderr) {
+      if (stdout != '') {
+        // check if file exists
+        path.exists(self.testfile, function(exists) {
+          if (exists) {
+            callback();
+          } else {
+            callback(new Error('test video file does not exist, check path (' + self.testfile + ')'));
+          }
+        });
       } else {
-        callback(new Error('test video file does not exist, check path (' + self.testfile + ')'));
+        callback(new Error('cannot run test without ffmpeg installed, aborting test...'));
       }
     });
   },
