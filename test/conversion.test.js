@@ -33,7 +33,6 @@ module.exports = testCase({
       .renice(19)
       .saveToFile(testFile, function(stdout, stderr, err) {
         test.ok(!err);
-        console.log(stderr);
         path.exists(testFile, function(exist) {
           test.ok(exist);
           // check filesize to make sure conversion actually worked
@@ -101,6 +100,7 @@ module.exports = testCase({
         .withSize('150x?')
       	.renice(19)
         .takeScreenshots(2, testFolder, function(err) {
+          console.log(err);
           test.ok(err == null);
           fs.readdir(testFolder, function(err, files) {
             var tnCount = 0;
@@ -130,6 +130,7 @@ module.exports = testCase({
           count: 2,
           timemarks: [ '0.5', '1' ]
         }, testFolder, function(err) {
+          console.log(err);
           test.ok(err == null);
           fs.readdir(testFolder, function(err, files) {
             var tnCount = 0;
