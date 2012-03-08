@@ -32,7 +32,6 @@ module.exports = testCase({
       .usingPreset('flashvideo')
       .renice(19)
       .saveToFile(testFile, function(stdout, stderr, err) {
-        console.log(stderr);
         test.ok(!err);
         path.exists(testFile, function(exist) {
           test.ok(exist);
