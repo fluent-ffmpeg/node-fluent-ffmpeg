@@ -100,7 +100,6 @@ module.exports = testCase({
         .withSize('150x?')
       	.renice(19)
         .takeScreenshots(2, testFolder, function(err) {
-          console.log(err);
           test.ok(err == null);
           fs.readdir(testFolder, function(err, files) {
             var tnCount = 0;
@@ -130,7 +129,6 @@ module.exports = testCase({
           count: 2,
           timemarks: [ '0.5', '1' ]
         }, testFolder, function(err) {
-          console.log(err);
           test.ok(err == null);
           fs.readdir(testFolder, function(err, files) {
             var tnCount = 0;
@@ -205,7 +203,6 @@ module.exports = testCase({
       })
       .usingPreset('flashvideo')
       .saveToFile(testFile, function(stdout, stderr, err) {
-        //console.log(stderr);
         test.ok(!err);
         path.exists(testFile, function(exist) {
           test.ok(exist);
