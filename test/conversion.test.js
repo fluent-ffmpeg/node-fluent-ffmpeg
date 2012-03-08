@@ -27,7 +27,7 @@ module.exports = testCase({
   },
   testConvertToFile: function(test) {
     test.expect(5);
-    var testFile = '/tmp/testConvertToFile.flv';
+    var testFile = __dirname + '/assets/testConvertToFile.flv';
     var args = new ffmpeg(this.testfile)
       .usingPreset('flashvideo')
       .renice(19)
@@ -49,7 +49,7 @@ module.exports = testCase({
   },
   testConvertToStream: function(test) {
     test.expect(4);
-    var testFile = '/tmp/testConvertToStream.flv';
+    var testFile = __dirname + '/assets/testConvertToStream.flv';
     var outstream = fs.createWriteStream(testFile);
     var args = new ffmpeg(this.testfile)
       .usingPreset('flashvideo')
@@ -71,7 +71,7 @@ module.exports = testCase({
   },
   testConvertFromStream: function(test) {
     var instream = fs.createReadStream(this.testfile);
-    var testFile = '/tmp/testConvertFromStream.flv';
+    var testFile = __dirname + '/assets/testConvertFromStream.flv';
     test.expect(4);
     var args = new ffmpeg(instream)
       .usingPreset('flashvideo')
@@ -93,7 +93,7 @@ module.exports = testCase({
   },
   testTakeScreenshots: function(test) {
     test.expect(2);
-    var testFolder = '/tmp/tntest';
+    var testFolder = __dirname + '/assets/tntest';
     var self = this;
     fs.mkdir(testFolder, '0755', function(err) {
       var args = new ffmpeg(self.testfile)
@@ -119,7 +119,7 @@ module.exports = testCase({
   },
   testTakeScreenshotsConfig: function(test) {
     test.expect(2);
-    var testFolder = '/tmp/tntest_config';
+    var testFolder = __dirname + '/assets/tntest_config';
     var self = this;
     fs.mkdir(testFolder, '0755', function(err) {
       var args = new ffmpeg(self.testfile)
@@ -148,7 +148,7 @@ module.exports = testCase({
   },
   testConvertAspectWithAutopaddingTo43: function(test) {
     test.expect(5);
-    var testFile = '/tmp/testConvertAspectTo43.avi';
+    var testFile = __dirname + '/assets/testConvertAspectTo43.avi';
     var args = new ffmpeg(this.testfilewide)
       .withAspect('4:3')
       .withSize('640x480')
@@ -172,7 +172,7 @@ module.exports = testCase({
   },
   testConvertAspectWithAutopaddingTo169: function(test) {
     test.expect(5);
-    var testFile = '/tmp/testConvertAspectTo169.avi';
+    var testFile = __dirname + '/assets/testConvertAspectTo169.avi';
     var args = new ffmpeg(this.testfile)
       .withAspect('16:9')
       .withSize('720x?')
@@ -196,7 +196,7 @@ module.exports = testCase({
   },
   testCodecDataNotification: function(test) {
     test.expect(5);
-    var testFile = '/tmp/testConvertToFile.flv';
+    var testFile = __dirname + '/assets/testConvertToFile.flv';
     var f = new ffmpeg(this.testfile)
       .onCodecData(function(codecinfo) {
         test.ok(codecinfo.video.indexOf('mpeg4') > -1);
