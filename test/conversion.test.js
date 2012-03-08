@@ -33,6 +33,7 @@ module.exports = testCase({
       .renice(19)
       .saveToFile(testFile, function(stdout, stderr, err) {
         test.ok(!err);
+        console.log(stderr);
         path.exists(testFile, function(exist) {
           test.ok(exist);
           // check filesize to make sure conversion actually worked
