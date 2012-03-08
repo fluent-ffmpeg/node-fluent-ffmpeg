@@ -1,10 +1,10 @@
+language: node_js
+node_js:
+  - 0.4
+  - 0.6
 before_script:
   - sudo apt-get update
   - sudo apt-get install -y ffmpeg libvpx-dev libvpx0 x264 libx264-116 libx264-dev
 notifications:
   email:
   	- schaermu@gmail.com
-language: node_js
-node_js:
-  - 0.4
-  - 0.6
