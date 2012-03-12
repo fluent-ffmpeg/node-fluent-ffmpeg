@@ -37,7 +37,7 @@ module.exports = testCase({
     var meta = metadata.get(this.testfile, function(meta, err) {
       test.ok(meta, 'meta data is missing');
       test.ok(!err, 'error was raised');
-      test.ok(meta.title == "Test Title", "Cannot retrieve title");
+      test.ok(meta.title.toLowerCase() == "test title", "Cannot retrieve title");
       test.done();
     });
   },
