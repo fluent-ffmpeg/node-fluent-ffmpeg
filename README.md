@@ -133,6 +133,27 @@ Using the notification callback onCodecData, you can get informations about the 
         console.log('file has been converted succesfully');
       });
 
+### Getting progress notification
+You can set the call back onProgress if you want to be notified on every progress update (triggered as fast as it's written out by FFMPEG).
+
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
+      .withAspect('4:3')
+      .withSize('640x480')
+      .onProgress(function(progress) {
+        console.log(progress);
+      })
+      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+        console.log('file has been converted succesfully');
+      });
+
+The progress object consists of 6 properties:
+  * frames: the total processed frame count
+  * currentFps: the framerate at which FFMPEG is currently processing the file
+  * currentKbps: the throughput at which FFMPEG is currently processing the file
+  * targetSize: the current size of the target file
+  * timemark: the timestamp of the frame being processed right now
+  * percent: an estimation on the progress (metadata is used, durationsec * fps)
+
 ### Creating a custom preset
 To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:
 
