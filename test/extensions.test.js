@@ -24,5 +24,11 @@ module.exports = testCase({
   	test.ok('1.0.10'.atLeastVersion('1.0.4'));
   	test.ok('2.3.4532'.atLeastVersion('2.3.4531'));
   	test.done();
+  },
+  testFfmpegTimemarkToSeconds: function(test) {
+    console.log('00:08:09.10'.ffmpegTimemarkToSeconds());
+    test.ok('00:02:00.00'.ffmpegTimemarkToSeconds() == 120);
+    test.ok('00:08:09.10'.ffmpegTimemarkToSeconds() == 489);
+    test.done();
   }
 });
