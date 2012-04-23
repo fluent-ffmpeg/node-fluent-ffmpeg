@@ -1,6 +1,6 @@
 var ffmpeg = require('../lib/fluent-ffmpeg');
 
-var proc = new ffmpeg('/path/to/your_movie.avi')
+var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
   // set the size of your thumbnails
   .withSize('150x100')
   // take 2 screenshots at predefined timemarks

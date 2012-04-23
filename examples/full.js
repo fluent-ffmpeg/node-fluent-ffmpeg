@@ -1,7 +1,7 @@
 var ffmpeg = require('../lib/fluent-ffmpeg');
 
 // make sure you set the correct path to your video file
-var proc = new ffmpeg('/path/to/your_movie.avi')
+var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
   // set video bitrate
   .withVideoBitrate(1024)
   // set target codec
