@@ -10,7 +10,7 @@ module.exports = testCase({
     // check for ffmpeg installation
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {
-      if (stdout != '') {
+      if (stdout !== '') {
         // check if file exists
         path.exists(self.testfile, function(exists) {
           if (exists) {
@@ -37,7 +37,7 @@ module.exports = testCase({
     var meta = metadata.get(this.testfile, function(meta, err) {
       test.ok(meta, 'meta data is missing');
       test.ok(!err, 'error was raised');
-      test.ok(meta.title.toLowerCase() == "test title", "Cannot retrieve title");
+      test.ok(meta.title.toLowerCase() === "test title", "Cannot retrieve title");
       test.done();
     });
   },

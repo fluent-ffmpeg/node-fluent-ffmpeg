@@ -1,153 +1,128 @@
-var ffmpeg = require('../lib/fluent-ffmpeg'),
+var Ffmpeg = require('../lib/fluent-ffmpeg'),
   path = require('path'),
-  testCase = require('nodeunit').testCase,
+  assert = require('assert'),
   exec = require('child_process').exec;
 
-module.exports = testCase({
-  setUp: function(callback) {
+suite('fluent-ffmpeg', function() {
+  setup(function(done) {
     // check for ffmpeg installation
     this.testfile = __dirname + '/assets/testvideo-43.avi';
     this.testfilewide = __dirname + '/assets/testvideo-169.avi';
     
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {
-      if (stdout != '') {
+      if (stdout !== '') {
         // check if file exists
         path.exists(self.testfile, function(exists) {
           if (exists) {
-            callback();
+            done();
           } else {
-            callback(new Error('test video file does not exist, check path (' + self.testfile + ')'));
+            done(new Error('test video file does not exist, check path (' + self.testfile + ')'));
           }
         });
       } else {
-        callback(new Error('cannot run test without ffmpeg installed, aborting test...'));
+        done(new Error('cannot run test without ffmpeg installed, aborting test...'));
       }
     });
-  },
-  testSimpleArgs: function(test) {
-    test.expect(5);
-    var proc = new ffmpeg({ source: this.testfile, nolog: true })
-      .withVideoBitrate(1024)
-      .withVideoCodec('divx')
-      .withAudioBitrate('128k')
-      .toFormat('avi')
-      .getCommand('file', function(cmd, err) {
-        test.ok(!err && cmd, 'execution for getCommand failed');
-        test.ok(cmd.indexOf('-b 1024k') > -1, 'bitrate does not match');
-        test.ok(cmd.indexOf('-ab 128k') > -1, 'audio bitrate does not match');
-        test.ok(cmd.indexOf('-f avi') > -1, 'output format does not match');
-        test.ok(cmd.indexOf('-vcodec divx') > -1, 'video codec does not match');
-        test.done();
-      });
-  },
-  testComplexArgs: function(test) {
-    test.expect(10);
-    var proc = new ffmpeg({ source: this.testfile, nolog: true })
-      .withVideoBitrate(1024)
-      .withVideoCodec('divx')
-      .withAudioBitrate(256)
-      .withAudioChannels(2)
-      .addOption('-flags')
-      .addOptions([ '+chroma', '+mixed_refs', '-qcomp 0.6' ])
-      .toFormat('avi')
-      .getCommand('file', function(cmd, err) {
-        test.ok(!err && cmd, 'execution for getCommand failed');
-        test.ok(cmd.indexOf('-b 1024k') > -1, 'bitrate does not match');
-        test.ok(cmd.indexOf('-f avi') > -1, 'output format does not match');
-        test.ok(cmd.indexOf('-vcodec divx') > -1, 'video codec does not match');
-        test.ok(cmd.indexOf('-ab 256k') > -1, 'audio bitrate does not match');
-        test.ok(cmd.indexOf('-ac 2') > -1, 'audio channels do not match');        
-        test.ok(cmd.indexOf('-flags') > -1, '-flags parameter missing');
-        test.ok(cmd.indexOf('+chroma') > -1, '+chroma parameter missing');
-        test.ok(cmd.indexOf('+mixed_refs') > -1, '+mixed_refs parameter missing');
-        test.ok(cmd.indexOf('-qcomp 0.6') > -1, '-qcomp does not match');
-        test.done();
-      });
-  },
-  testPreset: function(test) {
-    test.expect(1);
-    var args = new ffmpeg({ source: this.testfile, nolog: true })
+  });
+
+  suite('#getCommand', function() {
+    test('should compile simple arguments into command correctly', function(done) {
+      var proc = new Ffmpeg({ source: this.testfile, nolog: true })
+        .withVideoBitrate(1024)
+        .withVideoCodec('divx')
+        .withAudioBitrate('128k')
+        .toFormat('avi')
+        .getCommand('file', function(cmd, err) {
+          assert.ok(!err && cmd, 'execution for getCommand failed');
+          assert.ok(cmd.indexOf('-b 1024k') > -1, 'bitrate does not match');
+          assert.ok(cmd.indexOf('-ab 128k') > -1, 'audio bitrate does not match');
+          assert.ok(cmd.indexOf('-f avi') > -1, 'output format does not match');
+          assert.ok(cmd.indexOf('-vcodec divx') > -1, 'video codec does not match');
+          done();
+        });
+    });
+    test('should compile custom options into command correctly', function(done) {
+      var proc = new Ffmpeg({ source: this.testfile, nolog: true })
+        .addOption('-flags')
+        .addOptions([ '+chroma', '+mixed_refs', '-qcomp 0.6' ])
+        .toFormat('avi')
+        .getCommand('file', function(cmd, err) {
+          assert.ok(!err && cmd, 'execution for getCommand failed');      
+          assert.ok(cmd.indexOf('-flags') > -1, '-flags parameter missing');
+          assert.ok(cmd.indexOf('+chroma') > -1, '+chroma parameter missing');
+          assert.ok(cmd.indexOf('+mixed_refs') > -1, '+mixed_refs parameter missing');
+          assert.ok(cmd.indexOf('-qcomp 0.6') > -1, '-qcomp does not match');
+          done();
+        });
+    });
+    test('should load options from preset correctly', function(done) {
+      var args = new Ffmpeg({ source: this.testfile, nolog: true })
       .usingPreset('podcast')
       .getArgs(function(args) {
-        test.ok(args.length > 1, 'preset yielded no arguments');
-        test.done();
-      });  
-  },
-  testPresetOverride: function(test) {
-    test.expect(2);
-    var proc = new ffmpeg({ source: this.testfile, nolog: true })
-      .usingPreset('podcast')
-      .withSize('1024x768')
-      .getCommand('file', function(cmd, err) {   
-        test.ok(!err && cmd, 'execution for getCommand failed');
-        test.ok(cmd.indexOf('-s 1024x768') > -1, 'video frame size does not match');
-        test.done();
+        assert.ok(args.length > 1, 'preset yielded no arguments');
+        done();
       });
-    
-  },
-  testSizeCalculationFixed: function(test) {
-    test.expect(2);
-    var f = new ffmpeg({ source: this.testfile, nolog: true })
-      .withSize('?x140')
-      .getCommand('file', function(cmd, err) {
-        test.ok(!err && cmd, 'execution for getCommand failed');
-        test.ok(cmd.indexOf('-s 186x140') > -1, 'video frame size does not match');
-        test.done();
-      });
-  },
-  testSizeCalculationPercent: function(test) {
-    test.expect(2);
-    var f = new ffmpeg({ source: this.testfile, nolog: true })
-      .withSize('50%')
-      .getCommand('file', function(cmd, err) {
-        test.ok(!err && cmd, 'execution for getCommand failed');
-        test.ok(cmd.indexOf('-s 512x384') > -1, 'video frame size does not match');
-        test.done();
-      });
-  },
-  testSizeCalculationException: function(test) {
-    test.expect(2);
-    var f = new ffmpeg({ source: this.testfile })
-      .withSize('120%')
-      .getCommand('file', function(cmd, err) {
-        test.ok(cmd == null, 'command was generated, although invalid video size was set');
-        test.ok(err, 'no error returned, although invalid video size was set');
-        test.done();
-      });
-  },
-  testAutopadding43to169: function(test) {
-    var f = new ffmpeg({ source: this.testfile, nolog: true })
-      .withAspect('16:9')
-      .withSize('960x?')
-      .applyAutopadding(true)
-      .getCommand('file', function(cmd, err) {
-        if (err && err.message.indexOf('padding') > -1) {
-          // padding is not supported, skip test
-          test.done();
-        } else {
-          test.expect(2);
-          test.ok(!err && cmd, 'execution for getCommand failed');
-          test.ok(cmd.indexOf('-vf pad=960:540') > -1, 'padding filter is missing');
-          test.done();
-        }
-      });
-  },
-  testAutopadding169to43: function(test) {
-    var f = new ffmpeg({ source: this.testfilewide, nolog: true })
-      .withAspect('4:3')
-      .withSize('640x480')
-      .applyAutopadding(true)
-      .getCommand('file', function(cmd, err) {
-        if (err && err.message.indexOf('padding') > -1) {
-          // padding is not supported, skip test
-          test.done();
-        } else {
-          test.expect(2);
-          test.ok(!err && cmd, 'execution for getCommand failed');
-          test.ok(cmd.indexOf('-vf pad=640:480') > -1, 'padding filter is missing');
-          test.done();
-        }
-      });
-  }
+    });
+    test('should allow preset arguments to be overridden', function(done) {
+      var proc = new Ffmpeg({ source: this.testfile, nolog: true })
+        .usingPreset('podcast')
+        .withSize('1024x768')
+        .getCommand('file', function(cmd, err) {   
+          assert.ok(!err && cmd, 'execution for getCommand failed');
+          assert.ok(cmd.indexOf('-s 1024x768') > -1, 'video frame size does not match');
+          done();
+        });
+    });
+    test('should automatically calculate missing dimension arguments', function(done) {
+      var proc = new Ffmpeg({ source: this.testfile, nolog: true })
+        .withSize('?x140')
+        .getCommand('file', function(cmd, err) {
+          assert.ok(!err && cmd, 'execution for getCommand failed');
+          assert.ok(cmd.indexOf('-s 186x140') > -1, 'video frame size does not match');
+          done();
+        });
+    });
+    test('should automatically calculate dimensions on a percent base', function(done) {
+      var proc = new Ffmpeg({ source: this.testfile, nolog: true })
+        .withSize('50%')
+        .getCommand('file', function(cmd, err) {
+          assert.ok(!err && cmd, 'execution for getCommand failed');
+          assert.ok(cmd.indexOf('-s 512x384') > -1, 'video frame size does not match');
+          done();
+        });
+    });
+    test('should correctly determine padding when auto-padding is active (16:9)', function(done) {
+      var proc = new Ffmpeg({ source: this.testfile, nolog: true })
+        .withAspect('16:9')
+        .withSize('960x?')
+        .applyAutopadding(true)
+        .getCommand('file', function(cmd, err) {
+          if (err && err.message.indexOf('padding') > -1) {
+            // padding is not supported, skip test
+            done();
+          } else {
+            assert.ok(!err && cmd, 'execution for getCommand failed');
+            assert.ok(cmd.indexOf('-vf pad=960:540') > -1, 'padding filter is missing');
+            done();
+          }
+        });
+    });
+    test('should correctly determine padding when auto-passing is active (4:3)', function(done) {
+      var proc = new Ffmpeg({ source: this.testfilewide, nolog: true })
+        .withAspect('4:3')
+        .withSize('640x?')
+        .applyAutopadding(true)
+        .getCommand('file', function(cmd, err) {
+          if (err && err.message.indexOf('padding') > -1) {
+            // padding is not supported, skip test
+            done();
+          } else {
+            assert.ok(!err && cmd, 'execution for getCommand failed');
+            assert.ok(cmd.indexOf('-vf pad=640:480') > -1, 'padding filter is missing');
+            done();
+          }
+        });
+    });
+  });
 });
