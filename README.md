@@ -115,7 +115,7 @@ For more control, you can also set the timemarks for taking screenshots yourself
 ### Reading video metadata
 Using a seperate object, you are able to access various metadata of your video file.
 
-    var Metalib = require('../lib/').Metadata;
+    var Metalib = require('fluent-ffmpeg').Metadata;
 
     // make sure you set the correct path to your video file
     var metaObject = new Metalib('/path/to/your_movie.avi');
