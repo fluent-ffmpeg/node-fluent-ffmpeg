@@ -1,4 +1,4 @@
-var ffmpeg = require('../lib/fluent-ffmpeg'),
+var ffmpeg = require('../lib/'),
   fs = require('fs');
 
 // create the target stream (can be any WritableStream)

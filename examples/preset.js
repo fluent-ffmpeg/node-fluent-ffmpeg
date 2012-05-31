@@ -1,4 +1,4 @@
-var ffmpeg = require('../lib/fluent-ffmpeg');
+var ffmpeg = require('../lib');
 
 // make sure you set the correct path to your video file
 var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
