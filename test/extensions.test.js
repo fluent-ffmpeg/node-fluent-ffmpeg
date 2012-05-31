@@ -1,7 +1,7 @@
 var ffmpeg = require('../lib/')
   assert = require('assert');
 
-describe('extensions.toAspectRatio', function() {
+describe('Extensions.toAspectRatio', function() {
   it('should convert an aspect ratio string to a proper object', function() {
     var ret = '16:9'.toAspectRatio();
     ret.x.should.equal(16);
