@@ -13,6 +13,10 @@ To run unit tests, make sure have mocha installed on your system (registered as 
 
 `$ make test`
 
+If you want to re-generate the test coverage report (filed under test/coverage.html), run
+
+`$ make test-cov`
+
 Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
 ## Usage
 You find a lot of usage examples (including a real-time streaming example using [flowplayer](http://www.flowplayer.org) and [express](https://github.com/visionmedia/express)!) in the `examples` folder.
