@@ -1,23 +1,29 @@
-var ffmpeg = require('../lib/fluent-ffmpeg'),
-  Registry = require('../lib/registry'),
-  testCase = require('nodeunit').testCase;
+var ffmpeg = require('../lib/');
+  Registry = process.env.FLUENTFFMPEG_COV ? require('../lib-cov/registry') : require('../lib/registry');
 
 // reset registry
 Registry.instance.reset();
 
-module.exports = testCase({
-	testCanSetValue: function(test) {
+describe('Registry.set', function() {
+  it('should set a value in the global registry', function() {
     Registry.instance.set('foo', 'bar');
-    test.ok(Registry.instance.values.length === 1);
-    test.done();
-	},
-	testCanGetValue: function(test) {
+    Registry.instance.values.length.should.equal(1);
+  });
+  it('should update a value that was already set', function() {
+    Registry.instance.set('foo', 'bar-new');
+    Registry.instance.get('foo').should.equal('bar-new');
+
+    // re-set to old value
+    Registry.instance.set('foo', 'bar');
+  });
+});
+
+describe('Registry.get', function() {
+  it('should return the value for a certain key from the global registry', function() {
     var val = Registry.instance.get('foo');
-    test.ok(val === 'bar');
-    test.done();
-	},
-  testReturnsNullOnKeyNotFound: function(test) {
-    test.ok(Registry.instance.get('bar') === null);
-    test.done();
-  }
+    val.should.equal('bar');
+  });
+  it('should return false when key is not present', function() {
+    Registry.instance.get('NOTFOUND').should.be.false;
+  });
 });
