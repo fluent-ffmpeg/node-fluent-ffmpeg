@@ -91,7 +91,7 @@ describe('Processor', function() {
         count: 2,
         timemarks: [ '0.5', '1' ]
       }, testFolder, function(err) {
-        assert(!err);
+        assert.ok(!err);
         fs.readdir(testFolder, function(err, files) {
           var tnCount = 0;
           files.forEach(function(file) {
@@ -115,12 +115,12 @@ describe('Processor', function() {
         .usingPreset('flashvideo')
         .renice(19)
         .saveToFile(testFile, function(stdout, stderr, err) {
-          assert(!err);
+          assert.ok(!err);
           path.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
-              assert(!err && stats);
+              assert.ok(!err && stats);
               stats.size.should.above(0);
               stats.isFile().should.true;
               // unlink file
@@ -137,12 +137,12 @@ describe('Processor', function() {
         .usingPreset('flashvideo')
         .renice(19)
         .saveToFile(testFile, function(stdout, stderr, err) {
-          assert(!err);
+          assert.ok(!err);
           path.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
-              assert(!err && stats);
+              assert.ok(!err && stats);
               stats.size.should.above(0);
               stats.isFile().should.true;
               // unlink file
@@ -166,7 +166,7 @@ describe('Processor', function() {
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
-              assert(!err && stats);
+              assert.ok(!err && stats);
               stats.size.should.above(0);
               stats.isFile().should.true;
               // unlink file
@@ -188,7 +188,7 @@ describe('Processor', function() {
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
-              assert(!err && stats);
+              assert.ok(!err && stats);
               stats.size.should.above(0);
               stats.isFile().should.true;
               // unlink file
@@ -199,134 +199,4 @@ describe('Processor', function() {
         });
     });
   });
-})
-
-/*
-module.exports = testCase({
-  
-  testConvertFromStream: function(test) {
-    var instream = fs.createReadStream(this.testfile);
-    var testFile = __dirname + '/assets/testConvertFromStream.flv';
-    test.expect(4);
-    var args = new Ffmpeg({ source: instream, nolog: true })
-      .usingPreset('flashvideo')
-      .renice(19)
-      .saveToFile(testFile, function(stderr, stdout, err) {
-        path.exists(testFile, function(exist) {
-          // check filesize to make sure conversion actually worked
-          test.ok(exist);
-          fs.stat(testFile, function(err, stats) {
-            test.ok(!err);
-            test.ok(stats.size > 0);
-            test.ok(stats.isFile());
-            // unlink file
-            fs.unlinkSync(testFile);
-            test.done();
-          });
-        });
-      });
-  },
-  testTakeScreenshots: function(test) {
-    test.expect(2);
-    var testFolder = __dirname + '/assets/tntest';
-    var self = this;
-    fs.mkdir(testFolder, '0755', function(err) {
-      var args = new Ffmpeg({ source: self.testfile, nolog: true })
-        .withSize('150x?')
-        .renice(19)
-        .takeScreenshots(2, testFolder, function(err) {
-          test.ok(err == null);
-          fs.readdir(testFolder, function(err, files) {
-            var tnCount = 0;
-            files.forEach(function(file) {
-              if (file.indexOf('.jpg') > -1) {
-                tnCount++;
-                fs.unlinkSync(testFolder + '/' + file);
-              }
-            });
-            test.ok(tnCount === 2);
-            // remove folder
-            fs.rmdirSync(testFolder);
-            test.done();
-          });
-        });
-    });
-  },
-  
-  testConvertAspectWithAutopaddingTo43: function(test) {
-    var testFile = __dirname + '/assets/testConvertAspectTo43.avi';
-    var args = new Ffmpeg({ source: this.testfilewide, nolog: true })
-      .withAspect('4:3')
-      .withSize('640x480')
-      .applyAutopadding(true, 'black')
-      .renice(19)
-      .saveToFile(testFile, function(stdout, stderr, err) {
-        if (err && err.message.indexOf('padding') > -1) {
-          // padding is not supported, skip test
-          test.done();
-        } else {
-          test.expect(5);
-          test.ok(!err);
-          path.exists(testFile, function(exist) {
-            test.ok(exist);
-            // check filesize to make sure conversion actually worked
-            fs.stat(testFile, function(err, stats) {
-              test.ok(!err);
-              test.ok(stats.size > 0);
-              test.ok(stats.isFile());
-              // unlink file
-              fs.unlinkSync(testFile);
-              test.done();
-            });
-          });
-        }
-      });
-  },
-  testConvertAspectWithAutopaddingTo169: function(test) {
-    var testFile = __dirname + '/assets/testConvertAspectTo169.avi';
-    var args = new Ffmpeg({ source: this.testfile, nolog: true })
-      .withAspect('16:9')
-      .withSize('720x?')
-      .applyAutopadding(true, 'black')
-      .renice(19)
-      .saveToFile(testFile, function(stdout, stderr, err) {
-        if (err && err.message.indexOf('padding') > -1) {
-          // padding is not supported, skip test
-          test.done();
-        } else {
-          test.expect(5);
-          test.ok(!err);
-          path.exists(testFile, function(exist) {
-            test.ok(exist);
-            // check filesize to make sure conversion actually worked
-            fs.stat(testFile, function(err, stats) {
-              test.ok(!err);
-              test.ok(stats.size > 0);
-              test.ok(stats.isFile());
-              // unlink file
-              fs.unlinkSync(testFile);
-              test.done();
-            });
-          });
-        }
-      });
-  },
-  testCodecDataNotification: function(test) {
-    test.expect(2);
-    var testFile = __dirname + '/assets/testConvertToFile.flv';
-    var f = new Ffmpeg({ source: this.testfile, nolog: true })
-      .onCodecData(function(codecinfo) {
-        test.ok(codecinfo.video.indexOf('mpeg4') > -1);
-      })
-      .usingPreset('flashvideo')
-      .saveToFile(testFile, function(stdout, stderr, err) {
-        test.ok(!err);
-        fs.stat(testFile, function(err, stats) {
-          // unlink file
-          fs.unlinkSync(testFile);
-          test.done();
-        });
-      });
-  }
 });
-*/

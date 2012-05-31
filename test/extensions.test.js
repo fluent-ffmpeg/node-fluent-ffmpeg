@@ -11,7 +11,7 @@ describe('Extensions.toAspectRatio', function() {
     ret.y.should.equal(9);
   });
   it('should return undefined when an invalid aspect ratio is passed', function() {
-    assert(!ext.toAspectRatio('15.929'));
+    assert.ok(!ext.toAspectRatio('15.929'));
   });
 });
 
