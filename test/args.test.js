@@ -183,6 +183,37 @@ describe('Command', function() {
           }
         });
     });
+    it('should calculate size if a fixed width and an aspect ratio is provided', function(done) {
+      new Ffmpeg({ source: this.testfilewide, nolog: true })
+        .withSize('640x?')
+        .withAspect('4:3')
+        .applyAutopadding(true)
+        .getArgs(function(args, err) {
+          if (err) {
+            done(err);
+          } else {
+            args.indexOf('-vf').should.above(-1);
+            args.indexOf('pad=640:480:0:60:black').should.above(-1);
+            done();
+          }
+        });
+    });
+
+    it('should calculate size if a fixed height and an aspect ratio is provided', function(done) {
+      new Ffmpeg({ source: this.testfilewide, nolog: true })
+        .withSize('?x480')
+        .withAspect('4:3')
+        .applyAutopadding(true)
+        .getArgs(function(args, err) {
+          if (err) {
+            done(err);
+          } else {
+            args.indexOf('-vf').should.above(-1);
+            args.indexOf('pad=640:480:0:60:black').should.above(-1);
+            done();
+          }
+        });
+    });
   });
 
   describe('withFps', function() {
