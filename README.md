@@ -9,9 +9,9 @@ Via npm:
 Or as a submodule:
 `$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git vendor/fluent-ffmpeg`
 ## Tests
-To run unit tests, make sure have nodeunit installed on your system (currently, only npm-installed versions are supported).
+To run unit tests, make sure have mocha installed on your system (registered as devDependency in npm config).
 
-`$ nodeunit test`
+`$ make test`
 
 Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
 ## Usage
