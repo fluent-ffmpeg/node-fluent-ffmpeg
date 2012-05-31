@@ -9,7 +9,7 @@
       "url": "http://github.com/schaermu/node-fluent-ffmpeg/issues"
   },
   "repository": "git://github.com/schaermu/node-fluent-ffmpeg.git",
-  "devDependencies": { "mocha": "latest" },
+  "devDependencies": { "mocha": "latest", "should": "latest" },
   "dependencies": { "winston": ">=0.5.10" },
   "engines" : { "node" : ">=0.4.0" },
   "main": "index",
