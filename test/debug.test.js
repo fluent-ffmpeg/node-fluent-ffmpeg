@@ -40,7 +40,7 @@ describe('Debug', function() {
     it('should properly compile options into an ffmpeg command line call', function(done) {
       var self = this;
       new Ffmpeg({ source: this.testfile, nolog: true })
-        .usingPreset('podcast')
+        .usingPreset('divx')
         .getCommand('file', function(cmd) {
           cmd.length.should.above(1);
           cmd.indexOf(self.testfile).should.above(-1);
