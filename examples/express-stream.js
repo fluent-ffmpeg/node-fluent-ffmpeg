@@ -1,5 +1,5 @@
 var express = require('express'),
-  ffmpeg = require('../lib/');
+  ffmpeg = require('../index');
 
 var app = express.createServer();
 

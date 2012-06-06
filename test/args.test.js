@@ -1,4 +1,4 @@
-var Ffmpeg = require('../lib'),
+var Ffmpeg = require('../index'),
   path = require('path'),
   exec = require('child_process').exec;
 
@@ -7,7 +7,7 @@ describe('Command', function() {
     // check for ffmpeg installation
     this.testfile = __dirname + '/assets/testvideo-43.avi';
     this.testfilewide = __dirname + '/assets/testvideo-169.avi';
-    
+
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {
       if (stdout !== '') {
@@ -223,7 +223,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-r').should.above(-1);
           args.indexOf(27.77).should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -235,7 +235,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-aspect').should.above(-1);
           args.indexOf('16:9').should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -247,7 +247,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-vcodec').should.above(-1);
           args.indexOf('divx').should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -259,7 +259,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-ab').should.above(-1);
           args.indexOf('256k').should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -271,7 +271,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-acodec').should.above(-1);
           args.indexOf('mp3').should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -283,7 +283,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-ac').should.above(-1);
           args.indexOf(1).should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -295,7 +295,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-ar').should.above(-1);
           args.indexOf(22500).should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -307,7 +307,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-ss').should.above(-1);
           args.indexOf('00:00:10').should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -319,7 +319,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-t').should.above(-1);
           args.indexOf(10).should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -331,7 +331,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-ab').should.above(-1);
           args.indexOf('256k').should.above(-1);
-          done();  
+          done();
         });
     });
     it('should apply supplied extra options', function(done) {
@@ -344,7 +344,7 @@ describe('Command', function() {
           args.indexOf('+chroma').should.above(-1);
           args.indexOf('-partitions').should.above(-1);
           args.indexOf('+parti4x4+partp8x8+partb8x8').should.above(-1);
-          done();  
+          done();
         });
     });
   });
@@ -356,7 +356,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-f').should.above(-1);
           args.indexOf('mp4').should.above(-1);
-          done();  
+          done();
         });
     });
   });
