@@ -1,5 +1,5 @@
 var fs = require('fs'),
-  ffmpeg = require('./lib/');
+  ffmpeg = require('../index');
 
 // open input stream
 var infs = fs.createReadStream(__dirname + '/test/assets/testvideo-43.avi');
