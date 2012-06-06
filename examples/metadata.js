@@ -1,4 +1,4 @@
-var Metalib = require('../lib/').Metadata;
+var Metalib = require('../index').Metadata;
 
 // make sure you set the correct path to your video file
 var metaObject = new Metalib('/path/to/your_movie.avi');

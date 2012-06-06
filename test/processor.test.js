@@ -1,4 +1,4 @@
-var Ffmpeg = require('../lib'),
+var Ffmpeg = require('../index'),
   path = require('path'),
   fs = require('fs'),
   assert = require('assert'),
@@ -9,7 +9,7 @@ describe('Processor', function() {
     // check for ffmpeg installation
     this.testfile = __dirname + '/assets/testvideo-43.avi';
     this.testfilewide = __dirname + '/assets/testvideo-169.avi';
-    
+
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {
       if (stdout !== '') {
