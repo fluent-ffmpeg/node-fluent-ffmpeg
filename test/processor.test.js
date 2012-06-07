@@ -27,6 +27,11 @@ describe('Processor', function() {
     });
   });
 
+  it('should properly limit niceness', function() {
+    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
+        .renice(100).options._nice.level.should.equal(0);
+  });
+
   it('should kill the process on timeout', function(done) {
     var testFile = __dirname + '/assets/testProcessKill.flv';
     new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
