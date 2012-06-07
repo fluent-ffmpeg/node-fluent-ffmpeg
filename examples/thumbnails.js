@@ -1,4 +1,4 @@
-var ffmpeg = require('../lib/');
+var ffmpeg = require('../index');
 
 var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
   // set the size of your thumbnails
