@@ -3,5 +3,4 @@ before_script:
   - sudo apt-get install -y ffmpeg libavcodec-extra-53
 language: node_js
 node_js:
-  - 0.4
   - 0.6
