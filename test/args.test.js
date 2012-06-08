@@ -34,13 +34,11 @@ describe('Command', function() {
           done();
         });
     });
-    it('should fail silently when a preset it not found', function(done) {
-      new Ffmpeg({ source: this.testfile, nolog: true })
-        .usingPreset('NOTFOUND')
-        .getArgs(function(args) {
-          args.length.should.equal(3);
-          done();
-        });
+    it('should throw an exception when a preset it not found', function() {
+      (function() {
+        new Ffmpeg({ source: this.testfile, nolog: true })
+          .usingPreset('NOTFOUND');
+      }).should.throw(/^preset NOTFOUND could not be loaded/);
     });
   });
 
