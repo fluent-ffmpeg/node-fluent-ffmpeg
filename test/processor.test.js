@@ -2,6 +2,7 @@ var Ffmpeg = require('../index'),
   path = require('path'),
   fs = require('fs'),
   assert = require('assert'),
+  os = require('os').platform(),
   exec = require('child_process').exec;
 
 describe('Processor', function() {
@@ -27,10 +28,12 @@ describe('Processor', function() {
     });
   });
 
-  it('should properly limit niceness', function() {
-    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
-        .renice(100).options._nice.level.should.equal(0);
-  });
+  if (!os.match(/win(32|64)/)) {
+    it('should properly limit niceness', function() {
+      new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
+          .renice(100).options._nice.level.should.equal(0);
+    });
+  }
 
   it('should kill the process on timeout', function(done) {
     var testFile = __dirname + '/assets/testProcessKill.flv';
