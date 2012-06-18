@@ -116,6 +116,36 @@ describe('Processor', function() {
       });
   });
 
+  it('should report all generated filenames in the second callback argument', function(done) {
+    var testFolder = __dirname + '/assets/tntest_config';
+    var args = new Ffmpeg({ source: this.testfile, nolog: true })
+      .withSize('150x?')
+      .renice(19)
+      .takeScreenshots({
+        count: 2,
+        timemarks: [ '0.5', '1' ],
+        filename: 'shot_%00i'
+      }, testFolder, function(err, names) {
+        assert.ok(!err);
+        names.length.should.equal(2);
+        names[0].should.equal('shot_001.jpg');
+        names[1].should.equal('shot_002.jpg');
+        fs.readdir(testFolder, function(err, files) {
+          var tnCount = 0;
+          files.forEach(function(file) {
+            if (file.indexOf('.jpg') > -1) {
+              tnCount++;
+              fs.unlinkSync(testFolder + '/' + file);
+            }
+          });
+          tnCount.should.equal(2);
+          // remove folder
+          fs.rmdirSync(testFolder);
+          done();
+        });
+      });
+  });
+
   describe('saveToFile', function() {
     it('should save the output file properly to disk', function(done) {
       var testFile = __dirname + '/assets/testConvertToFile.flv';
