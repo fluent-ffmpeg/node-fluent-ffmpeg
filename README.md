@@ -95,8 +95,9 @@ One pretty neat feature is the ability of fluent-ffmpeg to generate any amount o
     
     var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withSize('150x100')
-      .takeScreenshots(5, '/path/to/thumbnail/folder', function(err) {
-        console.log('screenshots were saved')
+      .takeScreenshots(5, '/path/to/thumbnail/folder', function(err, filenames) {
+        console.log(filenames);
+        console.log('screenshots were saved');
       });
 
 For more control, you can also set the timemarks for taking screenshots yourself. Timemarks are percent `50%` or otherwise seconds.
@@ -108,8 +109,9 @@ For more control, you can also set the timemarks for taking screenshots yourself
       .takeScreenshots({
           count: 2,
           timemarks: [ '0.5', '1' ]
-        }, '/path/to/thumbnail/folder', function(err) {
-        console.log('screenshots were saved')
+        }, '/path/to/thumbnail/folder', function(err, filenames) {
+          console.log(filenames);
+          console.log('screenshots were saved');
       });
       
 You can set the screenshots filename dynamically using following format characters:
@@ -132,8 +134,9 @@ If multiple timemarks are given and no `%i` format character is found in filenam
           count: 2,
           timemarks: [ '50%', '75%' ],
           filename: '%b_screenshot_%w_%i'
-        }, '/path/to/thumbnail/folder', function(err) {
-        console.log('screenshots were saved')
+        }, '/path/to/thumbnail/folder', function(err, filenames) {
+          console.log(filenames);
+          console.log('screenshots were saved');
       });
 
 ### Reading video metadata
