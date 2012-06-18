@@ -8,6 +8,6 @@ test-cov: lib-cov
 
 lib-cov:
 	@rm -fr ./$@
-	@jscoverage lib $@
+	@jscoverage --no-highlight lib $@
 
 .PHONY: test test-cov lib-cov
