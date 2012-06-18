@@ -99,7 +99,7 @@ One pretty neat feature is the ability of fluent-ffmpeg to generate any amount o
         console.log('screenshots were saved')
       });
 
-For more control, you can also set the timemarks for taking screenshots yourself (timemarks are always in seconds):
+For more control, you can also set the timemarks for taking screenshots yourself. Timemarks are percent `50%` or otherwise seconds.
 
     var ffmpeg = require('fluent-ffmpeg');
     
@@ -108,6 +108,30 @@ For more control, you can also set the timemarks for taking screenshots yourself
       .takeScreenshots({
           count: 2,
           timemarks: [ '0.5', '1' ]
+        }, '/path/to/thumbnail/folder', function(err) {
+        console.log('screenshots were saved')
+      });
+      
+You can set the screenshots filename dynamically using following format characters:
+
+* `%s` - offset in seconds
+* `%w` - screenshot width
+* `%h` - screenshot height
+* `%r` - screenshot resolution ( widthxheight )
+* `%f` - input filename
+* `%b` - input basename ( filename w/o extension ) 
+* `%i` - number of screenshot in timemark array ( can be zeropadded by using it like `%000i` )  
+
+If multiple timemarks are given and no `%i` format character is found in filename `_%i` will be added to the end of the given filename.
+
+    var ffmpeg = require('fluent-ffmpeg');
+
+    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
+      .withSize('150x100')
+      .takeScreenshots({
+          count: 2,
+          timemarks: [ '50%', '75%' ],
+          filename: '%b_screenshot_%w_%i'
         }, '/path/to/thumbnail/folder', function(err) {
         console.log('screenshots were saved')
       });
