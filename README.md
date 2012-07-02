@@ -225,6 +225,12 @@ If you want to know for sure that the ffmpeg child process will not run for long
         }
       });
 
+## Contributors
+* tommadema
+* Bruno Celeste
+* Thorsten
+* Weltschmerz
+
 ## Contributing
 Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!
 
