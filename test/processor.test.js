@@ -10,6 +10,7 @@ describe('Processor', function() {
     // check for ffmpeg installation
     this.testfile = __dirname + '/assets/testvideo-43.avi';
     this.testfilewide = __dirname + '/assets/testvideo-169.avi';
+    this.testfileEscaped = __dirname + '/assets/te[s]t   audio \' " .ogg';
 
     var self = this;
     exec('which ffmpeg', function(err, stdout, stderr) {
@@ -34,6 +35,26 @@ describe('Processor', function() {
           .renice(100).options._nice.level.should.equal(0);
     });
   }
+
+  describe('Proper path escaping', function() {
+    it('should save the output file properly to disk using a stream', function(done) {
+      var testFile = __dirname + '/assets/testConvertToStream.mp3';
+      var outstream = fs.createWriteStream(testFile);
+      new Ffmpeg({ source: this.testfileEscaped, nolog: true })
+        .withAudioBitrate('128k')
+        .withAudioCodec('libmp3lame')
+        .withAudioChannels('2')
+        .toFormat('mp3')
+        .writeToStream(outstream, function(code, stderr) {
+          code.should.equal(0);
+          done();
+          path.exists(testFile, function(exist) {
+            exist.should.true;
+            fs.unlinkSync(testFile);
+          });
+        });
+    });
+  });
 
   it('should kill the process on timeout', function(done) {
     var testFile = __dirname + '/assets/testProcessKill.flv';
