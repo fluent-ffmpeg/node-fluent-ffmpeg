@@ -298,6 +298,18 @@ describe('Command', function() {
     });
   });
 
+  describe('withAudioQuality', function() {
+    it('should apply the audio quality argument', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .withAudioQuality(5)
+        .getArgs(function(args) {
+          args.indexOf('-aq').should.above(-1);
+          args.indexOf(5).should.above(-1);
+          done();
+        });
+    });
+  });
+
   describe('setStartTime', function() {
     it('should apply the start time offset argument', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true })
