@@ -178,6 +178,15 @@ You can set the call back onProgress if you want to be notified on every progres
         console.log('file has been converted succesfully');
       });
 
+The progress object consists of 6 properties:
+
+  * `frames` - the total processed frame count
+  * `currentFps` - the framerate at which FFMPEG is currently processing the file
+  * `currentKbps` - the throughput at which FFMPEG is currently processing the file
+  * `targetSize` - the current size of the target file
+  * `timemark` - the timestamp of the frame being processed right now
+  * `percent` - an estimation on the progress (metadata is used, durationsec * fps)
+
 ### Additional Inputs
 In case you need to add, for instance, and audio track
 
@@ -188,15 +197,6 @@ In case you need to add, for instance, and audio track
       .saveToFile('/path/to/your_target.avi', function(retcode, error) {
         console.log('file has been created with soundtrack succesfully');
       });
-
-The progress object consists of 6 properties:
-
-  * `frames` - the total processed frame count
-  * `currentFps` - the framerate at which FFMPEG is currently processing the file
-  * `currentKbps` - the throughput at which FFMPEG is currently processing the file
-  * `targetSize` - the current size of the target file
-  * `timemark` - the timestamp of the frame being processed right now
-  * `percent` - an estimation on the progress (metadata is used, durationsec * fps)
 
 ### Creating a custom preset
 To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:
