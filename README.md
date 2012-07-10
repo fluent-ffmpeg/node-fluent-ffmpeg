@@ -178,6 +178,17 @@ You can set the call back onProgress if you want to be notified on every progres
         console.log('file has been converted succesfully');
       });
 
+### Additional Inputs
+In case you need to add, for instance, and audio track
+
+    var ffmpeg = require('fluent-ffmpeg');
+
+    var proc = new ffmpeg({ source: 'images/frame%05d.png' })
+      .addInput('soundtrack.mp3')
+      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+        console.log('file has been created with soundtrack succesfully');
+      });
+
 The progress object consists of 6 properties:
 
   * `frames` - the total processed frame count
