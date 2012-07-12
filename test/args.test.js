@@ -214,6 +214,17 @@ describe('Command', function() {
     });
   });
 
+  describe('withMultiFile', function() {
+    it('should allow image2 multi-file input format', function(done) {
+      new Ffmpeg({ source: 'image-%05d.png', nolog: true })
+        .getArgs(function(args) {
+            args.indexOf('-i').should.above(-1);
+            args.indexOf('image-%05d.png').should.above(-1);
+            done();
+        });
+    });
+  });
+
   describe('withFps', function() {
     it('should apply the rate argument', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true })
