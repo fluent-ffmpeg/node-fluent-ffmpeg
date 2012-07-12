@@ -241,6 +241,7 @@ If you want to know for sure that the ffmpeg child process will not run for long
 * [sadikzzz](http://github.com/sadikzzz)
 * [tagedieb](http://github.com/tagedieb)
 * [Weltschmerz](http://github.com/Weltschmerz)
+* [enobrev](http://github.com/enobrev)
 
 ## Contributing
 Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!
