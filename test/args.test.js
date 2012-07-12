@@ -226,6 +226,18 @@ describe('Command', function() {
     });
   });
 
+  describe('addingAdditionalInput', function() {
+    it('should allow for additional inputs', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .addInput('soundtrack.mp3')
+        .getArgs(function(args) {
+          args.indexOf('-i').should.above(-1);
+          args.indexOf('soundtrack.mp3').should.above(-1);
+          done();
+        });
+    });
+  });
+
   describe('withAspect', function() {
     it('should apply the aspect ratio argument', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true })

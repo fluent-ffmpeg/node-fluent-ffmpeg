@@ -187,6 +187,17 @@ The progress object consists of 6 properties:
   * `timemark` - the timestamp of the frame being processed right now
   * `percent` - an estimation on the progress (metadata is used, durationsec * fps)
 
+### Additional Inputs
+In case you need to add, for instance, and audio track
+
+    var ffmpeg = require('fluent-ffmpeg');
+
+    var proc = new ffmpeg({ source: 'images/frame%05d.png' })
+      .addInput('soundtrack.mp3')
+      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+        console.log('file has been created with soundtrack succesfully');
+      });
+
 ### Creating a custom preset
 To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:
 
