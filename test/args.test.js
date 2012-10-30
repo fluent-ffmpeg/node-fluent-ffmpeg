@@ -281,6 +281,49 @@ describe('Command', function() {
           args.indexOf('-ab').should.above(-1);
           args.indexOf('256k').should.above(-1);
           done();
+        }); 
+    });
+  });
+
+  describe('loop', function() {
+    it('should add the -loop 1 argument', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .loop()
+        .getArgs(function(args) {
+          args.indexOf('-loop').should.above(-1);
+          done();
+        });
+    });
+    it('should add the -loop 1 and a time argument (seconds)', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .loop(120)
+        .getArgs(function(args) {
+          args.indexOf('-loop').should.above(-1);
+          args.indexOf('-t').should.above(-1);
+          args.indexOf(120).should.above(-1);
+          done();
+        });
+    });
+    it('should add the -loop 1 and a time argument (timemark)', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .loop('00:06:46.81')
+        .getArgs(function(args) {
+          args.indexOf('-loop').should.above(-1);
+          args.indexOf('-t').should.above(-1);
+          args.indexOf('00:06:46.81').should.above(-1);
+          done();
+        });
+    });
+  });
+
+  describe('takeFrames', function() {
+    it('should add the -vframes argument', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .takeFrames(250)
+        .getArgs(function(args) {
+          args.indexOf('-vframes').should.above(-1);
+          args.indexOf(250).should.above(-1);
+          done();
         });
     });
   });
