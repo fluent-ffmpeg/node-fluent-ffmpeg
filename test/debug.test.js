@@ -6,8 +6,8 @@ var Ffmpeg = require('../index'),
 describe('Debug', function() {
   before(function(done) {
     // check for ffmpeg installation
-    this.testfile = __dirname + '/assets/testvideo-43.avi';
-    this.testfilewide = __dirname + '/assets/testvideo-169.avi';
+    this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
+    this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
 
     var self = this;
     exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {

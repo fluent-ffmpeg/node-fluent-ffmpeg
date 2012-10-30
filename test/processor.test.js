@@ -9,9 +9,8 @@ var Ffmpeg = require('../index'),
 describe('Processor', function() {
   before(function(done) {
     // check for ffmpeg installation
-    this.testfile = __dirname + '/assets/testvideo-43.avi';
-    this.testfilewide = __dirname + '/assets/testvideo-169.avi';
-    this.testfileEscaped = __dirname + '/assets/te[s]t   audio \' " .ogg';
+    this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
+    this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
 
     var self = this;
     exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
@@ -37,33 +36,14 @@ describe('Processor', function() {
     });
   }
 
-  describe('Proper path escaping', function() {
+  describe('\'s proper path escaping', function() {
     it('should save the output file properly to disk using a stream', function(done) {
-      var testFile = __dirname + '/assets/testConvertToStream.mp3';
-      var outstream = fs.createWriteStream(testFile);
-      new Ffmpeg({ source: this.testfileEscaped, nolog: true })
-        .withAudioBitrate('128k')
-        .withAudioCodec('libmp3lame')
-        .withAudioChannels('2')
-        .toFormat('mp3')
-        .writeToStream(outstream, function(code, stderr) {
-          code.should.equal(0);
-          done();
-          path.exists(testFile, function(exist) {
-            exist.should.true;
-            fs.unlinkSync(testFile);
-          });
-        });
-    });
-  });
+      var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .flv');
 
-  it('should kill the process on timeout', function(done) {
-    var testFile = __dirname + '/assets/testProcessKill.flv';
-    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
+      new Ffmpeg({ source: this.testfile, nolog: false })
         .usingPreset('flashvideo')
         .renice(19)
-        .saveToFile(testFile, function(code, err) {
-          code.should.equal(-99);
+        .saveToFile(testFile, function(code, stderr) {
           path.exists(testFile, function(exist) {
             if (exist) {
               fs.unlinkSync(testFile);
@@ -71,10 +51,31 @@ describe('Processor', function() {
             done();
           });
         });
+    });
+  });
+
+  it('should kill the process on timeout', function(done) {
+    var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
+
+    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.01 })
+        .usingPreset('flashvideo')
+        .renice(19)
+        .saveToFile(testFile, function(code, err) {
+          code.should.equal(-99);
+          path.exists(testFile, function(exist) {
+            if (exist) {
+              setTimeout(function() {
+                fs.unlinkSync(testFile);
+                done();
+              }, 500);
+            }
+          });
+        });
   });
 
   it('should report codec data through event onCodecData', function(done) {
-    var testFile = __dirname + '/assets/testOnCodecData.flv';
+    var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
+
     new Ffmpeg({ source: this.testfile, nolog: true })
         .onCodecData(function(data) {
           data.should.have.property('audio');
@@ -93,7 +94,8 @@ describe('Processor', function() {
   });
 
   it('should report progress through event onProgress', function(done) {
-    var testFile = __dirname + '/assets/testOnProgress.flv';
+    var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv');
+
     new Ffmpeg({ source: this.testfile, nolog: true })
         .onProgress(function(data) {
           // conversion is too fast to make any progress reporting on the test assets,
@@ -113,7 +115,7 @@ describe('Processor', function() {
   });
 
   it('should properly take a certain amount of screenshots at defined timemarks', function(done) {
-    var testFolder = __dirname + '/assets/tntest_config';
+    var testFolder = path.join(__dirname, 'assets', 'tntest_config');
     var args = new Ffmpeg({ source: this.testfile, nolog: true })
       .withSize('150x?')
       .renice(19)
@@ -139,7 +141,7 @@ describe('Processor', function() {
   });
 
   it('should report all generated filenames in the second callback argument', function(done) {
-    var testFolder = __dirname + '/assets/tntest_config';
+    var testFolder = path.join(__dirname, 'assets', 'tntest_config');
     var args = new Ffmpeg({ source: this.testfile, nolog: true })
       .withSize('150x?')
       .renice(19)
@@ -170,7 +172,7 @@ describe('Processor', function() {
 
   describe('saveToFile', function() {
     it('should save the output file properly to disk', function(done) {
-      var testFile = __dirname + '/assets/testConvertToFile.flv';
+      var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('flashvideo')
         .renice(19)
@@ -191,7 +193,7 @@ describe('Processor', function() {
         });
     });
     it('should accept a stream as its source', function(done) {
-      var testFile = __dirname + '/assets/testConvertFromStreamToFile.flv';
+      var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
       var instream = fs.createReadStream(this.testfile);
       new Ffmpeg({ source: instream, nolog: true })
         .usingPreset('flashvideo')
@@ -216,7 +218,7 @@ describe('Processor', function() {
 
   describe('writeToStream', function() {
     it('should save the output file properly to disk using a stream', function(done) {
-      var testFile = __dirname + '/assets/testConvertToStream.flv';
+      var testFile = path.join(__dirname, 'assets', 'testConvertToStream.flv');
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('flashvideo')
@@ -237,7 +239,7 @@ describe('Processor', function() {
         });
     });
     it('should accept a stream as its source', function(done) {
-      var testFile = __dirname + '/assets/testConvertFromStreamToStream.flv';
+      var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToStream.flv');
       var instream = fs.createReadStream(this.testfile);
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: instream, nolog: true })
