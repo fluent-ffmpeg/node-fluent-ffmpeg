@@ -57,7 +57,7 @@ describe('Processor', function() {
   it('should kill the process on timeout', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.01 })
+    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
         .usingPreset('flashvideo')
         .renice(19)
         .saveToFile(testFile, function(code, err) {
