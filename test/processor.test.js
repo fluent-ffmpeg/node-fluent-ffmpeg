@@ -3,7 +3,8 @@ var Ffmpeg = require('../index'),
   fs = require('fs'),
   assert = require('assert'),
   os = require('os').platform(),
-  exec = require('child_process').exec;
+  exec = require('child_process').exec,
+  testhelper = require('./helpers');
 
 describe('Processor', function() {
   before(function(done) {
@@ -13,8 +14,8 @@ describe('Processor', function() {
     this.testfileEscaped = __dirname + '/assets/te[s]t   audio \' " .ogg';
 
     var self = this;
-    exec('which ffmpeg', function(err, stdout, stderr) {
-      if (stdout !== '') {
+    exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
+      if (!err) {
         // check if file exists
         path.exists(self.testfile, function(exists) {
           if (exists) {

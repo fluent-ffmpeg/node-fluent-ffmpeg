@@ -1,6 +1,7 @@
 var Ffmpeg = require('../index'),
   path = require('path'),
-  exec = require('child_process').exec;
+  exec = require('child_process').exec
+  testhelper = require('./helpers');
 
 describe('Debug', function() {
   before(function(done) {
@@ -9,8 +10,8 @@ describe('Debug', function() {
     this.testfilewide = __dirname + '/assets/testvideo-169.avi';
 
     var self = this;
-    exec('which ffmpeg', function(err, stdout, stderr) {
-      if (stdout !== '') {
+    exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
+      if (!err) {
         // check if file exists
         path.exists(self.testfile, function(exists) {
           if (exists) {
