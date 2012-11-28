@@ -1,7 +1,7 @@
 var express = require('express'),
   ffmpeg = require('../index');
 
-var app = express.createServer();
+var app = express();
 
 app.use(express.static(__dirname + '/flowplayer'));
 
