@@ -55,7 +55,7 @@ Using fluent-ffmpeg, you can auto-pad any video output when converting the aspec
       .withAspect('4:3')
       .withSize('640x480')
       .applyAutopadding(true, 'white')
-      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
         console.log('file has been converted succesfully');
       });
 This command will auto-pad your 4:3 output video stream using a white background-color (default is black).
@@ -67,7 +67,7 @@ This example loads up a predefined preset in the preset folder (currently, fluen
 
     var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .usingPreset('podcast')
-      .saveToFile('/path/to/your_target.m4v', function(retcode, error) {
+      .saveToFile('/path/to/your_target.m4v', function(stdout, stderr) {
         console.log('file has been converted succesfully');
       });
 ### Conversion using chainable API
@@ -85,7 +85,7 @@ Using the chainable API, you are able to perform any operation using FFMPEG. the
       .withAudioChannels(2)
       .addOption('-vtag', 'DIVX')
       .toFormat('avi')
-      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
         console.log('file has been converted succesfully');
       });
 ### Creating thumbnails from a video file
@@ -161,7 +161,7 @@ Using the notification callback onCodecData, you can get informations about the 
       .onCodecData(function(codecinfo) {
         console.log(codecinfo);
       })
-      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
         console.log('file has been converted succesfully');
       });
 
@@ -174,7 +174,7 @@ You can set the call back onProgress if you want to be notified on every progres
       .onProgress(function(progress) {
         console.log(progress);
       })
-      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
         console.log('file has been converted succesfully');
       });
 
@@ -194,7 +194,7 @@ In case you need to add, for instance, and audio track
 
     var proc = new ffmpeg({ source: 'images/frame%05d.png' })
       .addInput('soundtrack.mp3')
-      .saveToFile('/path/to/your_target.avi', function(retcode, error) {
+      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
         console.log('file has been created with soundtrack succesfully');
       });
 
@@ -216,7 +216,7 @@ You can adjust the scheduling priority of the child process used by ffmpeg, usin
     var proc = new ffmpeg({ source: './source.mp3', priority: 10 })
       .withAudioCodec('libvorbis')
       .toFormat('ogg')
-      .saveToFile('./target.ogg', function(retcode, error) {
+      .saveToFile('./target.ogg', function(stdout, stderr) {
         console.log('file has been converted succesfully');
       });
 
@@ -230,7 +230,7 @@ If you want to know for sure that the ffmpeg child process will not run for long
     var proc = new ffmpeg({ source: './source.mp3', timeout: 10 * 60 })
       .withAudioCodec('libvorbis')
       .toFormat('ogg')
-      .saveToFile('./target.ogg', function(retcode, error) {
+      .saveToFile('./target.ogg', function(stdout, stderr) {
         if (retcode == ffmpeg.E_PROCESSTIMEOUT) {
           console.log('ffmpeg terminated because of timeout');
         }
