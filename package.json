@@ -10,7 +10,7 @@
   },
   "repository": "git://github.com/schaermu/node-fluent-ffmpeg.git",
   "devDependencies": { "mocha": "latest", "should": "latest" },
-  "dependencies": { "winston": ">=0.5.10","node-uuid":"1.4.0" },
+  "dependencies": { "winston": ">=0.5.10" },
   "engines" : { "node" : ">=0.5.0" },
   "main": "index",
   "scripts": {
