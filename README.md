@@ -198,6 +198,16 @@ In case you need to add, for instance, and audio track
         console.log('file has been created with soundtrack succesfully');
       });
 
+### Concatenating Inputs
+To append a video to the end of another
+
+    var ffmpeg = require('fluent-ffmpeg');
+    var proc = new ffmpeg({source: "title.mp4"})
+        .mergeAdd("source.mp4")
+        .mergeToFile("out.mp4", "myTempFolder/", function(){
+            console.log('files has been merged succesfully');
+         });
+
 ### Creating a custom preset
 To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:
 
