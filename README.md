@@ -2,6 +2,9 @@
 This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264).
 
 Now including input streaming support (means you can convert **on-the-fly** using an input- and an outputstream)!
+
+### Sorry for the long period of inactivity, i had to settle some private stuff! Now back in full effect :)
+
 ## Installation
 Via npm:
 `$ npm install fluent-ffmpeg`
