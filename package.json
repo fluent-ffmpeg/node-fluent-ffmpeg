@@ -4,6 +4,12 @@
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [ "ffmpeg" ],
   "author": "Stefan Schaermeli <schaermu@gmail.com>",
+  "contributors": [ 
+    {
+      "name": "Felix Fichte",
+      "email": "spruce@space-ships.de"
+    } 
+  ],
   "bugs": {
       "mail": "schaermu@gmail.com",
       "url": "http://github.com/schaermu/node-fluent-ffmpeg/issues"
