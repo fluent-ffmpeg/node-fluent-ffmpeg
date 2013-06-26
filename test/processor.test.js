@@ -238,6 +238,7 @@ describe('Processor', function() {
           });
         });
     });
+    
     it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToStream.flv');
       var instream = fs.createReadStream(this.testfile);
@@ -260,5 +261,20 @@ describe('Processor', function() {
           });
         });
     });
+  });
+  
+  describe('takeScreenshot',function(){
+    it('should return error with wrong size',function(done){
+      var proc = new Ffmpeg({ source: path.join(__dirname, 'assets', 'testConvertToStream.flv')})
+      .withSize('aslkdbasd')
+      .takeScreenshots(5, path.join(__dirname, 'assets'), function(err, filenames) {
+        if(!err){
+          done();
+        }
+        else{
+          done(new Error('Didn\'t throw an error'));
+        }
+      })
+    })
   });
 });

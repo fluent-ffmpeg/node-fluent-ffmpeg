@@ -99,6 +99,9 @@ One pretty neat feature is the ability of fluent-ffmpeg to generate any amount o
     var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withSize('150x100')
       .takeScreenshots(5, '/path/to/thumbnail/folder', function(err, filenames) {
+        if(err){
+          throw err;
+        }
         console.log(filenames);
         console.log('screenshots were saved');
       });
