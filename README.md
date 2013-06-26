@@ -16,6 +16,8 @@ To run unit tests, make sure have mocha installed on your system (registered as 
 
 `$ make test`
 
+For constant checking your test install grunt globally (`npm uninstall -g grunt && npm install -g grunt-cli && npm install grunt`)
+
 If you want to re-generate the test coverage report (filed under test/coverage.html), run
 
 `$ make test-cov`
