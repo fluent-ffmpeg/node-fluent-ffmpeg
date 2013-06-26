@@ -27,7 +27,7 @@
     "winston": ">=0.5.10"
   },
   "engines": {
-    "node": ">=0.5.0"
+    "node": ">=0.8.0"
   },
   "main": "index",
   "scripts": {
