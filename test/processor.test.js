@@ -16,7 +16,7 @@ describe('Processor', function() {
     exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
       if (!err) {
         // check if file exists
-        path.exists(self.testfile, function(exists) {
+        fs.exists(self.testfile, function(exists) {
           if (exists) {
             done();
           } else {
@@ -43,7 +43,7 @@ describe('Processor', function() {
       new Ffmpeg({ source: this.testfile, nolog: false })
         .usingPreset('flashvideo')
         .saveToFile(testFile, function(code, stderr) {
-          path.exists(testFile, function(exist) {
+          fs.exists(testFile, function(exist) {
             if (exist) {
               fs.unlinkSync(testFile);
             }
@@ -81,7 +81,7 @@ describe('Processor', function() {
         })
         .usingPreset('flashvideo')
         .saveToFile(testFile, function(code, err) {
-          path.exists(testFile, function(exist) {
+          fs.exists(testFile, function(exist) {
             if (exist) {
               fs.unlinkSync(testFile);
             }
@@ -101,7 +101,7 @@ describe('Processor', function() {
         })
         .usingPreset('flashvideo')
         .saveToFile(testFile, function(code, err) {
-          path.exists(testFile, function(exist) {
+          fs.exists(testFile, function(exist) {
             if (exist) {
               fs.unlinkSync(testFile);
             }
@@ -171,7 +171,7 @@ describe('Processor', function() {
         .usingPreset('flashvideo')
         .saveToFile(testFile, function(stdout, stderr, err) {
           assert.ok(!err);
-          path.exists(testFile, function(exist) {
+          fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
@@ -192,7 +192,7 @@ describe('Processor', function() {
         .usingPreset('flashvideo')
         .saveToFile(testFile, function(stdout, stderr, err) {
           assert.ok(!err);
-          path.exists(testFile, function(exist) {
+          fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
@@ -237,7 +237,7 @@ describe('Processor', function() {
       new Ffmpeg({ source: instream, nolog: true })
         .usingPreset('flashvideo')
         .writeToStream(outstream, function(code, stderr) {
-          path.exists(testFile, function(exist) {
+          fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
