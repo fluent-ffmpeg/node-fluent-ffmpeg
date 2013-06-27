@@ -16,7 +16,7 @@ module.exports = function(grunt) {
     },
 		watch: {
 			scripts: {
-				files: ['test/**/*.js'],
+				files: ['test/**/*.js','lib/**/*.js'],
 				tasks: ['shell'],
 				options: {
 					nospawn: true,
