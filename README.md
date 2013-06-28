@@ -2,6 +2,9 @@
 This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264).
 
 Now including input streaming support (means you can convert **on-the-fly** using an input- and an outputstream)!
+
+### Sorry for the long period of inactivity, i had to settle some private stuff! Now back in full effect :)
+
 ## Installation
 Via npm:
 `$ npm install fluent-ffmpeg`
@@ -12,6 +15,8 @@ Or as a submodule:
 To run unit tests, make sure have mocha installed on your system (registered as devDependency in npm config).
 
 `$ make test`
+
+For constant checking your test install grunt globally (`npm uninstall -g grunt && npm install -g grunt-cli && npm install grunt`)
 
 If you want to re-generate the test coverage report (filed under test/coverage.html), run
 
@@ -96,6 +101,9 @@ One pretty neat feature is the ability of fluent-ffmpeg to generate any amount o
     var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
       .withSize('150x100')
       .takeScreenshots(5, '/path/to/thumbnail/folder', function(err, filenames) {
+        if(err){
+          throw err;
+        }
         console.log(filenames);
         console.log('screenshots were saved');
       });
@@ -197,6 +205,16 @@ In case you need to add, for instance, and audio track
       .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
         console.log('file has been created with soundtrack succesfully');
       });
+
+### Concatenating Inputs
+To append a video to the end of another
+
+    var ffmpeg = require('fluent-ffmpeg');
+    var proc = new ffmpeg({source: "title.mp4"})
+        .mergeAdd("source.mp4")
+        .mergeToFile("out.mp4", "myTempFolder/", function(){
+            console.log('files has been merged succesfully');
+         });
 
 ### Creating a custom preset
 To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:

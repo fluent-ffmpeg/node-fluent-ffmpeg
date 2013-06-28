@@ -1,5 +1,6 @@
 var Ffmpeg = require('../index'),
   path = require('path'),
+  fs = require('fs'),
   exec = require('child_process').exec,
   testhelper = require('./helpers');
 
@@ -13,7 +14,7 @@ describe('Command', function() {
     exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
       if (!err) {
         // check if file exists
-        path.exists(self.testfile, function(exists) {
+        fs.exists(self.testfile, function(exists) {
           if (exists) {
             done();
           } else {
