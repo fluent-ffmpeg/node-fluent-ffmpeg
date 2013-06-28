@@ -255,6 +255,7 @@ If you want to know for sure that the ffmpeg child process will not run for long
       });
 
 ## Contributors
+* [smremde](http://github.com/smremde)
 * [tommadema](http://github.com/tommadema)
 * [sadikzzz](http://github.com/sadikzzz)
 * [tagedieb](http://github.com/tagedieb)
