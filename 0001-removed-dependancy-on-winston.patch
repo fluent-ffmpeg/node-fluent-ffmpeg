@@ -1,0 +1,52 @@
+From 054458951e7eaf3365937f3daf96cebf39d6c43f Mon Sep 17 00:00:00 2001
+From: Stephen Remde <smremde@gmail.com>
+Date: Fri, 28 Jun 2013 15:04:33 +0100
+Subject: [PATCH 1/2] removed dependancy on winston
+
+default to no logging - can still use winston if the user passes a
+winston logger using the args
+---
+ lib/fluent-ffmpeg.js | 7 ++-----
+ package.json         | 1 -
+ 2 files changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/lib/fluent-ffmpeg.js b/lib/fluent-ffmpeg.js
+index 54ee820..a201cbc 100644
+--- a/lib/fluent-ffmpeg.js
++++ b/lib/fluent-ffmpeg.js
+@@ -7,7 +7,7 @@ var path = require('path'),
+  * - source: either a ReadableStream or the path to a file (required)
+  * - timeout: timeout in seconds for all ffmpeg sub-processes (optional, defaults to 30)
+  * - priority: default-priority for all ffmpeg sub-processes (optional, defaults to 0)
+- * - logger: add a winston logging instance (optional, default is clumsy console logging)
++ * - logger: add a winston logging instance (optional, default is no logging)
+  * - nolog: completely disables any logging
+  */
+ function FfmpegCommand(args) {
+@@ -18,10 +18,7 @@ function FfmpegCommand(args) {
+       nologging = args.nolog || false,
+       inputlive = args.inputlive || false;
+ 
+-  if (!logger && !nologging) {
+-    // create new winston instance
+-    logger = require('winston');
+-  } else if (!logger && nologging) {
++  if (!logger || nologging) {
+     // create fake object to route log calls
+     logger = {
+       debug: function() {},
+diff --git a/package.json b/package.json
+index 400e21b..44d9ee0 100644
+--- a/package.json
++++ b/package.json
+@@ -24,7 +24,6 @@
+     "grunt-shell": "~0.3.0"
+   },
+   "dependencies": {
+-    "winston": ">=0.5.10"
+   },
+   "engines": {
+     "node": ">=0.8.0"
+-- 
+1.8.1.msysgit.1
+

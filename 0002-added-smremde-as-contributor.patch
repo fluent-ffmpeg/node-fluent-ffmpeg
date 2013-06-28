@@ -1,0 +1,24 @@
+From 8395de41d06f505c04f25ab0bcea2a53e3386b15 Mon Sep 17 00:00:00 2001
+From: Stephen Remde <smremde@gmail.com>
+Date: Fri, 28 Jun 2013 15:04:49 +0100
+Subject: [PATCH 2/2] added smremde as contributor
+
+---
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/README.md b/README.md
+index d630aec..85242cf 100644
+--- a/README.md
++++ b/README.md
+@@ -255,6 +255,7 @@ If you want to know for sure that the ffmpeg child process will not run for long
+       });
+ 
+ ## Contributors
++* [smremde](http://github.com/smremde)
+ * [tommadema](http://github.com/tommadema)
+ * [sadikzzz](http://github.com/sadikzzz)
+ * [tagedieb](http://github.com/tagedieb)
+-- 
+1.8.1.msysgit.1
+
