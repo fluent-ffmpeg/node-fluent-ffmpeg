@@ -13,4 +13,8 @@ lib-cov:
 	@rm -fr ./$@
 	@jscoverage lib $@
 
-.PHONY: test test-cov lib-cov test-colors
+publish: test-cov
+	@git clean -d -n
+	@npm version patch -m "version bump"
+
+.PHONY: test test-cov lib-cov test-colors publish
