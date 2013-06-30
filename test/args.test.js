@@ -292,28 +292,41 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .loop()
         .getArgs(function(args) {
-          args.indexOf('-loop').should.above(-1);
-          done();
+          if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
+            done();
+          }
+          else{
+            done(new Error("args should contain loop or loop_output"))
+          }
         });
     });
     it('should add the -loop 1 and a time argument (seconds)', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .loop(120)
         .getArgs(function(args) {
-          args.indexOf('-loop').should.above(-1);
-          args.indexOf('-t').should.above(-1);
-          args.indexOf(120).should.above(-1);
-          done();
+          if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
+            args.indexOf('-t').should.above(-1);
+            args.indexOf(120).should.above(-1);
+            done();
+          }
+          else{
+            done(new Error("args should contain loop or loop_output"))
+          }
+          
         });
     });
     it('should add the -loop 1 and a time argument (timemark)', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .loop('00:06:46.81')
         .getArgs(function(args) {
-          args.indexOf('-loop').should.above(-1);
-          args.indexOf('-t').should.above(-1);
-          args.indexOf('00:06:46.81').should.above(-1);
-          done();
+          if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
+            args.indexOf('-t').should.above(-1);
+            args.indexOf('00:06:46.81').should.above(-1);
+            done();
+          }
+          else{
+            done(new Error("args should contain loop or loop_output"))
+          }
         });
     });
   });

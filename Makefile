@@ -14,7 +14,7 @@ lib-cov:
 	@jscoverage lib $@
 
 publish: 
-	@git clean -d -n
 	@npm version patch -m "version bump"
+	@npm publish
 
 .PHONY: test test-cov lib-cov test-colors publish
