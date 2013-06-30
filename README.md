@@ -255,11 +255,13 @@ If you want to know for sure that the ffmpeg child process will not run for long
       });
 
 ## Contributors
-* [tommadema](http://github.com/tommadema)
-* [sadikzzz](http://github.com/sadikzzz)
-* [tagedieb](http://github.com/tagedieb)
-* [Weltschmerz](http://github.com/Weltschmerz)
 * [enobrev](http://github.com/enobrev)
+* [sadikzzz](http://github.com/sadikzzz)
+* [smremde](http://github.com/smremde)
+* [spruce](http://github.com/spruce)
+* [tagedieb](http://github.com/tagedieb)
+* [tommadema](http://github.com/tommadema)
+* [Weltschmerz](http://github.com/Weltschmerz)
 
 ## Contributing
 Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!
