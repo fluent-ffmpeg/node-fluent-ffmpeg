@@ -36,41 +36,6 @@ describe('Processor', function() {
     });
   }
 
-  describe('\'s proper path escaping', function() {
-    it('should save the output file properly to disk using a stream', function(done) {
-      var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .flv');
-
-      new Ffmpeg({ source: this.testfile, nolog: false })
-        .usingPreset('flashvideo')
-        .saveToFile(testFile, function(code, stderr) {
-          fs.exists(testFile, function(exist) {
-            if (exist) {
-              fs.unlinkSync(testFile);
-            }
-            done();
-          });
-        });
-    });
-  });
-
-  it('should kill the process on timeout', function(done) {
-    var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
-
-    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
-        .usingPreset('flashvideo')
-        .saveToFile(testFile, function(code, err) {
-          code.should.equal(-99);
-          fs.exists(testFile, function(exist) {
-            if (exist) {
-              setTimeout(function() {
-                fs.unlinkSync(testFile);
-                done();
-              }, 10);
-            }
-          });
-        });
-  });
-
   it('should report codec data through event onCodecData', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
 
@@ -163,7 +128,45 @@ describe('Processor', function() {
         });
       });
   });
+  
+  it('should save the output file properly to disk using a stream', function(done) {
+    var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .flv');
 
+    new Ffmpeg({ source: this.testfile, nolog: false })
+      .usingPreset('flashvideo')
+      .saveToFile(testFile, function(code, stderr) {
+        fs.exists(testFile, function(exist) {
+          if (exist) {
+            fs.unlinkSync(testFile);
+          }
+          done();
+        });
+      });
+  });
+  
+  it('should kill the process on timeout', function(done) {
+    var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
+
+    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
+        .usingPreset('flashvideo')
+        .saveToFile(testFile, function(code, err) {
+          code.should.equal(-99);
+          fs.exists(testFile, function(exist) {
+            if (exist) {
+              setTimeout(function() {
+                fs.unlink(testFile,function(){
+                  done()
+                });
+              }, 10);
+            }
+            else{
+              console.log("no File: testProcessKill.flv");
+              done();
+            }
+          });
+        });
+  });
+  
   describe('saveToFile', function() {
     it('should save the output file properly to disk', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
@@ -185,6 +188,7 @@ describe('Processor', function() {
           });
         });
     });
+    
     it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
       var instream = fs.createReadStream(this.testfile);
