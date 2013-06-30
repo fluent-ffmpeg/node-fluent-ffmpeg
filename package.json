@@ -21,7 +21,8 @@
     "mocha": "latest",
     "should": "latest",
     "grunt-contrib-watch": "~0.4.4",
-    "grunt-shell": "~0.3.0"
+    "grunt-shell": "~0.3.0",
+    "grunt": "~0.4.1"
   },
   "dependencies": {
     "async": ">=0.2.9"
