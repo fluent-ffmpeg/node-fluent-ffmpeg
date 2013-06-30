@@ -24,7 +24,8 @@
     "grunt-shell": "~0.3.0"
   },
   "dependencies": {
-    "winston": ">=0.5.10"
+    "winston": ">=0.5.10",
+    "async": ">=0.2.9"
   },
   "engines": {
     "node": ">=0.8.0"
