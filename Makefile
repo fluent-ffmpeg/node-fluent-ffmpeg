@@ -13,7 +13,7 @@ lib-cov:
 	@rm -fr ./$@
 	@jscoverage lib $@
 
-publish: test-cov
+publish: 
 	@git clean -d -n
 	@npm version patch -m "version bump"
 
