@@ -153,8 +153,7 @@ Using a seperate object, you are able to access various metadata of your video f
     var Metalib = require('fluent-ffmpeg').Metadata;
 
     // make sure you set the correct path to your video file
-    var metaObject = new Metalib('/path/to/your_movie.avi');
-    metaObject.get(function(metadata, err) {
+    var metaObject = new Metalib('/path/to/your_movie.avi', function(metadata, err) {
       console.log(require('util').inspect(metadata, false, null));
     });
 
