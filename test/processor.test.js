@@ -11,6 +11,7 @@ describe('Processor', function() {
     // check for ffmpeg installation
     this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
     this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
+    this.testfilebig = path.join(__dirname, 'assets', 'testvideo-5m.mpg');
 
     var self = this;
     exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
@@ -56,13 +57,14 @@ describe('Processor', function() {
   });
 
   it('should report progress through event onProgress', function(done) {
-    var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv');
+    this.timeout(15000)
 
-    new Ffmpeg({ source: this.testfile, nolog: true })
+    var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
+      , gotProgress = false;
+
+    new Ffmpeg({ source: this.testfilebig, nolog: true })
         .onProgress(function(data) {
-          // conversion is too fast to make any progress reporting on the test assets,
-          // but it's idiotic to commit a 5M+ file to github just for 1 test.
-          // I'll leave this test here for coverage's sake...
+          gotProgress = true;
         })
         .usingPreset('flashvideo')
         .saveToFile(testFile, function(code, err) {
@@ -70,6 +72,8 @@ describe('Processor', function() {
             if (exist) {
               fs.unlinkSync(testFile);
             }
+
+            gotProgress.should.be.true;
             done();
           });
         });
@@ -128,7 +132,7 @@ describe('Processor', function() {
         });
       });
   });
-  
+
   it('should save the output file properly to disk using a stream', function(done) {
     var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .flv');
 
@@ -143,7 +147,7 @@ describe('Processor', function() {
         });
       });
   });
-  
+
   it('should kill the process on timeout', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
@@ -166,7 +170,7 @@ describe('Processor', function() {
           });
         });
   });
-  
+
   describe('saveToFile', function() {
     it('should save the output file properly to disk', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
@@ -188,7 +192,7 @@ describe('Processor', function() {
           });
         });
     });
-    
+
     it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
       var instream = fs.createReadStream(this.testfile);
@@ -233,7 +237,7 @@ describe('Processor', function() {
           });
         });
     });
-    
+
     it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToStream.flv');
       var instream = fs.createReadStream(this.testfile);
@@ -256,7 +260,7 @@ describe('Processor', function() {
         });
     });
   });
-  
+
   describe('takeScreenshot',function(){
     it('should return error with wrong size',function(done){
       var proc = new Ffmpeg({ source: path.join(__dirname, 'assets', 'testConvertToStream.flv')})

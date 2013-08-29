@@ -32,7 +32,8 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('podcast')
         .getArgs(function(args) {
-          args.length.should.equal(42); // on a side note: it's 42 args by coincidence ;)
+          args.length.should.equal(44); // on a side note: it's 42 args by coincidence ;)
+                                        // on a side note: not anymore, sorry :(
           done();
         });
     });
@@ -283,7 +284,7 @@ describe('Command', function() {
           args.indexOf('-ab').should.above(-1);
           args.indexOf('256k').should.above(-1);
           done();
-        }); 
+        });
     });
   });
 
@@ -312,7 +313,7 @@ describe('Command', function() {
           else{
             done(new Error("args should contain loop or loop_output"))
           }
-          
+
         });
     });
     it('should add the -loop 1 and a time argument (timemark)', function(done) {
