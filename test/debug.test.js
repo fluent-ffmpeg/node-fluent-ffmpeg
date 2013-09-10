@@ -32,7 +32,7 @@ describe('Debug', function() {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('podcast')
         .getArgs(function(args) {
-          args.length.should.equal(42);
+          args.length.should.equal(44);
           done();
         });
     });
