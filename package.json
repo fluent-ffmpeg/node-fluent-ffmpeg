@@ -1,22 +1,11 @@
 {
-  "name": "fluent-ffmpeg",
+  "name": "fluent-ffmpeg-extended",
   "version": "1.5.2",
-  "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
+  "description": "A fluent API to FFMPEG (http://www.ffmpeg.org).  This is a fork of the original fluent-ffmpeg.",
   "keywords": [
-    "ffmpeg"
+    ""
   ],
-  "author": "Stefan Schaermeli <schaermu@gmail.com>",
-  "contributors": [
-    {
-      "name": "Felix Fichte",
-      "email": "spruce@space-ships.de"
-    }
-  ],
-  "bugs": {
-    "mail": "schaermu@gmail.com",
-    "url": "http://github.com/schaermu/node-fluent-ffmpeg/issues"
-  },
-  "repository": "git://github.com/schaermu/node-fluent-ffmpeg.git",
+  "repository": "git@github.com:btmdave/node-fluent-ffmpeg.git",
   "devDependencies": {
     "mocha": "latest",
     "should": "latest",
