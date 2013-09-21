@@ -33,14 +33,14 @@
 18 verbose url raw fluent-ffmpeg-extended
 19 verbose url resolving [ 'https://registry.npmjs.org/', './fluent-ffmpeg-extended' ]
 20 verbose url resolved https://registry.npmjs.org/fluent-ffmpeg-extended
-21 info trying registry request attempt 1 at 19:46:49
+21 info trying registry request attempt 1 at 19:47:19
 22 verbose etag "CAVZV11TJ2YPOLH0XJV8UMIHX"
 23 http GET https://registry.npmjs.org/fluent-ffmpeg-extended
 24 http 304 https://registry.npmjs.org/fluent-ffmpeg-extended
 25 silly registry.get cb [ 304,
 25 silly registry.get   { server: 'CouchDB/1.3.1 (Erlang OTP/R15B03)',
 25 silly registry.get     etag: '"CAVZV11TJ2YPOLH0XJV8UMIHX"',
-25 silly registry.get     date: 'Sat, 21 Sep 2013 23:46:49 GMT',
+25 silly registry.get     date: 'Sat, 21 Sep 2013 23:47:19 GMT',
 25 silly registry.get     'content-length': '0' } ]
 26 verbose etag fluent-ffmpeg-extended from cache
 27 silly addNameRange number 2 { name: 'fluent-ffmpeg-extended', range: '', hasData: true }
@@ -79,13 +79,13 @@
 40 verbose url raw fluent-ffmpeg-extended
 41 verbose url resolving [ 'https://registry.npmjs.org/', './fluent-ffmpeg-extended' ]
 42 verbose url resolved https://registry.npmjs.org/fluent-ffmpeg-extended
-43 info trying registry request attempt 1 at 19:46:49
+43 info trying registry request attempt 1 at 19:47:19
 44 http PUT https://registry.npmjs.org/fluent-ffmpeg-extended
 45 http 409 https://registry.npmjs.org/fluent-ffmpeg-extended
 46 verbose url raw fluent-ffmpeg-extended
 47 verbose url resolving [ 'https://registry.npmjs.org/', './fluent-ffmpeg-extended' ]
 48 verbose url resolved https://registry.npmjs.org/fluent-ffmpeg-extended
-49 info trying registry request attempt 1 at 19:46:50
+49 info trying registry request attempt 1 at 19:47:20
 50 http GET https://registry.npmjs.org/fluent-ffmpeg-extended
 51 http 200 https://registry.npmjs.org/fluent-ffmpeg-extended
 52 error publish fail Cannot publish over existing version.

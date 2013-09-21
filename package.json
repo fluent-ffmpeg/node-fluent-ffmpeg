@@ -1,6 +1,6 @@
 {
   "name": "fluent-ffmpeg-extended",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org).  This is a fork of the original fluent-ffmpeg.",
   "keywords": [
     ""
