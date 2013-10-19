@@ -216,6 +216,37 @@ describe('Processor', function() {
     });
   });
 
+  describe('mergeToFile', function() {
+
+    it('should merge multiple files', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testMergeAddOption.wav');
+      var srcFile = path.join(__dirname, 'assets', 'testaudio-one.wav');
+      var src1File = path.join(__dirname, 'assets', 'testaudio-two.wav');
+      var src2File = path.join(__dirname, 'assets', 'testaudio-three.wav');
+
+      new Ffmpeg({source: srcFile, nolog: true})
+        .mergeAdd(src1File)
+        .mergeAdd(src2File)
+        .mergeToFile(testFile, function(stdout, stderr, err) {
+          assert.ok(!err);
+          fs.exists(testFile, function(exist) {
+            exist.should.true;
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+              // unlink file
+              fs.unlinkSync(testFile);
+              done();
+            });
+          });
+        });
+
+    });
+
+  });
+
   describe('writeToStream', function() {
     it('should save the output file properly to disk using a stream', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToStream.flv');
