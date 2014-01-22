@@ -25,7 +25,8 @@
     "grunt": "~0.4.1"
   },
   "dependencies": {
-    "async": ">=0.2.9"
+    "async": ">=0.2.9",
+    "exec-queue": ">=0.0.2"
   },
   "engines": {
     "node": ">=0.8.0"
