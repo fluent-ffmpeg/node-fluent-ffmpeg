@@ -9,6 +9,6 @@ var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
   // use the 'flashvideo' preset (located in /lib/presets/flashvideo.js)
   .usingPreset('flashvideo')
   // save to stream
-  .writeToStream(stream, function(retcode, error){
+  .writeToStream(stream, {end:true}, function(retcode, error){ //end = true, close output stream after writing
     console.log('file has been converted succesfully');
   });
