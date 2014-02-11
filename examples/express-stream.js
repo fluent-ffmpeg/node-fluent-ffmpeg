@@ -17,7 +17,7 @@ app.get('/video/:filename', function(req, res) {
     // use the 'flashvideo' preset (located in /lib/presets/flashvideo.js)
     .usingPreset('flashvideo')
     // save to stream
-    .writeToStream(res, function(retcode, error){
+    .writeToStream(res, {end:true}, function(retcode, error){
       console.log('file has been converted succesfully');
     });
 });
