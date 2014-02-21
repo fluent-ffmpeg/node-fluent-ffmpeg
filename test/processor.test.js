@@ -37,37 +37,38 @@ describe('Processor', function() {
     });
   }
 
-  it('should report codec data through event onCodecData', function(done) {
+  it('should report codec data through \'codecData\' event', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
 
     new Ffmpeg({ source: this.testfile, nolog: true })
-        .onCodecData(function(data) {
+        .on('codecData', function(data) {
           data.should.have.property('audio');
           data.should.have.property('video');
         })
         .usingPreset('flashvideo')
-        .saveToFile(testFile, function(code, err) {
+        .on('end', function() {
           fs.exists(testFile, function(exist) {
             if (exist) {
               fs.unlinkSync(testFile);
             }
             done();
           });
-        });
+        })
+        .saveToFile(testFile);
   });
 
-  it('should report progress through event onProgress', function(done) {
+  it('should report progress through \'progress\' event', function(done) {
     this.timeout(15000)
 
     var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
       , gotProgress = false;
 
     new Ffmpeg({ source: this.testfilebig, nolog: true })
-        .onProgress(function(data) {
+        .on('progress', function(data) {
           gotProgress = true;
         })
         .usingPreset('flashvideo')
-        .saveToFile(testFile, function(code, err) {
+        .on('end', function() {
           fs.exists(testFile, function(exist) {
             if (exist) {
               fs.unlinkSync(testFile);
@@ -76,18 +77,19 @@ describe('Processor', function() {
             gotProgress.should.be.true;
             done();
           });
-        });
+        })
+        .saveToFile(testFile);
   });
 
   it('should properly take a certain amount of screenshots at defined timemarks', function(done) {
     var testFolder = path.join(__dirname, 'assets', 'tntest_config');
     var args = new Ffmpeg({ source: this.testfile, nolog: true })
       .withSize('150x?')
-      .takeScreenshots({
-        count: 2,
-        timemarks: [ '0.5', '1' ]
-      }, testFolder, function(err) {
+      .on('error', function(err) {
         assert.ok(!err);
+        done();
+      })
+      .on('end', function() {
         fs.readdir(testFolder, function(err, files) {
           var tnCount = 0;
           files.forEach(function(file) {
@@ -101,19 +103,22 @@ describe('Processor', function() {
           fs.rmdirSync(testFolder);
           done();
         });
-      });
+      })
+      .takeScreenshots({
+        count: 2,
+        timemarks: [ '0.5', '1' ]
+      }, testFolder);
   });
 
-  it('should report all generated filenames in the second callback argument', function(done) {
+  it('should report all generated filenames as an argument to the \'end\' event', function(done) {
     var testFolder = path.join(__dirname, 'assets', 'tntest_config');
     var args = new Ffmpeg({ source: this.testfile, nolog: true })
       .withSize('150x?')
-      .takeScreenshots({
-        count: 2,
-        timemarks: [ '0.5', '1' ],
-        filename: 'shot_%00i'
-      }, testFolder, function(err, names) {
+      .on('error', function(err) {
         assert.ok(!err);
+        done();
+      })
+      .on('end', function(names) {
         names.length.should.equal(2);
         names[0].should.equal('shot_001.jpg');
         names[1].should.equal('shot_002.jpg');
@@ -130,7 +135,12 @@ describe('Processor', function() {
           fs.rmdirSync(testFolder);
           done();
         });
-      });
+      })
+      .takeScreenshots({
+        count: 2,
+        timemarks: [ '0.5', '1' ],
+        filename: 'shot_%00i'
+      }, testFolder);
   });
 
   it('should save the output file properly to disk using a stream', function(done) {
@@ -138,14 +148,15 @@ describe('Processor', function() {
 
     new Ffmpeg({ source: this.testfile, nolog: false })
       .usingPreset('flashvideo')
-      .saveToFile(testFile, function(code, stderr) {
+      .on('end', function() {
         fs.exists(testFile, function(exist) {
           if (exist) {
             fs.unlinkSync(testFile);
           }
           done();
         });
-      });
+      })
+      .saveToFile(testFile);
   });
 
   it('should kill the process on timeout', function(done) {
@@ -153,8 +164,9 @@ describe('Processor', function() {
 
     new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
         .usingPreset('flashvideo')
-        .saveToFile(testFile, function(code, err) {
-          code.should.equal(-99);
+        .on('error', function(err) {
+          err.message.indexOf('timeout').should.not.equal(-1);
+
           fs.exists(testFile, function(exist) {
             if (exist) {
               setTimeout(function() {
@@ -168,7 +180,13 @@ describe('Processor', function() {
               done();
             }
           });
-        });
+        })
+        .on('end', function() {
+          console.log('end was called, expected a timeout');
+          assert.ok(false);
+          done();
+        })
+        .saveToFile(testFile);
   });
 
   describe('saveToFile', function() {
@@ -176,8 +194,11 @@ describe('Processor', function() {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('flashvideo')
-        .saveToFile(testFile, function(stdout, stderr, err) {
+        .on('error', function(err) {
           assert.ok(!err);
+          done();
+        })
+        .on('end', function() {
           fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
@@ -190,7 +211,8 @@ describe('Processor', function() {
               done();
             });
           });
-        });
+        })
+        .saveToFile(testFile);
     });
 
     it('should accept a stream as its source', function(done) {
@@ -198,8 +220,11 @@ describe('Processor', function() {
       var instream = fs.createReadStream(this.testfile);
       new Ffmpeg({ source: instream, nolog: true })
         .usingPreset('flashvideo')
-        .saveToFile(testFile, function(stdout, stderr, err) {
+        .on('error', function(err) {
           assert.ok(!err);
+          done();
+        })
+        .on('end', function() {
           fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
@@ -212,7 +237,8 @@ describe('Processor', function() {
               done();
             });
           });
-        });
+        })
+        .saveToFile(testFile);
     });
   });
 
@@ -225,10 +251,11 @@ describe('Processor', function() {
       var src2File = path.join(__dirname, 'assets', 'testaudio-three.wav');
 
       new Ffmpeg({source: srcFile, nolog: true})
-        .mergeAdd(src1File)
-        .mergeAdd(src2File)
-        .mergeToFile(testFile, function(stdout, stderr, err) {
+        .on('error', function(err) {
           assert.ok(!err);
+          done();
+        })
+        .on('end', function() {
           fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
@@ -241,10 +268,11 @@ describe('Processor', function() {
               done();
             });
           });
-        });
-
+        })
+        .mergeAdd(src1File)
+        .mergeAdd(src2File)
+        .mergeToFile(testFile);
     });
-
   });
 
   describe('writeToStream', function() {
@@ -253,7 +281,7 @@ describe('Processor', function() {
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('flashvideo')
-        .writeToStream(outstream, {end:true}, function(code, stderr) {
+        .on('end', function() {
           fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
@@ -266,7 +294,8 @@ describe('Processor', function() {
               done();
             });
           });
-        });
+        })
+        .writeToStream(outstream, {end:true});
     });
 
     it('should accept a stream as its source', function(done) {
@@ -275,7 +304,7 @@ describe('Processor', function() {
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: instream, nolog: true })
         .usingPreset('flashvideo')
-        .writeToStream(outstream, function(code, stderr) {
+        .on('end', function() {
           fs.exists(testFile, function(exist) {
             exist.should.true;
             // check filesize to make sure conversion actually worked
@@ -288,7 +317,8 @@ describe('Processor', function() {
               done();
             });
           });
-        });
+        })
+        .writeToStream(outstream);
     });
   });
 
@@ -296,14 +326,16 @@ describe('Processor', function() {
     it('should return error with wrong size',function(done){
       var proc = new Ffmpeg({ source: path.join(__dirname, 'assets', 'testConvertToStream.flv')})
       .withSize('aslkdbasd')
-      .takeScreenshots(5, path.join(__dirname, 'assets'), function(err, filenames) {
-        if(err){
-          done();
-        }
-        else{
-          done(new Error('Didn\'t throw an error'));
-        }
+      .on('error', function(err) {
+        assert.ok(!!err);
+        done();
       })
-    })
+      .on('end', function() {
+        console.log('end was emitted, expected error');
+        assert.ok(false);
+        done();
+      })
+      .takeScreenshots(5, path.join(__dirname, 'assets'));
+    });
   });
 });
