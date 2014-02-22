@@ -62,7 +62,7 @@ describe('Command', function() {
         .getArgs(function(args) {
           args.indexOf('-vn').should.above(-1);
           args.indexOf('-s').should.equal(-1);
-          args.indexOf('-ab').should.above(-1);
+          args.indexOf('-b:a').should.above(-1);
           done();
         });
     });
@@ -96,7 +96,7 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .withVideoBitrate('256k')
         .getArgs(function(args) {
-          args.indexOf('-b').should.above(-1);
+          args.indexOf('-b:v').should.above(-1);
           done();
         });
     });
@@ -104,7 +104,7 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .withVideoBitrate('256k', Ffmpeg.CONSTANT_BITRATE)
         .getArgs(function(args) {
-          args.indexOf('-b').should.above(-1);
+          args.indexOf('-b:v').should.above(-1);
           args.indexOf('-maxrate').should.above(-1);;
           args.indexOf('-minrate').should.above(-1);
           args.indexOf('-bufsize').should.above(-1);
@@ -281,7 +281,7 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .withAudioBitrate(256)
         .getArgs(function(args) {
-          args.indexOf('-ab').should.above(-1);
+          args.indexOf('-b:a').should.above(-1);
           args.indexOf('256k').should.above(-1);
           done();
         });
