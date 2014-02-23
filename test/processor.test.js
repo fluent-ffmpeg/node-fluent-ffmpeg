@@ -35,6 +35,48 @@ describe('Processor', function() {
       new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
           .renice(100).options._nice.level.should.equal(0);
     });
+
+    it('should dynamically renice process', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
+
+      var ffmpegJob = new Ffmpeg({ source: this.testfile, nolog: true, timeout: 1 })
+          .usingPreset('flashvideo')
+
+      ffmpegJob
+          .on('error', function(err) {
+            fs.exists(testFile, function(exist) {
+              if (exist) {
+                setTimeout(function() {
+                  fs.unlink(testFile,function(){
+                    done()
+                  });
+                }, 10);
+              }
+              else{
+                console.log("no File: testProcessKill.flv");
+                done();
+              }
+            });
+          })
+          .on('end', function() {
+            console.log('end was called, expected a timeout');
+            assert.ok(false);
+            done();
+          })
+          .saveToFile(testFile);
+
+      setTimeout(function() {
+        ffmpegJob.kill('SIGSTOP');
+        ffmpegJob.renice(5);
+      }, 20);
+
+      setTimeout(function() {
+        exec("ps h p " + ffmpegJob.ffmpegProc.pid + " -o ni", function(err, stdout, stderr) {
+          assert.ok(!err);
+          parseInt(stdout).should.equal(5);
+        });
+      }, 500);
+    });
   }
 
   it('should report codec data through \'codecData\' event', function(done) {
@@ -187,6 +229,74 @@ describe('Processor', function() {
           done();
         })
         .saveToFile(testFile);
+  });
+
+  it('should kill the process with .kill', function(done) {
+    var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
+
+    var ffmpegJob = new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0 })
+        .usingPreset('flashvideo');
+
+    ffmpegJob
+        .on('error', function(err) {
+          err.message.indexOf('ffmpeg returned with code').should.not.equal(-1);
+
+          fs.exists(testFile, function(exist) {
+            if (exist) {
+              setTimeout(function() {
+                fs.unlink(testFile,function(){
+                  done()
+                });
+              }, 10);
+            }
+            else{
+              console.log("no File: testProcessKill.flv");
+              done();
+            }
+          });
+        })
+        .on('end', function() {
+          console.log('end was called, expected an error');
+          assert.ok(false);
+          done();
+        })
+        .saveToFile(testFile);
+
+    setTimeout(function() { ffmpegJob.kill(); }, 20);
+  });
+
+  it('should send the process custom signals with .kill(signal)', function(done) {
+    var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
+
+    var ffmpegJob = new Ffmpeg({ source: this.testfile, nolog: true, timeout: 1 })
+        .usingPreset('flashvideo');
+
+    ffmpegJob
+        .on('error', function(err) {
+          err.message.indexOf('timeout').should.not.equal(-1);
+
+          fs.exists(testFile, function(exist) {
+            if (exist) {
+              setTimeout(function() {
+                fs.unlink(testFile,function(){
+                  done()
+                });
+              }, 10);
+            }
+            else{
+              console.log("no File: testProcessKill.flv");
+              done();
+            }
+          });
+        })
+        .on('end', function() {
+          console.log('end was called, expected a timeout');
+          assert.ok(false);
+          done();
+        })
+        .saveToFile(testFile);
+
+    setTimeout(function() { ffmpegJob.kill('SIGSTOP'); }, 20);
   });
 
   describe('saveToFile', function() {
