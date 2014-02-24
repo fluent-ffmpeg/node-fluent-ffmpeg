@@ -16,10 +16,15 @@ app.get('/video/:filename', function(req, res) {
   var proc = new ffmpeg({ source: pathToMovie, nolog: true })
     // use the 'flashvideo' preset (located in /lib/presets/flashvideo.js)
     .usingPreset('flashvideo')
-    // save to stream
-    .writeToStream(res, {end:true}, function(retcode, error){
+    // setup event handlers
+    .on('end', function() {
       console.log('file has been converted succesfully');
-    });
+    })
+    .on('error', function(err) {
+      console.log('an error happened: ' + err.message);
+    })
+    // save to stream
+    .writeToStream(res, {end:true});
 });
 
 app.listen(4000);

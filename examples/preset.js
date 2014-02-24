@@ -6,7 +6,12 @@ var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
   .usingPreset('podcast')
   // in case you want to override the preset's setting, just keep chaining
   .withVideoBitrate('512k')
-  // save to file
-  .saveToFile('/path/to/your_target.m4v', function(retcode, error){
+  // setup event handlers
+  .on('end', function() {
     console.log('file has been converted succesfully');
-  });
+  })
+  .on('error', function(err) {
+    console.log('an error happened: ' + err.message);
+  })
+  // save to file
+  .saveToFile('/path/to/your_target.m4v');

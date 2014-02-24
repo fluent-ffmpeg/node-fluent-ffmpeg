@@ -12,6 +12,12 @@ infs.on('error', function(err) {
 // instead of file path (can be any ReadableStream)
 var proc = new ffmpeg({ source: infs, nolog: true })
   .usingPreset('flashvideo')
-  .saveToFile('/path/to/your_target.flv', function(stdout, stderr, err) {
+  // setup event handlers
+  .on('end', function() {
     console.log('done processing input stream');
-  });
+  })
+  .on('error', function(err) {
+    console.log('an error happened: ' + err.message);
+  })
+  // save to file
+  .saveToFile('/path/to/your_target.flv');

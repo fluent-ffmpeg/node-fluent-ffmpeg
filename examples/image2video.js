@@ -6,7 +6,12 @@ var proc = new ffmpeg({ source: '/path/to/your_image.jpg', nolog: true })
   .loop(5)
   // using 25 fps
   .withFps(25)
-  // save to file
-  .saveToFile('/path/to/your_target.m4v', function(retcode, error){
+  // setup event handlers
+  .on('end', function() {
     console.log('file has been converted succesfully');
-  });
+  })
+  .on('error', function(err) {
+    console.log('an error happened: ' + err.message);
+  })
+  // save to file
+  .saveToFile('/path/to/your_target.m4v');

@@ -22,6 +22,10 @@ var proc = new ffmpeg({source:firstFile,nolog:true})
     .mergeAdd(thirdFile)
     //.mergeAdd(fourthFile)
     //.mergeAdd(...)
-    .mergeToFile(outPath,function(){
-        console.log('files have been merged successfully');
-    });
+    .on('end', function() {
+      console.log('files have been merged succesfully');
+    })
+    .on('error', function(err) {
+      console.log('an error happened: ' + err.message);
+    })
+    .mergeToFile(outPath);

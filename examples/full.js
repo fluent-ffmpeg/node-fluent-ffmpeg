@@ -22,7 +22,12 @@ var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
   .addOption('-vtag', 'DIVX')
   // set output format to force
   .toFormat('avi')
-  // save to file
-  .saveToFile('/path/to/your_target.avi', function(retcode, error){
+  // setup event handlers
+  .on('end', function() {
     console.log('file has been converted succesfully');
-  });
+  })
+  .on('error', function(err) {
+    console.log('an error happened: ' + err.message);
+  })
+  // save to file
+  .saveToFile('/path/to/your_target.avi');
