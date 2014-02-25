@@ -239,7 +239,7 @@ describe('Processor', function() {
 
     ffmpegJob
         .on('error', function(err) {
-          err.message.indexOf('ffmpeg returned with code').should.not.equal(-1);
+          err.message.indexOf('ffmpeg received signal SIGKILL').should.not.equal(-1);
 
           fs.exists(testFile, function(exist) {
             if (exist) {
