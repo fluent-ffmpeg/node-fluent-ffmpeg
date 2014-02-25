@@ -100,9 +100,9 @@ describe('Command', function() {
           done();
         });
     });
-    it('should apply additional bitrate arguments for CONSTANT_BITRATE', function(done) {
+    it('should apply additional bitrate arguments for constant bitrate', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true })
-        .withVideoBitrate('256k', Ffmpeg.CONSTANT_BITRATE)
+        .withVideoBitrate('256k', true)
         .getArgs(function(args) {
           args.indexOf('-b:v').should.above(-1);
           args.indexOf('-maxrate').should.above(-1);;
