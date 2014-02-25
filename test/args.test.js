@@ -37,6 +37,29 @@ describe('Command', function() {
           done();
         });
     });
+
+    it('should allow using functions as presets', function(done) {
+      var presetArg;
+
+      function presetFunc(command) {
+        presetArg = command;
+        command.withVideoCodec('libx264');
+        command.withAudioFrequency(22050);
+      }
+
+      var cmd = new Ffmpeg({ source: this.testfile });
+
+      cmd
+        .usingPreset(presetFunc)
+        .getArgs(function(args) {
+          presetArg.should.equal(cmd);
+          args.join(' ').indexOf('-vcodec libx264').should.not.equal(-1);
+          args.join(' ').indexOf('-ar 22050').should.not.equal(-1);
+
+          done();
+        });
+    });
+    
     it('should throw an exception when a preset it not found', function() {
       (function() {
         new Ffmpeg({ source: this.testfile, nolog: true })
@@ -264,7 +287,7 @@ describe('Command', function() {
     });
   });
 
-  describe('withVideCodec', function() {
+  describe('withVideoCodec', function() {
     it('should apply the video codec argument', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true })
         .withVideoCodec('divx')
