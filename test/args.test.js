@@ -59,7 +59,7 @@ describe('Command', function() {
           done();
         });
     });
-    
+
     it('should throw an exception when a preset it not found', function() {
       (function() {
         new Ffmpeg({ source: this.testfile, nolog: true })
@@ -459,6 +459,25 @@ describe('Command', function() {
           args.indexOf('+chroma').should.above(-1);
           args.indexOf('-partitions').should.above(-1);
           args.indexOf('+parti4x4+partp8x8+partb8x8').should.above(-1);
+          done();
+        });
+    });
+    it('should apply a single input option', function(done) {
+      new Ffmpeg({ source: this.testfile })
+        .addInputOption('-r', '29.97')
+        .getArgs(function(args) {
+          var joined = args.join(' ');
+          joined.indexOf('-r 29.97').should.above(-1).and.below(joined.indexOf('-i '));
+          done();
+        });
+    });
+    it('should apply multiple input options', function(done) {
+      new Ffmpeg({ source: this.testfile })
+        .addInputOptions(['-r 29.97', '-f ogg'])
+        .getArgs(function(args) {
+          var joined = args.join(' ');
+          joined.indexOf('-r 29.97').should.above(-1).and.below(joined.indexOf('-i'));
+          joined.indexOf('-f ogg').should.above(-1).and.below(joined.indexOf('-i'));
           done();
         });
     });
