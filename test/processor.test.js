@@ -394,9 +394,14 @@ describe('Processor', function() {
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('flashvideo')
-        .on('end', function() {
+        .on('end', function(stdout, stderr) {
           fs.exists(testFile, function(exist) {
+            if (!exist) {
+              console.log(stderr);  
+            }
+
             exist.should.true;
+
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
