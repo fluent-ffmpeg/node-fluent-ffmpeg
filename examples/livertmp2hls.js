@@ -18,7 +18,12 @@ var proc = new ffmpeg({ source: 'rtmp://path/to/live/stream', nolog: true, timeo
   .addOption('-hls_time', 10)
   // include all the segments in the list
   .addOption('-hls_list_size',0)
-  // save to file
-  .saveToFile('/path/to/your_target.m3u8', function(retcode, error){
+  // setup event handlers
+  .on('end', function() {
     console.log('file has been converted succesfully');
-  });
+  })
+  .on('error', function(err) {
+    console.log('an error happened: ' + err.message);
+  })
+  // save to file
+  .saveToFile('/path/to/your_target.m3u8');

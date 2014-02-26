@@ -1,257 +1,476 @@
 # Fluent ffmpeg-API for node.js [![Build Status](https://secure.travis-ci.org/schaermu/node-fluent-ffmpeg.png)](http://travis-ci.org/schaermu/node-fluent-ffmpeg)
+
 This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264).
 
 Now including input streaming support (means you can convert **on-the-fly** using an input- and an outputstream)!
 
 ## Installation
+
 Via npm:
-`$ npm install fluent-ffmpeg`
+
+```sh
+$ npm install fluent-ffmpeg
+```
 
 Or as a submodule:
-`$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git vendor/fluent-ffmpeg`
+```sh
+$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git vendor/fluent-ffmpeg
+```
+
 ## Tests
-To run unit tests, make sure have mocha installed on your system (registered as devDependency in npm config).
+To run unit tests, first make sure you installed npm dependencies (run `npm install`).
 
-`$ make test`
-
-For constant checking your test install grunt globally (`npm uninstall -g grunt && npm install -g grunt-cli && npm install grunt`)
+```sh
+$ make test
+```
 
 If you want to re-generate the test coverage report (filed under test/coverage.html), run
 
-`$ make test-cov`
+```sh
+$ make test-cov
+```
 
 Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
+
 ## Usage
-You find a lot of usage examples (including a real-time streaming example using [flowplayer](http://www.flowplayer.org) and [express](https://github.com/visionmedia/express)!) in the `examples` folder.
-## Basics
-fluent-ffmpeg is always initialized using the returned class of your initial (and only) require call. You have to supply an config object to the constructor containing at least the input source (either a ReadableStream or a filepath).
 
-    var ffmpeg = require('fluent-ffmpeg');
+You will find a lot of usage examples (including a real-time streaming example using [flowplayer](http://www.flowplayer.org) and [express](https://github.com/visionmedia/express)!) in the `examples` folder.
 
-    var proc = new ffmpeg({
-      // input source, required
-      source: '/path/to/your_movie.avi',
-      // timout of the spawned ffmpeg sub-processes in seconds (optional, defaults to 30)
-      timeout: 30,
-      // default priority for all ffmpeg sub-processes (optional, defaults to 0 which is no priorization)
-      priority: 0,
-      // set a custom [winston](https://github.com/flatiron/winston) logging instance (optional, default null which will cause fluent-ffmpeg to spawn a winston console logger)
-      logger: null,
-      // completely disable logging (optional, defaults to false)
-      nolog: false
+### Creating an FFmpeg command
+
+The fluent-ffmpeg module returns a constructor that you can use to instanciate FFmpeg commands.  You have to supply a configuration object containing at least the input source.
+
+```js
+var FFmpeg = require('fluent-ffmpeg');
+var command = FFmpeg({ source: '/path/to/file.avi' });
+```
+
+The input file can also be an image or an image pattern.
+
+```js
+var imageCommand = FFmpeg({ source: '/path/to/file.png' });
+
+// Will use file000.png, file001.png, etc.
+var patternCommand = FFmpeg({ source: '/path/to/file%03d.png' });
+```
+
+You can also pass a Readable stream instead of a source path.
+
+```js
+var inStream = fs.createReadStream('/path/to/file.avi');
+var command = new FFmpeg({ source: inStream });
+```
+
+Additional options can be supplied when creating a command.
+
+```js
+var command = new FFmpeg({
+        // Source filename or input stream
+        source: '/path/to/file.avi',
+
+        // Source string is a live stream URI, defaults to false
+        inputlive: false,
+
+        // Processing timeout in seconds, defaults to 30.
+        // You can disable the timeout by passing 0.
+        timeout: 30,
+
+        // Priority (niceness) for spawned FFmpeg processes.
+        // Defaults to 0; not supported on Windows platforms
+        priority: -5,
+
+        // Custom Winston logger instance, defaults to not
+        // logging anything.
+        logger: new winston.Logger(...),
+
+        // Disable logging, even if logger is specified
+        nolog: false
     });
+```
 
-### Auto-calculation of video dimensions
-Since ffmpeg does not support dynamic sizing of your movies, fluent-ffmpeg can do this job for you (using it's internal metadata-discovery). The following size formats are allowed to be passed to `withSize`:
+### Supplying FFmpeg options
 
-  * `320x?` - Fixed width, calculate height
-  * `?x240` - Fixed height, calculate width
-  * `50%` - percental resizing
-  * `320x240` - fixed size (plain ffmpeg way)
+FFmpeg commands have several methods to pass options to FFmpeg.  All these methods return the command object, so that calls can be chained.  Here are all the available methods:
 
-### Auto-padding when converting aspect ratio
-Using fluent-ffmpeg, you can auto-pad any video output when converting the aspect ratio. When converting from 4:3 to 16:9, padding is added to the left/right, when converting from 16:9 to 4:3, padding is added to top/bottom.
+```js
 
-    var ffmpeg = require('fluent-ffmpeg');
-
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .withAspect('4:3')
-      .withSize('640x480')
-      .applyAutopadding(true, 'white')
-      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
-        console.log('file has been converted succesfully');
-      });
-This command will auto-pad your 4:3 output video stream using a white background-color (default is black).
-
-### Simple conversion using preset
-This example loads up a predefined preset in the preset folder (currently, fluent-ffmpeg ships with presets for DIVX, Flashvideo and Podcast conversions)
-
-    var ffmpeg = require('fluent-ffmpeg');
-
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .usingPreset('podcast')
-      .saveToFile('/path/to/your_target.m4v', function(stdout, stderr) {
-        console.log('file has been converted succesfully');
-      });
-### Conversion using chainable API
-Using the chainable API, you are able to perform any operation using FFMPEG. the most common options are implemented using methods, for more advanced usages you can still use the `addOption(s)` method group.
-
-    var ffmpeg = require('fluent-ffmpeg');
+new FFmpeg({ source: '/path/to/video.avi' })
     
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .withVideoBitrate(1024)
-      .withVideoCodec('divx')
-      .withAspect('16:9')
-      .withFps(24)
-      .withAudioBitrate('128k')
-      .withAudioCodec('libmp3lame')
-      .withAudioChannels(2)
-      .addOption('-vtag', 'DIVX')
-      .toFormat('avi')
-      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
-        console.log('file has been converted succesfully');
-      });
-### Creating thumbnails from a video file
-One pretty neat feature is the ability of fluent-ffmpeg to generate any amount of thumbnails from your movies. The screenshots are taken at automatically determined timemarks using the following formula: `(duration_in_sec * 0.9) / number_of_thumbnails`.
+    /** Stream selection **/
 
-    var ffmpeg = require('fluent-ffmpeg');
-    
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .withSize('150x100')
-      .takeScreenshots(5, '/path/to/thumbnail/folder', function(err, filenames) {
-        if(err){
-          throw err;
-        }
-        console.log(filenames);
-        console.log('screenshots were saved');
-      });
+    // Skip video streams in output
+    .withNoVideo()
 
-For more control, you can also set the timemarks for taking screenshots yourself. Timemarks are percent `50%` or otherwise seconds.
+    // Skip audio streams in output
+    .withNoAudio()
 
-    var ffmpeg = require('fluent-ffmpeg');
-    
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .withSize('150x100')
-      .takeScreenshots({
-          count: 2,
-          timemarks: [ '0.5', '1' ]
-        }, '/path/to/thumbnail/folder', function(err, filenames) {
-          console.log(filenames);
-          console.log('screenshots were saved');
-      });
-      
-You can set the screenshots filename dynamically using following format characters:
+    // Add an input file
+    .addInput('/path/to/audiotrack.mp3')
+
+
+    /** Video codec and bitrate **/
+
+    // Specify video codec
+    .withVideoCodec('libx624')
+
+    // Specify video bitrate in kbps (the 'k' is optional)
+    .withVideoBitrate('650k')
+
+    // Specify a constant video bitrate
+    .withVideoBitrate('650k', FFmpeg.CONSTANT_BITRATE)
+
+
+    /** Video size **/
+
+    // Specify a fixed output size
+    .withSize('320x240')
+
+    // Specify a proportional resize of the input
+    .withSize('50%')
+
+    // Force one dimension and automatically determine the other
+    .withSize('320x?')
+    .withSize('?x240')
+
+    // Auto-pad video, defaulting to black padding
+    .applyAutopadding(true)
+    .applyAutopadding(true, 'white')
+
+    // Set aspect ratio
+    .withAspectRatio(1.33)
+
+    // Keep aspect ratio
+    .keepPixelAspect(true)
+
+
+    /** Video timing **/
+
+    // Specify input FPS (only valid for raw video formats)
+    .withFpsInput(24)
+
+    // Set output FPS
+    .withFps(24)
+    .withFpsOutput(24)
+
+    // Loop indefinitely, only relevant when outputting to a stream
+    .loop()
+
+    // Loop for a certain duration in seconds
+    .loop(120)
+
+    // Skip to specific timestamp
+    .setStartTime(120)
+    .setStartTime('2:00')
+
+    // Only transcode a certain duration
+    .setDuration(120)
+    .setDuration('2:00')
+
+    // Only transcode a certain number of frames
+    .takeFrames(250)
+
+
+    /** Audio codec and bitrate **/
+
+    // Specify audio codec
+    .withAudioCodec('libmp3lame')
+
+    // Specify audio bitrate in kbps (the 'k' is optional)
+    .withAudioBitrate('128k')
+
+    // Specify the number of audio channels
+    .withAudioChannels(2)
+
+    // Specify the audio sample frequency
+    .withAudioFrequency(48000)
+
+    // Specify the audio quality factor
+    .withAudioQuality(5)
+
+
+    /** Format options **/
+
+    // Specify input format
+    .fromFormat('avi')
+
+    // Set output format
+    .toFormat('webm')
+
+
+    /** Miscellaneous options **/
+
+    // Use strict experimental flag (needed for some codecs)
+    .withStrictExperimental()
+
+    // Add custom option
+    .addOption('-crf', '23')
+
+    // Add several options at once
+    .addOption(['-crf 23', '--preset ultrafast']);
+```
+
+### Setting event handlers
+
+You can set events listeners on a command.
+
+```js
+
+var command = new FFmpeg({ source: '/path/to/video.avi' })
+
+    .on('start', function(commandLine) {
+        // The 'start' event is emitted just before the FFmpeg
+        // process is spawned.
+
+        console.log('Spawned FFmpeg with command: ' + commandLine);
+    })
+
+    .on('codecData', function(data) {
+        // The 'codecData' event is emitted when FFmpeg first
+        // reports input codec information. 'data' contains
+        // the following information:
+        // - 'format': input format
+        // - 'duration': input duration
+        // - 'audio': audio codec
+        // - 'audio_details': audio encoding details
+        // - 'video': video codec
+        // - 'video_details': video encoding details
+        console.log('Input is ' + data.audio + ' audio with ' + data.video + ' video');
+    })
+
+    .on('progress', function(progress) {
+        // The 'progress' event is emitted every time FFmpeg
+        // reports progress information. 'progress' contains
+        // the following information:
+        // - 'frames': the total processed frame count
+        // - 'currentFps': the framerate at which FFmpeg is
+        //   currently processing
+        // - 'currentKbps': the throughput at which FFmpeg is
+        //   currently processing
+        // - 'targetSize': the current size of the target file
+        //   in kilobytes
+        // - 'timemark': the timestamp of the current frame
+        // - 'percent': an estimation of the progress
+
+        console.log('Processing: ' + progress.percent + '% done');
+    })
+
+    .on('error', function(err) {
+        // The 'error' event is emitted when an error occurs,
+        // either when preparing the FFmpeg process or while
+        // it is running
+
+        console.log('Cannot process video: ' + err.message);
+    })
+
+    .on('end', function() {
+        // The 'end' event is emitted when FFmpeg finishes
+        // processing.
+
+        console.log('Processing finished successfully');
+    });
+```
+
+Note that you should always set a listener for the `error` event.  If you have not set any listener and an error happens, your nodejs process will end.
+
+### Starting FFmpeg processing
+
+#### Saving output to a file
+
+Use the `saveToFile` method on a command to start processing and save the output to a file.
+
+```js
+new FFmpeg({ source: })
+    .withVideoCodec('libx264')
+    .withAudioCodec('libmp3lame')
+    .withSize('320x240')
+    .on('error', function(err) {
+        console.log('An error occurred: ' + err.message);
+    })
+    .on('end', function() {
+        console.log('Processing finished !');
+    })
+    .saveToFile('/path/to/output.mp4');
+```
+
+#### Piping output to a writable stream
+
+Use the `writeToStream` method on a command to start processing and pipe the output to a writable stream.  You can supply pipe options as a second argument to `writeToStream`.
+
+```js
+var outStream = fs.createWriteStream('/path/to/output.mp4');
+
+new FFmpeg({ source: '/path/to/video.avi' })
+    .withVideoCodec('libx264')
+    .withAudioCodec('libmp3lame')
+    .withSize('320x240')
+    .on('error', function(err) {
+        console.log('An error occurred: ' + err.message);
+    })
+    .on('end', function() {
+        console.log('Processing finished !');
+    })
+    .writeToStream(outStream, { end: true });
+```
+
+### Using presets
+
+Presets are located in fluent-ffmpeg `lib/presets` directory.  To use a preset, call the `usingPreset` method on a command.
+
+```js
+new FFmpeg({ source: '/path/to/video.avi' })
+    .usingPreset('flashvideo')
+    .saveToFile('/path/to/converted.flv');
+```
+
+Preset modules should export a `load` method, which will receive the command object to alter.
+
+```js
+exports.load = function(command) {
+    command
+        .withAudioCodec('libmp3lame')
+        .withVideoCodec('libx264')
+        .withSize('320x240');
+};
+```
+
+fluent-ffmpeg comes with the following presets preinstalled:
+* `divx`
+* `flashvideo`
+* `podcast`
+
+### Merging inputs
+
+Use the `mergeAdd` and `mergeToFile` methods on a command to concatenate multiple inputs to a single output file.  The `mergeToFile` needs a temporary folder as its second argument.
+
+```js
+new FFmpeg({ source: '/path/to/part1.avi' })
+    .mergeAdd('/path/to/part2.avi')
+    .mergeAdd('/path/to/part2.avi')
+    .on('error', function(err) {
+        console.log('An error occurred: ' + err.message);
+    })
+    .on('end', function() {
+        console.log('Merging finished !');
+    })
+    .mergeToFile('/path/to/merged.avi', '/path/to/tempDir');
+```
+
+### Generating thumbnails
+
+One pretty neat feature of fluent-ffmpeg is the ability to generate any amount of thumbnails from your movies. The screenshots are taken at automatically determined timemarks using the following formula: `(duration_in_sec * 0.9) / number_of_thumbnails`.
+
+When generating thumbnails, the `end` event is dispatched with an array of generated filenames as an argument.
+
+```js
+new FFmpeg({ source: '/path/to/video.avi' })
+    .withSize('320x240')
+    .on('error', function(err) {
+        console.log('An error occurred: ' + err.message);
+    })
+    .on('end', function(filenames) {
+        console.log('Successfully generated ' + filenames.join(', '));
+    })
+    .takeScreenshots(5, '/path/to/directory');
+```
+
+You can also call `takeScreenshots` with specific timemarks.
+
+```js
+new FFmpeg({ source: '/path/to/video.avi' })
+    .withSize('320x240')
+    .on('error', function(err) {
+        console.log('An error occurred: ' + err.message);
+    })
+    .on('end', function(filenames) {
+        console.log('Successfully generated ' + filenames.join(', '));
+    })
+    .takeScreenshots(
+        {
+            count: 2,
+            timemarks: [ '0.5', '1' ]
+        },
+        '/path/to/directory'
+    );
+```
+
+You can set a filename pattern using following format characters:
 
 * `%s` - offset in seconds
 * `%w` - screenshot width
 * `%h` - screenshot height
-* `%r` - screenshot resolution ( widthxheight )
+* `%r` - screenshot resolution (eg. '320x240')
 * `%f` - input filename
-* `%b` - input basename ( filename w/o extension ) 
-* `%i` - number of screenshot in timemark array ( can be zeropadded by using it like `%000i` )  
+* `%b` - input basename (filename w/o extension) 
+* `%i` - number of screenshot in timemark array (can be zero-padded by using it like `%000i`)
 
-If multiple timemarks are given and no `%i` format character is found in filename `_%i` will be added to the end of the given filename.
+If multiple timemarks are given and no `%i` format character is found in filename, `_%i` will be added to the end of the given pattern.
 
-    var ffmpeg = require('fluent-ffmpeg');
+```js
+new FFmpeg({ source: '/path/to/video.avi' })
+    .withSize('320x240')
+    .on('error', function(err) {
+        console.log('An error occurred: ' + err.message);
+    })
+    .on('end', function(filenames) {
+        console.log('Successfully generated ' + filenames.join(', '));
+    })
+    .takeScreenshots(
+        {
+            count: 2,
+            timemarks: [ '0.5', '1' ]
+            filename: '%b-thumbnail-%i-%r'
+        },
+        '/path/to/directory'
+    );
+```
 
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .withSize('150x100')
-      .takeScreenshots({
-          count: 2,
-          timemarks: [ '50%', '75%' ],
-          filename: '%b_screenshot_%w_%i'
-        }, '/path/to/thumbnail/folder', function(err, filenames) {
-          console.log(filenames);
-          console.log('screenshots were saved');
-      });
+### Controlling the FFmpeg process
+
+You can control the spawned FFmpeg process with the `kill` and `renice` methods.  `kill` only works after having spawned an FFmpeg process, but `renice` can be used at any time.
+
+```js
+var command = new FFmpeg({ source: '/path/to/video.avi' })
+    .withVideoCodec('libx264')
+    .withAudioCodec('libmp3lame')
+
+    // Set initial niceness
+    .renice(5)
+
+    .saveToFile('/path/to/output.mp4');
+
+// Change process niceness (not supported on Windows platforms)
+command.renice(-5);
+
+// Send custom signals
+command.kill('SIGSTOP');
+setTimeout(function() {
+    command.kill('SIGCONT');
+}, 1000);
+
+// `kill` defaults to SIGKILL (will make command emit an 'error' event)
+setTimeout(function() {
+    command.kill();
+}, 2000);
+```
 
 ### Reading video metadata
-Using a seperate object, you are able to access various metadata of your video file.
 
-    var Metalib = require('fluent-ffmpeg').Metadata;
+Using a seperate object, you can access various metadata of your video file.
 
-    // make sure you set the correct path to your video file
-    var metaObject = new Metalib('/path/to/your_movie.avi', function(metadata, err) {
-      console.log(require('util').inspect(metadata, false, null));
-    });
+```js
+var Metadata = require('fluent-ffmpeg').Metadata;
 
-### Reading Codec information while processing
-Using the notification callback onCodecData, you can get informations about the input file's codecs being processed:
-
-    var ffmpeg = require('fluent-ffmpeg');
-
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .withAspect('4:3')
-      .withSize('640x480')
-      .onCodecData(function(codecinfo) {
-        console.log(codecinfo);
-      })
-      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
-        console.log('file has been converted succesfully');
-      });
-
-### Getting progress notification
-You can set the call back onProgress if you want to be notified on every progress update (triggered as fast as it's written out by FFMPEG).
-
-    var proc = new ffmpeg({ source: '/path/to/your_movie.avi' })
-      .withAspect('4:3')
-      .withSize('640x480')
-      .onProgress(function(progress) {
-        console.log(progress);
-      })
-      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
-        console.log('file has been converted succesfully');
-      });
-
-The progress object consists of 6 properties:
-
-  * `frames` - the total processed frame count
-  * `currentFps` - the framerate at which FFMPEG is currently processing the file
-  * `currentKbps` - the throughput at which FFMPEG is currently processing the file
-  * `targetSize` - the current size of the target file
-  * `timemark` - the timestamp of the frame being processed right now
-  * `percent` - an estimation on the progress (metadata is used, durationsec * fps)
-
-### Additional Inputs
-In case you need to add, for instance, and audio track
-
-    var ffmpeg = require('fluent-ffmpeg');
-
-    var proc = new ffmpeg({ source: 'images/frame%05d.png' })
-      .addInput('soundtrack.mp3')
-      .saveToFile('/path/to/your_target.avi', function(stdout, stderr) {
-        console.log('file has been created with soundtrack succesfully');
-      });
-
-### Concatenating Inputs
-To append a video to the end of another
-
-    var ffmpeg = require('fluent-ffmpeg');
-    var proc = new ffmpeg({source: "title.mp4"})
-        .mergeAdd("source.mp4")
-        .mergeToFile("out.mp4", "myTempFolder/", function(){
-            console.log('files has been merged succesfully');
-         });
-
-### Creating a custom preset
-To create a custom preset, you have to create a new file inside the `lib/presets` folder. The filename is used as the preset's name ([presetname].js). In order to make the preset work, you have to export a `load` function using the CommonJS module specifications:
-
-    exports.load = function(ffmpeg) {
-      // your custom preset code
+new Metadata(
+    '/path/to/your_movie.avi',
+    function(metadata, err) {
+        console.log(require('util').inspect(metadata, false, null));
     }
+);
+```
 
-The `ffmpeg` parameter is a full fluent-ffmpeg object, you can use all the chaining-goodness from here on. For a good example for the possibilities using presets, check out `lib/presets/podcast.js`.
-
-
-### Setting custom child process niceness
-You can adjust the scheduling priority of the child process used by ffmpeg, using renice (http://manpages.ubuntu.com/manpages/intrepid/man1/renice.1.html):
-
-    var ffmpeg = require('fluent-ffmpeg');
-    
-    var proc = new ffmpeg({ source: './source.mp3', priority: 10 })
-      .withAudioCodec('libvorbis')
-      .toFormat('ogg')
-      .saveToFile('./target.ogg', function(stdout, stderr) {
-        console.log('file has been converted succesfully');
-      });
-
-Which will use a niceness of 10 (thus it has a lower scheduling priority than the node process and other processes, which default to a niceness of 0).
-
-### Setting an optional processing timeout
-If you want to know for sure that the ffmpeg child process will not run for longer than a certain amount of time, you can optionally pass the key 'timeout' into the constructor of the ffmpeg command object. An example of a process that will return an error string of 'timeout' if ffmpeg did not finish within 10 minutes:
-
-    var ffmpeg = require('fluent-ffmpeg');
-    
-    var proc = new ffmpeg({ source: './source.mp3', timeout: 10 * 60 })
-      .withAudioCodec('libvorbis')
-      .toFormat('ogg')
-      .saveToFile('./target.ogg', function(stdout, stderr) {
-        if (retcode == ffmpeg.E_PROCESSTIMEOUT) {
-          console.log('ffmpeg terminated because of timeout');
-        }
-      });
 
 ## Contributors
+
 * [enobrev](http://github.com/enobrev)
 * [sadikzzz](http://github.com/sadikzzz)
 * [smremde](http://github.com/smremde)
@@ -261,9 +480,11 @@ If you want to know for sure that the ffmpeg child process will not run for long
 * [Weltschmerz](http://github.com/Weltschmerz)
 
 ## Contributing
+
 Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!
 
 ## License
+
 (The MIT License)
 
 Copyright (c) 2011 Stefan Schaermeli &lt;schaermu@gmail.com&gt;
