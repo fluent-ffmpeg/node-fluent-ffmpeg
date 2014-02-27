@@ -71,6 +71,9 @@ var command = new FFmpeg({
         // Source string is a live stream URI, defaults to false
         inputlive: false,
 
+        // Custom presets folder
+        presets: './presets',
+
         // Processing timeout in seconds, defaults to 30.
         // You can disable the timeout by passing 0.
         timeout: 30,
