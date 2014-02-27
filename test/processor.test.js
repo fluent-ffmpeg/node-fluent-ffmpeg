@@ -39,7 +39,7 @@ describe('Processor', function() {
     it('should dynamically renice process', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-      var ffmpegJob = new Ffmpeg({ source: this.testfile, nolog: true, timeout: 1 })
+      var ffmpegJob = new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 2 })
           .usingPreset('flashvideo')
 
       ffmpegJob
@@ -66,15 +66,14 @@ describe('Processor', function() {
           .saveToFile(testFile);
 
       setTimeout(function() {
-        ffmpegJob.kill('SIGSTOP');
         ffmpegJob.renice(5);
-      }, 20);
 
-      setTimeout(function() {
-        exec("ps h p " + ffmpegJob.ffmpegProc.pid + " -o ni", function(err, stdout, stderr) {
-          assert.ok(!err);
-          parseInt(stdout).should.equal(5);
-        });
+        setTimeout(function() {
+          exec("ps h p " + ffmpegJob.ffmpegProc.pid + " -o ni", function(err, stdout, stderr) {
+            assert.ok(!err);
+            parseInt(stdout).should.equal(5);
+          });
+        }, 500);
       }, 500);
     });
   }
@@ -82,7 +81,7 @@ describe('Processor', function() {
   it('should report codec data through \'codecData\' event', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
 
-    new Ffmpeg({ source: this.testfile, nolog: true })
+    new Ffmpeg({ source: this.testfilebig, nolog: true })
         .on('codecData', function(data) {
           data.should.have.property('audio');
           data.should.have.property('video');
@@ -110,6 +109,10 @@ describe('Processor', function() {
           gotProgress = true;
         })
         .usingPreset('flashvideo')
+        .on('error', function(err) {
+          assert.ok(!err);
+          done();
+        })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
             if (exist) {
@@ -204,7 +207,7 @@ describe('Processor', function() {
   it('should kill the process on timeout', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-    new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
+    new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 0.02 })
         .usingPreset('flashvideo')
         .on('error', function(err) {
           err.message.indexOf('timeout').should.not.equal(-1);
@@ -234,12 +237,12 @@ describe('Processor', function() {
   it('should kill the process with .kill', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-    var ffmpegJob = new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0 })
+    var ffmpegJob = new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 0 })
         .usingPreset('flashvideo');
 
     ffmpegJob
         .on('error', function(err) {
-          err.message.indexOf('ffmpeg returned with code').should.not.equal(-1);
+          err.message.indexOf('ffmpeg received signal SIGKILL').should.not.equal(-1);
 
           fs.exists(testFile, function(exist) {
             if (exist) {
@@ -262,13 +265,13 @@ describe('Processor', function() {
         })
         .saveToFile(testFile);
 
-    setTimeout(function() { ffmpegJob.kill(); }, 20);
+    setTimeout(function() { ffmpegJob.kill(); }, 500);
   });
 
   it('should send the process custom signals with .kill(signal)', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-    var ffmpegJob = new Ffmpeg({ source: this.testfile, nolog: true, timeout: 1 })
+    var ffmpegJob = new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 1 })
         .usingPreset('flashvideo');
 
     ffmpegJob
@@ -391,9 +394,14 @@ describe('Processor', function() {
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('flashvideo')
-        .on('end', function() {
+        .on('end', function(stdout, stderr) {
           fs.exists(testFile, function(exist) {
+            if (!exist) {
+              console.log(stderr);  
+            }
+
             exist.should.true;
+
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
