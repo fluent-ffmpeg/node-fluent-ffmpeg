@@ -33,7 +33,7 @@ describe('Processor', function() {
   if (!os.match(/win(32|64)/)) {
     it('should properly limit niceness', function() {
       new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
-          .renice(100).options._nice.level.should.equal(0);
+          .renice(100).options._niceness.should.equal(0);
     });
 
     it('should dynamically renice process', function(done) {
@@ -242,7 +242,7 @@ describe('Processor', function() {
 
     ffmpegJob
         .on('error', function(err) {
-          err.message.indexOf('ffmpeg received signal SIGKILL').should.not.equal(-1);
+          err.message.indexOf('ffmpeg was killed with signal SIGKILL').should.not.equal(-1);
 
           fs.exists(testFile, function(exist) {
             if (exist) {
