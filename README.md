@@ -196,6 +196,15 @@ new FFmpeg({ source: '/path/to/video.avi' })
     // Set output format
     .toFormat('webm')
 
+    /** Custom filters **/
+
+    // Add custom audio filters
+    .withAudioFilter('equalizer=f=1000:width_type=h:width=200:g=-10')
+    .withAudioFilter('pan=1:c0=0.9*c0+0.1*c1')
+
+    // Add custom video filters
+    .withVideoFilter('size=iw*1.5:ih/2')
+    .withVideoFilter('drawtext=\'fontfile=FreeSans.ttf:text=Hello\'')
 
     /** Miscellaneous options **/
 

@@ -172,7 +172,7 @@ describe('Command', function() {
           if (err) {
             done(err);
           } else {
-            args.indexOf('-vf').should.above(-1);
+            args.indexOf('-filter:v').should.above(-1);
             args.indexOf('pad=1024:768:128:0:red').should.above(-1);
             done();
           }
@@ -187,7 +187,7 @@ describe('Command', function() {
             done(err);
           } else {
             args.indexOf('1280x540').should.above(-1);
-            args.indexOf('-vf').should.above(-1);
+            args.indexOf('-filter:v').should.above(-1);
             args.indexOf('pad=1280:720:0:90:black').should.above(-1);
             done();
           }
@@ -201,7 +201,7 @@ describe('Command', function() {
           if (err) {
             done(err);
           } else {
-            args.indexOf('-vf').should.above(-1);
+            args.indexOf('-filter:v').should.above(-1);
             args.indexOf('pad=640:480:0:60:black').should.above(-1);
             done();
           }
@@ -216,7 +216,7 @@ describe('Command', function() {
           if (err) {
             done(err);
           } else {
-            args.indexOf('-vf').should.above(-1);
+            args.indexOf('-filter:v').should.above(-1);
             args.indexOf('pad=640:480:0:60:black').should.above(-1);
             done();
           }
@@ -232,7 +232,7 @@ describe('Command', function() {
           if (err) {
             done(err);
           } else {
-            args.indexOf('-vf').should.above(-1);
+            args.indexOf('-filter:v').should.above(-1);
             args.indexOf('pad=640:480:0:60:black').should.above(-1);
             done();
           }
@@ -298,6 +298,19 @@ describe('Command', function() {
         });
     });
   });
+
+  describe('withVideoFilter', function() {
+    it('should apply the video filter argument', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .withVideoFilter('scale=123:456')
+        .withVideoFilter('pad=1230:4560:100:100:yellow')
+        .getArgs(function(args) {
+          args.indexOf('-filter:v').should.above(-1);
+          args.indexOf('scale=123:456,pad=1230:4560:100:100:yellow').should.above(-1);
+          done();
+        });
+    });
+  })
 
   describe('withAudioBitrate', function() {
     it('should apply the audio bitrate argument', function(done) {
@@ -378,6 +391,19 @@ describe('Command', function() {
         });
     });
   });
+
+  describe('withAudioFilter', function() {
+    it('should apply the audio filter argument', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .withAudioFilter('silencedetect=n=-50dB:d=5')
+        .withAudioFilter('volume=0.5')
+        .getArgs(function(args) {
+          args.indexOf('-filter:a').should.above(-1);
+          args.indexOf('silencedetect=n=-50dB:d=5,volume=0.5').should.above(-1);
+          done();
+        });
+    });
+  })
 
   describe('withAudioChannels', function() {
     it('should apply the audio channels argument', function(done) {
