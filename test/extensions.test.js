@@ -45,10 +45,10 @@ describe('Extensions', function() {
       ext.ffmpegTimemarkToSeconds('00:02:00.00').should.be.equal(120);
     });
     it('should correctly convert a complex timestamp', function() {
-      ext.ffmpegTimemarkToSeconds('00:08:09.10').should.be.equal(489);
+      ext.ffmpegTimemarkToSeconds('00:08:09.10').should.be.equal(489.1);
     });
     it('should correclty convert a simple float timestamp', function() {
-      ext.ffmpegTimemarkToSeconds('132.44').should.be.equal(132);
+      ext.ffmpegTimemarkToSeconds('132.44').should.be.equal(132.44);
     });
   });
 });

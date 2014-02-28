@@ -256,6 +256,7 @@ var command = new FFmpeg({ source: '/path/to/video.avi' })
         // - 'targetSize': the current size of the target file
         //   in kilobytes
         // - 'timemark': the timestamp of the current frame
+        //   in seconds
         // - 'percent': an estimation of the progress
 
         console.log('Processing: ' + progress.percent + '% done');
