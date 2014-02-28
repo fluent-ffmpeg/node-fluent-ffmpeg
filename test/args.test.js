@@ -38,7 +38,7 @@ describe('Command', function() {
         });
     });
     it('should properly generate the command for the requested preset in custom folder', function(done) {
-      new Ffmpeg({ source: this.testfile, nolog: true, presets: path.join(__dirname, 'assets', 'presets') })
+      new Ffmpeg({ source: this.testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
         .usingPreset('custompreset')
         .getArgs(function(args) {
           args.length.should.equal(44);
