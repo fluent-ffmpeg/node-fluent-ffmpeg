@@ -120,7 +120,7 @@ new FFmpeg({ source: '/path/to/video.avi' })
     .withVideoBitrate('650k')
 
     // Specify a constant video bitrate
-    .withVideoBitrate('650k', FFmpeg.CONSTANT_BITRATE)
+    .withVideoBitrate('650k', true)
 
 
     /** Video size **/
@@ -199,11 +199,27 @@ new FFmpeg({ source: '/path/to/video.avi' })
     // Set output format
     .toFormat('webm')
 
+    /** Custom filters **/
+
+    // Add custom audio filters
+    .withAudioFilter('equalizer=f=1000:width_type=h:width=200:g=-10')
+    .withAudioFilter('pan=1:c0=0.9*c0+0.1*c1')
+
+    // Add custom video filters
+    .withVideoFilter('size=iw*1.5:ih/2')
+    .withVideoFilter('drawtext=\'fontfile=FreeSans.ttf:text=Hello\'')
 
     /** Miscellaneous options **/
 
     // Use strict experimental flag (needed for some codecs)
     .withStrictExperimental()
+
+    // Add custom input option (will be added before the input
+    // on ffmpeg command line)
+    .addInputOption('-f', 'avi')
+
+    // Add several input options at once
+    .addInputOptions(['-f avi', '-ss 2:30'])
 
     // Add custom option
     .addOption('-crf', '23')
@@ -252,6 +268,7 @@ var command = new FFmpeg({ source: '/path/to/video.avi' })
         // - 'targetSize': the current size of the target file
         //   in kilobytes
         // - 'timemark': the timestamp of the current frame
+        //   in seconds
         // - 'percent': an estimation of the progress
 
         console.log('Processing: ' + progress.percent + '% done');
@@ -317,7 +334,26 @@ new FFmpeg({ source: '/path/to/video.avi' })
 
 ### Using presets
 
-Presets are located in fluent-ffmpeg `lib/presets` directory.  To use a preset, call the `usingPreset` method on a command.
+#### Preset functions
+
+You can define a preset as a function that takes an `FfmpegCommand` as an argument and calls method on it, and then pass it to `usePreset`.
+
+```js
+function myPreset(command) {
+    command
+        .withAudioCodec('libmp3lame')
+        .withVideoCodec('libx264')
+        .withSize('320x240');
+}
+
+new Ffmpeg({ source: '/path/to/video.avi' })
+    .usingPreset(myPreset)
+    .saveToFile('/path/to/converted.mp4');
+```
+
+#### Preset modules
+
+Preset modules are located in fluent-ffmpeg `lib/presets` directory.  To use a preset, call the `usingPreset` method on a command.
 
 ```js
 new FFmpeg({ source: '/path/to/video.avi' })
@@ -336,7 +372,7 @@ exports.load = function(command) {
 };
 ```
 
-fluent-ffmpeg comes with the following presets preinstalled:
+fluent-ffmpeg comes with the following preset modules preinstalled:
 * `divx`
 * `flashvideo`
 * `podcast`
