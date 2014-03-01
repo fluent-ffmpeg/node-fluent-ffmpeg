@@ -33,7 +33,7 @@ describe('Processor', function() {
   if (!os.match(/win(32|64)/)) {
     it('should properly limit niceness', function() {
       new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
-          .renice(100).options._nice.level.should.equal(0);
+          .renice(100).options._niceness.should.equal(0);
     });
 
     it('should dynamically renice process', function(done) {
@@ -242,7 +242,7 @@ describe('Processor', function() {
 
     ffmpegJob
         .on('error', function(err) {
-          err.message.indexOf('ffmpeg received signal SIGKILL').should.not.equal(-1);
+          err.message.indexOf('ffmpeg was killed with signal SIGKILL').should.not.equal(-1);
 
           fs.exists(testFile, function(exist) {
             if (exist) {
@@ -394,6 +394,10 @@ describe('Processor', function() {
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: this.testfile, nolog: true })
         .usingPreset('flashvideo')
+        .on('error', function(err) {
+          console.log('got error ' + err.message);
+          assert.ok(!err);
+        })
         .on('end', function(stdout, stderr) {
           fs.exists(testFile, function(exist) {
             if (!exist) {
@@ -422,8 +426,16 @@ describe('Processor', function() {
       var outstream = fs.createWriteStream(testFile);
       new Ffmpeg({ source: instream, nolog: true })
         .usingPreset('flashvideo')
-        .on('end', function() {
+        .on('error', function(err) {
+          console.log('got error ' + err.message);
+          assert.ok(!err);
+        })
+        .on('end', function(stdout,stderr) {
           fs.exists(testFile, function(exist) {
+            if (!exist) {
+              console.log(stderr);  
+            }
+
             exist.should.true;
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
