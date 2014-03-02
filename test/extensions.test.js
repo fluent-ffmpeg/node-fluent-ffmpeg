@@ -1,9 +1,10 @@
 var Ffmpeg = require('../index'),
   path = require('path'),
+  testhelper = require('./helpers'),
   assert = require('assert');
 
 // kinda nasty...
-var ext = new Ffmpeg(path.join(__dirname, 'assets', 'testvideo-43.avi'));
+var ext = new Ffmpeg({ source: path.join(__dirname, 'assets', 'testvideo-43.avi'), logger: testhelper.logger });
 describe('Extensions', function() {
   describe('toAspectRatio', function() {
     it('should convert an aspect ratio string to a proper object', function() {

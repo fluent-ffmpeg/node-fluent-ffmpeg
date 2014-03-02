@@ -11,9 +11,46 @@ exports = module.exports = TestHelpers = {
     }
   },
 
+  logger: {
+    debug: function(arg) { console.log('[DEBUG] ' + arg); },
+    info: function(arg) { console.log('[INFO] ' + arg); },
+    warn: function(arg) { console.log('[WARN] ' + arg); },
+    error: function(arg) { console.log('[ERROR] ' + arg); }
+  },
+
+  logArgError: function(err) {
+    if (err) {
+      console.log('got error: ' + (err.stack || err));
+      if (err.ffmpegOut) {
+        console.log('---stdout---');
+        console.log(err.ffmpegOut);
+      }
+      if (err.ffmpegErr) {
+        console.log('---stderr---');
+        console.log(err.ffmpegErr);
+      }
+      if (err.spawnErr) {
+        console.log('---spawn error---');
+        console.log(err.spawnErr.stack || err.spawnErr);
+      }
+    }
+  },
+
   logError: function(err, stdout, stderr) {
     if (err) {
       console.log('got error: ' + (err.stack || err));
+      if (err.ffmpegOut) {
+        console.log('---metadata stdout---');
+        console.log(err.ffmpegOut);
+      }
+      if (err.ffmpegErr) {
+        console.log('---metadata stderr---');
+        console.log(err.ffmpegErr);
+      }
+      if (err.spawnErr) {
+        console.log('---metadata spawn error---');
+        console.log(err.spawnErr.stack || err.spawnErr);
+      }
       if (stdout) {
         console.log('---stdout---');
         console.log(stdout);

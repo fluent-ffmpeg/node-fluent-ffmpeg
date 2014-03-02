@@ -37,14 +37,14 @@ describe('Processor', function() {
 
   if (!os.match(/win(32|64)/)) {
     it('should properly limit niceness', function() {
-      new Ffmpeg({ source: this.testfile, nolog: true, timeout: 0.02 })
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
           .renice(100).options._niceness.should.equal(0);
     });
 
     it('should dynamically renice process', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-      var ffmpegJob = new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 2 })
+      var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
           .usingPreset('flashvideo')
 
       ffmpegJob
@@ -86,12 +86,16 @@ describe('Processor', function() {
   it('should report codec data through \'codecData\' event', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
 
-    new Ffmpeg({ source: this.testfilebig, nolog: true })
+    new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger })
         .on('codecData', function(data) {
           data.should.have.property('audio');
           data.should.have.property('video');
         })
         .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
             if (exist) {
@@ -109,14 +113,14 @@ describe('Processor', function() {
     var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
       , gotProgress = false;
 
-    new Ffmpeg({ source: this.testfilebig, nolog: true })
+    new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger })
         .on('progress', function(data) {
           gotProgress = true;
         })
         .usingPreset('flashvideo')
-        .on('error', function(err) {
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
-          done();
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
@@ -133,11 +137,11 @@ describe('Processor', function() {
 
   it('should properly take a certain amount of screenshots at defined timemarks', function(done) {
     var testFolder = path.join(__dirname, 'assets', 'tntest_config');
-    var args = new Ffmpeg({ source: this.testfile, nolog: true })
+    var args = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
       .withSize('150x?')
-      .on('error', function(err) {
+      .on('error', function(err, stdout, stderr) {
+        testhelper.logError(err, stdout, stderr);
         assert.ok(!err);
-        done();
       })
       .on('end', function() {
         fs.readdir(testFolder, function(err, files) {
@@ -162,11 +166,11 @@ describe('Processor', function() {
 
   it('should report all generated filenames as an argument to the \'end\' event', function(done) {
     var testFolder = path.join(__dirname, 'assets', 'tntest_config');
-    var args = new Ffmpeg({ source: this.testfile, nolog: true })
+    var args = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
       .withSize('150x?')
-      .on('error', function(err) {
+      .on('error', function(err, stdout, stderr) {
+        testhelper.logError(err, stdout, stderr);
         assert.ok(!err);
-        done();
       })
       .on('end', function(names) {
         names.length.should.equal(2);
@@ -196,8 +200,12 @@ describe('Processor', function() {
   it('should save the output file properly to disk using a stream', function(done) {
     var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .flv');
 
-    new Ffmpeg({ source: this.testfile, nolog: false })
+    new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
       .usingPreset('flashvideo')
+      .on('error', function(err, stdout, stderr) {
+        testhelper.logError(err, stdout, stderr);
+        assert.ok(!err);
+      })
       .on('end', function() {
         fs.exists(testFile, function(exist) {
           if (exist) {
@@ -212,7 +220,7 @@ describe('Processor', function() {
   it('should kill the process on timeout', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-    new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 0.02 })
+    new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.02 })
         .usingPreset('flashvideo')
         .on('error', function(err) {
           err.message.indexOf('timeout').should.not.equal(-1);
@@ -242,7 +250,7 @@ describe('Processor', function() {
   it('should kill the process with .kill', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-    var ffmpegJob = new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 0 })
+    var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 0 })
         .usingPreset('flashvideo');
 
     ffmpegJob
@@ -276,7 +284,7 @@ describe('Processor', function() {
   it('should send the process custom signals with .kill(signal)', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
-    var ffmpegJob = new Ffmpeg({ source: this.testfilebig, nolog: true, timeout: 1 })
+    var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 1 })
         .usingPreset('flashvideo');
 
     ffmpegJob
@@ -310,11 +318,11 @@ describe('Processor', function() {
   describe('saveToFile', function() {
     it('should save the output file properly to disk', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
-      new Ffmpeg({ source: this.testfile, nolog: true })
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .usingPreset('flashvideo')
-        .on('error', function(err) {
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
-          done();
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
@@ -335,7 +343,7 @@ describe('Processor', function() {
 
     it('should save output files with special characters', function(done) {
       var testFile = path.join(__dirname, 'assets', '[test "special \' char*cters \n.flv');
-      new Ffmpeg({ source: this.testfile, nolog: true })
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .usingPreset('flashvideo')
         .on('error', function(err, stdout, stderr) {
           testhelper.logError(err, stdout, stderr);
@@ -361,11 +369,11 @@ describe('Processor', function() {
     it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
       var instream = fs.createReadStream(this.testfile);
-      new Ffmpeg({ source: instream, nolog: true })
+      new Ffmpeg({ source: instream, logger: testhelper.logger })
         .usingPreset('flashvideo')
-        .on('error', function(err) {
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
-          done();
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
@@ -393,10 +401,10 @@ describe('Processor', function() {
       var src1File = path.join(__dirname, 'assets', 'testaudio-two.wav');
       var src2File = path.join(__dirname, 'assets', 'testaudio-three.wav');
 
-      new Ffmpeg({source: srcFile, nolog: true})
-        .on('error', function(err) {
+      new Ffmpeg({source: srcFile, logger: testhelper.logger})
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
-          done();
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
@@ -422,10 +430,10 @@ describe('Processor', function() {
     it('should save the output file properly to disk using a stream', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToStream.flv');
       var outstream = fs.createWriteStream(testFile);
-      new Ffmpeg({ source: this.testfile, nolog: true })
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .usingPreset('flashvideo')
-        .on('error', function(err) {
-          console.log('got error ' + err.message);
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
         })
         .on('end', function(stdout, stderr) {
@@ -454,10 +462,10 @@ describe('Processor', function() {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToStream.flv');
       var instream = fs.createReadStream(this.testfile);
       var outstream = fs.createWriteStream(testFile);
-      new Ffmpeg({ source: instream, nolog: true })
+      new Ffmpeg({ source: instream, logger: testhelper.logger })
         .usingPreset('flashvideo')
-        .on('error', function(err) {
-          console.log('got error ' + err.message);
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
         })
         .on('end', function(stdout,stderr) {
@@ -484,7 +492,7 @@ describe('Processor', function() {
 
   describe('takeScreenshot',function(){
     it('should return error with wrong size',function(done){
-      var proc = new Ffmpeg({ source: path.join(__dirname, 'assets', 'testConvertToStream.flv')})
+      var proc = new Ffmpeg({ source: path.join(__dirname, 'assets', 'testConvertToStream.flv'), logger: testhelper.logger })
       .withSize('aslkdbasd')
       .on('error', function(err) {
         assert.ok(!!err);
@@ -502,7 +510,7 @@ describe('Processor', function() {
   describe('inputs', function() {
     it('should take input from a file with special characters', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
-      new Ffmpeg({ source: this.testfilespecial, inputLive: true, timeout: 10 })
+      new Ffmpeg({ source: this.testfilespecial, logger: testhelper.logger, timeout: 10 })
         .takeFrames(50)
         .usingPreset('flashvideo')
         .on('error', function(err, stdout, stderr) {
@@ -528,7 +536,7 @@ describe('Processor', function() {
 
     it('should take input from a RTSP stream', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
-      new Ffmpeg({ source: encodeURI(testRTSP), timeout: 0 })
+      new Ffmpeg({ source: encodeURI(testRTSP), logger: testhelper.logger, timeout: 0 })
         .takeFrames(10)
         .usingPreset('flashvideo')
         .withSize('320x240')
@@ -555,7 +563,7 @@ describe('Processor', function() {
 
     it('should take input from a RTMP stream', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
-      new Ffmpeg({ source: encodeURI(testRTMP), timeout: 0 })
+      new Ffmpeg({ source: encodeURI(testRTMP), logger: testhelper.logger, timeout: 0 })
         .takeFrames(10)
         .usingPreset('flashvideo')
         .withSize('320x240')
@@ -582,7 +590,7 @@ describe('Processor', function() {
 
     it('should take input from an URL', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
-      new Ffmpeg({ source: testHTTP, timeout: 0 })
+      new Ffmpeg({ source: testHTTP, logger: testhelper.logger, timeout: 0 })
         .takeFrames(5)
         .usingPreset('flashvideo')
         .withSize('320x240')
