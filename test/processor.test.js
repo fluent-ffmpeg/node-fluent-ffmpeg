@@ -16,6 +16,7 @@ describe('Processor', function() {
     this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
     this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
     this.testfilebig = path.join(__dirname, 'assets', 'testvideo-5m.mpg');
+    this.testfilespecial = path.join(__dirname, 'assets', 'te[s]t\\ video \' " .flv');
 
     var self = this;
     exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
@@ -332,6 +333,31 @@ describe('Processor', function() {
         .saveToFile(testFile);
     });
 
+    it('should save output files with special characters', function(done) {
+      var testFile = path.join(__dirname, 'assets', '[test "special \' char*cters \n.flv');
+      new Ffmpeg({ source: this.testfile, nolog: true })
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            exist.should.true;
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+              // unlink file
+              fs.unlinkSync(testFile);
+              done();
+            });
+          });
+        })
+        .saveToFile(testFile);
+    })
+
     it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
       var instream = fs.createReadStream(this.testfile);
@@ -474,6 +500,32 @@ describe('Processor', function() {
   });
 
   describe('inputs', function() {
+    it('should take input from a file with special characters', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
+      new Ffmpeg({ source: this.testfilespecial, inputLive: true, timeout: 10 })
+        .takeFrames(50)
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            exist.should.true;
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+              // unlink file
+              fs.unlinkSync(testFile);
+              done();
+            });
+          });
+        })
+        .saveToFile(testFile);
+    });
+
     it('should take input from a RTSP stream', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: encodeURI(testRTSP), timeout: 0 })
@@ -527,6 +579,7 @@ describe('Processor', function() {
         })
         .saveToFile(testFile);
     });
+
     it('should take input from an URL', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: testHTTP, timeout: 0 })
