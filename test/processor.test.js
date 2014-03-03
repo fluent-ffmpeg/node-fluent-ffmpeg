@@ -6,6 +6,10 @@ var Ffmpeg = require('../index'),
   exec = require('child_process').exec,
   testhelper = require('./helpers');
 
+var testHTTP = 'http://www.wowza.com/_h264/BigBuckBunny_115k.mov?test with=space';
+var testRTSP = 'rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov?test with=spa ce';
+var testRTMP = 'rtmp://rtmp.jim.stream.vmmacdn.be/vmma-jim-rtmplive-live/jim';
+
 describe('Processor', function() {
   before(function(done) {
     // check for ffmpeg installation
@@ -466,6 +470,88 @@ describe('Processor', function() {
         done();
       })
       .takeScreenshots(5, path.join(__dirname, 'assets'));
+    });
+  });
+
+  describe('inputs', function() {
+    it('should take input from a RTSP stream', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
+      new Ffmpeg({ source: encodeURI(testRTSP), timeout: 0 })
+        .takeFrames(10)
+        .usingPreset('flashvideo')
+        .withSize('320x240')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            exist.should.true;
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+              // unlink file
+              fs.unlinkSync(testFile);
+              done();
+            });
+          });
+        })
+        .saveToFile(testFile);
+    });
+
+    it('should take input from a RTMP stream', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
+      new Ffmpeg({ source: encodeURI(testRTMP), timeout: 0 })
+        .takeFrames(10)
+        .usingPreset('flashvideo')
+        .withSize('320x240')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            exist.should.true;
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+              // unlink file
+              fs.unlinkSync(testFile);
+              done();
+            });
+          });
+        })
+        .saveToFile(testFile);
+    });
+    it('should take input from an URL', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
+      new Ffmpeg({ source: testHTTP, timeout: 0 })
+        .takeFrames(5)
+        .usingPreset('flashvideo')
+        .withSize('320x240')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            exist.should.true;
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+              // unlink file
+              fs.unlinkSync(testFile);
+              done();
+            });
+          });
+        })
+        .saveToFile(testFile);
     });
   });
 });
