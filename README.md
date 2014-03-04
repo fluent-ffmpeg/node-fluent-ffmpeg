@@ -67,10 +67,7 @@ Additional options can be supplied when creating a command.
 var command = new FFmpeg({
         // Source filename or input stream
         source: '/path/to/file.avi',
-
-        // Source string is a live stream URI, defaults to false
-        inputlive: false,
-
+        
         // Processing timeout in seconds, defaults to 30.
         // You can disable the timeout by passing 0.
         timeout: 30,
