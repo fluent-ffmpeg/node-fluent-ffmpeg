@@ -42,6 +42,8 @@ describe('Processor', function() {
     });
 
     it('should dynamically renice process', function(done) {
+      this.timeout(10000);
+
       var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
       var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
@@ -84,6 +86,8 @@ describe('Processor', function() {
   }
 
   it('should report codec data through \'codecData\' event', function(done) {
+    this.timeout(10000);
+
     var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
 
     new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger })
@@ -108,7 +112,7 @@ describe('Processor', function() {
   });
 
   it('should report progress through \'progress\' event', function(done) {
-    this.timeout(15000)
+    this.timeout(10000)
 
     var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
       , gotProgress = false;
@@ -282,6 +286,8 @@ describe('Processor', function() {
   });
 
   it('should send the process custom signals with .kill(signal)', function(done) {
+    this.timeout(10000);
+
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
     var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 1 })
@@ -535,6 +541,8 @@ describe('Processor', function() {
     });
 
     it('should take input from a RTSP stream', function(done) {
+      this.timeout(60000);
+
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: encodeURI(testRTSP), logger: testhelper.logger, timeout: 0 })
         .takeFrames(10)
@@ -562,6 +570,8 @@ describe('Processor', function() {
     });
 
     it('should take input from a RTMP stream', function(done) {
+      this.timeout(60000);
+
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: encodeURI(testRTMP), logger: testhelper.logger, timeout: 0 })
         .takeFrames(10)
@@ -589,6 +599,8 @@ describe('Processor', function() {
     });
 
     it('should take input from an URL', function(done) {
+      this.timeout(60000);
+
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: testHTTP, logger: testhelper.logger, timeout: 0 })
         .takeFrames(5)
