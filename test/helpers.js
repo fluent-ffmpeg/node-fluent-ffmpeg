@@ -9,5 +9,19 @@ exports = module.exports = TestHelpers = {
       // windows, use where (> windows server 2003 / windows 7)
       return 'where /Q ffmpeg';
     }
+  },
+
+  logError: function(err, stdout, stderr) {
+    if (err) {
+      console.log('got error: ' + (err.stack || err));
+      if (stdout) {
+        console.log('---stdout---');
+        console.log(stdout);
+      }
+      if (stderr) {
+        console.log('---stderr---');
+        console.log(stderr);
+      }
+    }
   }
 }
