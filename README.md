@@ -231,7 +231,7 @@ You can set events listeners on a command.
 var command = new FFmpeg({ source: '/path/to/video.avi' })
 
     .on('start', function(commandLine) {
-        // The 'start' event is emitted just before the FFmpeg
+        // The 'start' event is emitted just after the FFmpeg
         // process is spawned.
 
         console.log('Spawned FFmpeg with command: ' + commandLine);

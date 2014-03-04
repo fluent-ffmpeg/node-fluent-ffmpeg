@@ -49,8 +49,23 @@ describe('Processor', function() {
       var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
           .usingPreset('flashvideo')
 
+      var startCalled = false;
       ffmpegJob
+          .on('start', function() {
+            startCalled = true;
+            setTimeout(function() {
+              ffmpegJob.renice(5);
+
+              setTimeout(function() {
+                exec("ps h p " + ffmpegJob.ffmpegProc.pid + " -o ni", function(err, stdout, stderr) {
+                  assert.ok(!err);
+                  parseInt(stdout).should.equal(5);
+                });
+              }, 500);
+            }, 500);
+          })
           .on('error', function(err) {
+            startCalled.should.be.true;
             fs.exists(testFile, function(exist) {
               if (exist) {
                 setTimeout(function() {
@@ -71,17 +86,6 @@ describe('Processor', function() {
             done();
           })
           .saveToFile(testFile);
-
-      setTimeout(function() {
-        ffmpegJob.renice(5);
-
-        setTimeout(function() {
-          exec("ps h p " + ffmpegJob.ffmpegProc.pid + " -o ni", function(err, stdout, stderr) {
-            assert.ok(!err);
-            parseInt(stdout).should.equal(5);
-          });
-        }, 500);
-      }, 500);
     });
   }
 
@@ -133,6 +137,39 @@ describe('Processor', function() {
             }
 
             gotProgress.should.be.true;
+            done();
+          });
+        })
+        .saveToFile(testFile);
+  });
+
+  it('should report start of ffmpeg process through \'start\' event', function(done) {
+    this.timeout(10000)
+
+    var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
+      , startCalled = false;
+
+    new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger })
+        .on('start', function(cmdline) {
+          startCalled = true;
+
+          // Only test a subset of command line
+          cmdline.indexOf('ffmpeg').should.equal(0);
+          cmdline.indexOf('testvideo-5m').should.not.equal(-1);
+          cmdline.indexOf('-b:a 96k').should.not.equal(-1);
+        })
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            if (exist) {
+              fs.unlinkSync(testFile);
+            }
+
+            startCalled.should.be.true;
             done();
           });
         })
@@ -257,9 +294,15 @@ describe('Processor', function() {
     var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 0 })
         .usingPreset('flashvideo');
 
+    var startCalled = false;
     ffmpegJob
+        .on('start', function() {
+          startCalled = true;
+          setTimeout(function() { ffmpegJob.kill(); }, 500);
+        })
         .on('error', function(err) {
           err.message.indexOf('ffmpeg was killed with signal SIGKILL').should.not.equal(-1);
+          startCalled.should.be.true;
 
           fs.exists(testFile, function(exist) {
             if (exist) {
@@ -281,8 +324,6 @@ describe('Processor', function() {
           done();
         })
         .saveToFile(testFile);
-
-    setTimeout(function() { ffmpegJob.kill(); }, 500);
   });
 
   it('should send the process custom signals with .kill(signal)', function(done) {
@@ -293,8 +334,14 @@ describe('Processor', function() {
     var ffmpegJob = new Ffmpeg({ source: this.testfilebig, logger: testhelper.logger, timeout: 1 })
         .usingPreset('flashvideo');
 
+    var startCalled = true;
     ffmpegJob
+        .on('start', function() {
+          startCalled = true;
+          setTimeout(function() { ffmpegJob.kill('SIGSTOP'); }, 20);
+        })
         .on('error', function(err) {
+          startCalled.should.be.true;
           err.message.indexOf('timeout').should.not.equal(-1);
 
           fs.exists(testFile, function(exist) {
@@ -318,7 +365,6 @@ describe('Processor', function() {
         })
         .saveToFile(testFile);
 
-    setTimeout(function() { ffmpegJob.kill('SIGSTOP'); }, 20);
   });
 
   describe('saveToFile', function() {
