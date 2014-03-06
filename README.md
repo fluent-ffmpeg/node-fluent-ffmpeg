@@ -67,10 +67,7 @@ Additional options can be supplied when creating a command.
 var command = new FFmpeg({
         // Source filename or input stream
         source: '/path/to/file.avi',
-
-        // Source string is a live stream URI, defaults to false
-        inputlive: false,
-
+        
         // Processing timeout in seconds, defaults to 30.
         // You can disable the timeout by passing 0.
         timeout: 30,
@@ -234,7 +231,7 @@ You can set events listeners on a command.
 var command = new FFmpeg({ source: '/path/to/video.avi' })
 
     .on('start', function(commandLine) {
-        // The 'start' event is emitted just before the FFmpeg
+        // The 'start' event is emitted just after the FFmpeg
         // process is spawned.
 
         console.log('Spawned FFmpeg with command: ' + commandLine);
