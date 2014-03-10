@@ -1,7 +1,7 @@
 var Ffmpeg = require('../index'),
   path = require('path'),
   fs = require('fs'),
-  exec = require('child_process').exec
+  exec = require('child_process').exec,
   testhelper = require('./helpers');
 
 describe('Debug', function() {
@@ -29,7 +29,7 @@ describe('Debug', function() {
 
   describe('getArgs', function() {
     it('should properly return arguments in callback', function(done) {
-      new Ffmpeg({ source: this.testfile, nolog: true })
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .usingPreset('podcast')
         .getArgs(function(args) {
           args.length.should.equal(44);
@@ -41,7 +41,7 @@ describe('Debug', function() {
   describe('getCommand', function() {
     it('should properly compile options into an ffmpeg command line call', function(done) {
       var self = this;
-      new Ffmpeg({ source: this.testfile, nolog: true })
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .usingPreset('divx')
         .getCommand('file', function(cmd) {
           cmd.length.should.above(1);
