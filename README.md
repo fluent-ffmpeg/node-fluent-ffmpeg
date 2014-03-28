@@ -219,7 +219,7 @@ new FFmpeg({ source: '/path/to/video.avi' })
     .addOption('-crf', '23')
 
     // Add several options at once
-    .addOption(['-crf 23', '--preset ultrafast']);
+    .addOptions(['-crf 23', '--preset ultrafast']);
 ```
 
 ### Setting event handlers
