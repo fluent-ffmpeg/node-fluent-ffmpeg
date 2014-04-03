@@ -11,14 +11,14 @@ describe('Capabilities', function() {
       (typeof codecs).should.equal('object');
       Object.keys(codecs).length.should.not.equal(0);
 
-      codecs.should.have.key('pcm_s16le');
-      codecs.pcm_s16le.should.have.key('type');
+      ('pcm_s16le' in codecs).should.equal(true);
+      ('type' in codecs.pcm_s16le).should.equal(true);
       (typeof codecs.pcm_s16le.type).should.equal('string');
-      codecs.pcm_s16le.should.have.key('description');
+      ('description' in codecs.pcm_s16le).should.equal(true);
       (typeof codecs.pcm_s16le.description).should.equal('string');
-      codecs.pcm_s16le.should.have.key('canEncode');
+      ('canEncode' in codecs.pcm_s16le).should.equal(true);
       (typeof codecs.pcm_s16le.canEncode).should.equal('boolean');
-      codecs.pcm_s16le.should.have.key('canDecode');
+      ('canDecode' in codecs.pcm_s16le).should.equal(true);
       (typeof codecs.pcm_s16le.canDecode).should.equal('boolean');
 
       done();
@@ -33,12 +33,12 @@ describe('Capabilities', function() {
       (typeof formats).should.equal('object');
       Object.keys(formats).length.should.not.equal(0);
 
-      formats.should.have.key('wav');
-      formats.wav.should.have.key('description');
+      ('wav' in formats).should.equal(true);
+      ('description' in formats.wav).should.equal(true);
       (typeof formats.wav.description).should.equal('string');
-      formats.wav.should.have.key('canMux');
+      ('canMux' in formats.wav).should.equal(true);
       (typeof formats.wav.canMux).should.equal('boolean');
-      formats.wav.should.have.key('canDemux');
+      ('canDemux' in formats.wav).should.equal(true);
       (typeof formats.wav.canDemux).should.equal('boolean');
 
       done();
@@ -53,16 +53,16 @@ describe('Capabilities', function() {
       (typeof filters).should.equal('object');
       Object.keys(filters).length.should.not.equal(0);
 
-      filters.should.have.key('anull');
-      filters.anull.should.have.key('description');
+      ('anull' in filters).should.equal(true);
+      ('description' in filters.anull).should.equal(true);
       (typeof filters.anull.description).should.equal('string');
-      filters.anull.should.have.key('input');
+      ('input' in filters.anull).should.equal(true);
       (typeof filters.anull.input).should.equal('string');
-      filters.anull.should.have.key('output');
+      ('output' in filters.anull).should.equal(true);
       (typeof filters.anull.output).should.equal('string');
-      filters.anull.should.have.key('multipleInputs');
+      ('multipleInputs' in filters.anull).should.equal(true);
       (typeof filters.anull.multipleInputs).should.equal('boolean');
-      filters.anull.should.have.key('multipleOutputs');
+      ('multipleOutputs' in filters.anull).should.equal(true);
       (typeof filters.anull.multipleOutputs).should.equal('boolean');
 
       done();
