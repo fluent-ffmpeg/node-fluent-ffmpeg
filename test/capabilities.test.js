@@ -68,4 +68,16 @@ describe('Capabilities', function() {
       done();
     });
   });
+
+  it('should enable querying capabilities without instanciating a command', function(done) {
+    Ffmpeg.getAvailableCodecs(function(err, filters) {
+      testhelper.logError(err);
+      assert.ok(!err);
+
+      (typeof filters).should.equal('object');
+      Object.keys(filters).length.should.not.equal(0);
+
+      done();
+    });
+  });
 });
