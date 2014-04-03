@@ -67,7 +67,10 @@ Additional options can be supplied when creating a command.
 var command = new FFmpeg({
         // Source filename or input stream
         source: '/path/to/file.avi',
-        
+
+        // Custom presets folder
+        preset: './presets',
+
         // Processing timeout in seconds, defaults to 30.
         // You can disable the timeout by passing 0.
         timeout: 30,

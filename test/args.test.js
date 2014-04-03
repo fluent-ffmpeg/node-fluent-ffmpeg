@@ -42,6 +42,16 @@ describe('Command', function() {
         });
     });
 
+    it('should properly generate the command for the requested preset in custom folder', function(done) {
+      new Ffmpeg({ source: this.testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
+        .usingPreset('custompreset')
+        .getArgs(function(args) {
+          args.length.should.equal(44);
+
+        done();
+      })
+    });
+
     it('should allow using functions as presets', function(done) {
       var presetArg;
 
