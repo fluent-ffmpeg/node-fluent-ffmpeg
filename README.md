@@ -603,6 +603,7 @@ The returned object for filters looks like:
 ## Contributors
 
 * [enobrev](http://github.com/enobrev)
+* [njoyard](http://github.com/njoyard)
 * [sadikzzz](http://github.com/sadikzzz)
 * [smremde](http://github.com/smremde)
 * [spruce](http://github.com/spruce)
