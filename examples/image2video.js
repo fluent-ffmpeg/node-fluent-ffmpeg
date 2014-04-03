@@ -1,4 +1,4 @@
-var ffmpeg = require('../index');
+var ffmpeg = require('fluent-ffmpeg');
 
 // make sure you set the correct path to your video file
 var proc = new ffmpeg({ source: '/path/to/your_image.jpg', nolog: true })
