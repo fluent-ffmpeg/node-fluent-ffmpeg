@@ -71,7 +71,7 @@ var command = new FFmpeg({
         // Custom presets folder
         preset: './presets',
 
-        // Processing timeout in seconds, defaults to 30.
+        // Processing timeout in seconds, defaults to no timeout
         // You can disable the timeout by passing 0.
         timeout: 30,
 
