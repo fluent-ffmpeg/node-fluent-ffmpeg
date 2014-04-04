@@ -8,7 +8,7 @@ var Ffmpeg = require('../index'),
 
 var testHTTP = 'http://www.wowza.com/_h264/BigBuckBunny_115k.mov?test with=space';
 var testRTSP = 'rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov?test with=spa ce';
-var testRTMP = 'rtmp://rtmp.jim.stream.vmmacdn.be/vmma-jim-rtmplive-live/jim';
+var testRTMP = 'rtmp://cp67126.edgefcs.net/ondemand/mp4:mediapm/ovp/content/test/video/spacealonehd_sounas_640_300.mp4';
 
 describe('Processor', function() {
   before(function(done) {
