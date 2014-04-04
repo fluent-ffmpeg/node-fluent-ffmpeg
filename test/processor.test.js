@@ -8,7 +8,7 @@ var Ffmpeg = require('../index'),
 
 var testHTTP = 'http://www.wowza.com/_h264/BigBuckBunny_115k.mov?test with=space';
 var testRTSP = 'rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov?test with=spa ce';
-var testRTMP = 'rtmp://rtmp.jim.stream.vmmacdn.be/vmma-jim-rtmplive-live/jim';
+var testRTMP = 'rtmp://cp67126.edgefcs.net/ondemand/mp4:mediapm/ovp/content/test/video/spacealonehd_sounas_640_300.mp4';
 
 describe('Processor', function() {
   before(function(done) {
@@ -42,7 +42,7 @@ describe('Processor', function() {
     });
 
     it('should dynamically renice process', function(done) {
-      this.timeout(10000);
+      this.timeout(60000);
 
       var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
@@ -90,7 +90,7 @@ describe('Processor', function() {
   }
 
   it('should report codec data through \'codecData\' event', function(done) {
-    this.timeout(10000);
+    this.timeout(60000);
 
     var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
 
@@ -116,7 +116,7 @@ describe('Processor', function() {
   });
 
   it('should report progress through \'progress\' event', function(done) {
-    this.timeout(10000)
+    this.timeout(60000)
 
     var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
       , gotProgress = false;
@@ -144,7 +144,7 @@ describe('Processor', function() {
   });
 
   it('should report start of ffmpeg process through \'start\' event', function(done) {
-    this.timeout(10000)
+    this.timeout(60000)
 
     var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
       , startCalled = false;
@@ -327,7 +327,7 @@ describe('Processor', function() {
   });
 
   it('should send the process custom signals with .kill(signal)', function(done) {
-    this.timeout(10000);
+    this.timeout(60000);
 
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
 
@@ -491,7 +491,7 @@ describe('Processor', function() {
         .on('end', function(stdout, stderr) {
           fs.exists(testFile, function(exist) {
             if (!exist) {
-              console.log(stderr);  
+              console.log(stderr);
             }
 
             exist.should.true;
@@ -523,7 +523,7 @@ describe('Processor', function() {
         .on('end', function(stdout,stderr) {
           fs.exists(testFile, function(exist) {
             if (!exist) {
-              console.log(stderr);  
+              console.log(stderr);
             }
 
             exist.should.true;
@@ -587,7 +587,7 @@ describe('Processor', function() {
     });
 
     it('should take input from a RTSP stream', function(done) {
-      this.timeout(60000);
+      this.timeout(300000);
 
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: encodeURI(testRTSP), logger: testhelper.logger, timeout: 0 })
@@ -616,7 +616,7 @@ describe('Processor', function() {
     });
 
     it('should take input from a RTMP stream', function(done) {
-      this.timeout(60000);
+      this.timeout(300000);
 
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: encodeURI(testRTMP), logger: testhelper.logger, timeout: 0 })
@@ -645,7 +645,7 @@ describe('Processor', function() {
     });
 
     it('should take input from an URL', function(done) {
-      this.timeout(60000);
+      this.timeout(300000);
 
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.flv');
       new Ffmpeg({ source: testHTTP, logger: testhelper.logger, timeout: 0 })
