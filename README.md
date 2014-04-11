@@ -333,7 +333,7 @@ new FFmpeg({ source: '/path/to/video.avi' })
 
 #### Preset functions
 
-You can define a preset as a function that takes an `FfmpegCommand` as an argument and calls method on it, and then pass it to `usePreset`.
+You can define a preset as a function that takes an `FfmpegCommand` as an argument and calls method on it, and then pass it to `usingPreset`.
 
 ```js
 function myPreset(command) {
