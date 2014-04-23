@@ -453,7 +453,7 @@ new FFmpeg({ source: '/path/to/video.avi' })
     .takeScreenshots(
         {
             count: 2,
-            timemarks: [ '0.5', '1' ]
+            timemarks: [ '0.5', '1' ],
             filename: '%b-thumbnail-%i-%r'
         },
         '/path/to/directory'
