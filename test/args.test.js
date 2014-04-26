@@ -35,7 +35,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.length.should.equal(44); // on a side note: it's 42 args by coincidence ;)
                                         // on a side note: not anymore, sorry :(
           done();
@@ -68,7 +68,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           presetArg.should.equal(cmd);
           args.join(' ').indexOf('-vcodec libx264').should.not.equal(-1);
           args.join(' ').indexOf('-ar 22050').should.not.equal(-1);
@@ -121,7 +121,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-an').should.above(-1);
           done();
         });
@@ -134,10 +134,10 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-an').should.above(-1);
           args.indexOf('-ac').should.equal(-1);
-          args.indexOf('-s').should.above(-1);
+          args.indexOf('scale=320:-1').should.above(-1);
           done();
         });
     });
@@ -150,7 +150,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-b:v').should.above(-1);
           done();
         });
@@ -161,119 +161,11 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-b:v').should.above(-1);
           args.indexOf('-maxrate').should.above(-1);;
           args.indexOf('-minrate').should.above(-1);
           args.indexOf('-bufsize').should.above(-1);
-          done();
-        });
-    });
-  });
-
-  describe('withSize', function() {
-    it('should calculate the missing size part (height)', function(done) {
-      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('320x?')
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-          
-          args.indexOf('320x240').should.above(-1);
-          done();
-        });
-    });
-    it('should calculate the missing size part (width)', function(done) {
-      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('?x480')
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-          
-          args.indexOf('640x480').should.above(-1);
-          done();
-        });
-    });
-    it('should calculate the size based on a percentage', function(done) {
-      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('50%')
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-          
-          args.indexOf('512x384').should.above(-1);
-          done();
-        });
-    });
-  });
-
-  describe('applyAutopadding', function() {
-    it('should apply color if provided', function(done) {
-      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withAspect('16:9')
-        .applyAutopadding(true, 'red')
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-          
-          args.indexOf('-filter:v').should.above(-1);
-          args.indexOf('pad=1024:768:128:0:red').should.above(-1);
-          done();
-        });
-    });
-    it('should calculate the correct size for output video stream', function(done) {
-      new Ffmpeg({ source: this.testfilewide, logger: testhelper.logger })
-        .withAspect('4:3')
-        .applyAutopadding(true)
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-        
-          args.indexOf('1280x540').should.above(-1);
-          args.indexOf('-filter:v').should.above(-1);
-          args.indexOf('pad=1280:720:0:90:black').should.above(-1);
-          done();
-        });
-    });
-    it('should calculate the correct aspect ratio if omitted in favor of size', function(done) {
-      new Ffmpeg({ source: this.testfilewide, logger: testhelper.logger })
-        .withSize('640x480')
-        .applyAutopadding(true)
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-          
-          args.indexOf('-filter:v').should.above(-1);
-          args.indexOf('pad=640:480:0:60:black').should.above(-1);
-          done();
-        });
-    });
-    it('should calculate size if a fixed width and an aspect ratio is provided', function(done) {
-      new Ffmpeg({ source: this.testfilewide, logger: testhelper.logger })
-        .withSize('640x?')
-        .withAspect('4:3')
-        .applyAutopadding(true)
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-        
-          args.indexOf('-filter:v').should.above(-1);
-          args.indexOf('pad=640:480:0:60:black').should.above(-1);
-          done();
-        });
-    });
-
-    it('should calculate size if a fixed height and an aspect ratio is provided', function(done) {
-      new Ffmpeg({ source: this.testfilewide, logger: testhelper.logger })
-        .withSize('?x480')
-        .withAspect('4:3')
-        .applyAutopadding(true)
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-        
-          args.indexOf('-filter:v').should.above(-1);
-          args.indexOf('pad=640:480:0:60:black').should.above(-1);
           done();
         });
     });
@@ -285,7 +177,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-        
+
           args.indexOf('-i').should.above(-1);
           args.indexOf('image-%05d.png').should.above(-1);
           done();
@@ -300,7 +192,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-r').should.above(-1);
           args.indexOf(27.77).should.above(-1);
           done();
@@ -315,7 +207,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-i').should.above(-1);
           args.indexOf('soundtrack.mp3').should.above(-1);
           done();
@@ -330,7 +222,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-aspect').should.above(-1);
           args.indexOf('16:9').should.above(-1);
           done();
@@ -341,13 +233,13 @@ describe('Command', function() {
   describe('withVideoCodec', function() {
     it('should apply the video codec argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withVideoCodec('divx')
+        .withVideoCodec('libx264')
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-vcodec').should.above(-1);
-          args.indexOf('divx').should.above(-1);
+          args.indexOf('libx264').should.above(-1);
           done();
         });
     });
@@ -361,7 +253,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-filter:v').should.above(-1);
           args.indexOf('scale=123:456,pad=1230:4560:100:100:yellow').should.above(-1);
           done();
@@ -376,7 +268,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-b:a').should.above(-1);
           args.indexOf('256k').should.above(-1);
           done();
@@ -391,7 +283,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
             done();
           }
@@ -406,7 +298,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
             args.indexOf('-t').should.above(-1);
             args.indexOf(120).should.above(-1);
@@ -424,7 +316,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
             args.indexOf('-t').should.above(-1);
             args.indexOf('00:06:46.81').should.above(-1);
@@ -444,7 +336,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-vframes').should.above(-1);
           args.indexOf(250).should.above(-1);
           done();
@@ -459,7 +351,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-acodec').should.above(-1);
           args.indexOf('mp3').should.above(-1);
           done();
@@ -475,7 +367,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-filter:a').should.above(-1);
           args.indexOf('silencedetect=n=-50dB:d=5,volume=0.5').should.above(-1);
           done();
@@ -490,7 +382,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-ac').should.above(-1);
           args.indexOf(1).should.above(-1);
           done();
@@ -505,7 +397,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-ar').should.above(-1);
           args.indexOf(22500).should.above(-1);
           done();
@@ -520,7 +412,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-aq').should.above(-1);
           args.indexOf(5).should.above(-1);
           done();
@@ -535,7 +427,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-ss').should.above(-1);
           args.indexOf('00:00:10').should.above(-1);
           done();
@@ -550,7 +442,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-t').should.above(-1);
           args.indexOf(10).should.above(-1);
           done();
@@ -565,7 +457,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-ab').should.above(-1);
           args.indexOf('256k').should.above(-1);
           done();
@@ -577,7 +469,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-flags').should.above(-1);
           args.indexOf('+loop').should.above(-1);
           args.indexOf('-cmp').should.above(-1);
@@ -593,7 +485,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           var joined = args.join(' ');
           joined.indexOf('-r 29.97').should.above(-1).and.below(joined.indexOf('-i '));
           done();
@@ -605,7 +497,7 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           var joined = args.join(' ');
           joined.indexOf('-r 29.97').should.above(-1).and.below(joined.indexOf('-i'));
           joined.indexOf('-f ogg').should.above(-1).and.below(joined.indexOf('-i'));
@@ -621,11 +513,175 @@ describe('Command', function() {
         .getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
-          
+
           args.indexOf('-f').should.above(-1);
           args.indexOf('mp4').should.above(-1);
           done();
         });
+    });
+  });
+
+  describe('Size calculations', function() {
+    it('Should not add scale filters when withSize was not called', function() {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .getSizeFilters().length.should.equal(0);
+
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withAspect(4/3)
+        .getSizeFilters().length.should.equal(0);
+
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .applyAutopadding(true, 'white')
+        .getSizeFilters().length.should.equal(0);
+    });
+
+    it('Should add proper scale filter when withSize was called with a percent value', function() {
+      var filters;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('42%')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=iw*42/100:ih*42/100');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('42%')
+        .withAspect(4/3)
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=iw*42/100:ih*42/100');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('42%')
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=iw*42/100:ih*42/100');
+    });
+
+    it('Should add proper scale filter when withSize was called with a fixed size', function() {
+      var filters;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x456')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=123:456');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x456')
+        .withAspect(4/3)
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=123:456');
+    });
+
+    it('Should add proper scale filter when withSize was called with a "?" and no aspect ratio is specified', function() {
+      var filters;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x?')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=123:-1');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x?')
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=123:-1');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('?x456')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=-1:456');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('?x456')
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=-1:456');
+    });
+
+    it('Should add proper scale filter when withSize was called with a "?" and an aspect ratio is specified', function() {
+      var filters;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x?')
+        .withAspect(0.5)
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=123:246');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('?x123')
+        .withAspect(2)
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=246:123');
+    });
+
+    it('Should add scale and pad filters when withSize was called with a "?", aspect ratio and auto padding are specified', function() {
+      var filters;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x?')
+        .withAspect(0.5)
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=ow=if(gt(a,0.5),123,246*a),oh=if(lt(a,0.5),246,123/a)');
+      filters[1].should.equal('pad=w=123,h=246,x=if(gt(a,0.5),0,(123-iw*a)/2),y=if(lt(a,0.5),0,(246-ih/a)/2),color=white');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('?x123')
+        .withAspect(2)
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=ow=if(gt(a,2),246,123*a),oh=if(lt(a,2),123,246/a)');
+      filters[1].should.equal('pad=w=246,h=123,x=if(gt(a,2),0,(246-iw*a)/2),y=if(lt(a,2),0,(123-ih/a)/2),color=white');
+    });
+
+    it('Should add scale and pad filters when withSize was called with a fixed size and auto padding is specified', function() {
+      var filters;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x246')
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=ow=if(gt(a,0.5),123,246*a),oh=if(lt(a,0.5),246,123/a)');
+      filters[1].should.equal('pad=w=123,h=246,x=if(gt(a,0.5),0,(123-iw*a)/2),y=if(lt(a,0.5),0,(246-ih/a)/2),color=white');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('123x246')
+        .withAspect(4/3)
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=ow=if(gt(a,0.5),123,246*a),oh=if(lt(a,0.5),246,123/a)');
+      filters[1].should.equal('pad=w=123,h=246,x=if(gt(a,0.5),0,(123-iw*a)/2),y=if(lt(a,0.5),0,(246-ih/a)/2),color=white');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('246x123')
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=ow=if(gt(a,2),246,123*a),oh=if(lt(a,2),123,246/a)');
+      filters[1].should.equal('pad=w=246,h=123,x=if(gt(a,2),0,(246-iw*a)/2),y=if(lt(a,2),0,(123-ih/a)/2),color=white');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('246x123')
+        .withAspect(4/3)
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=ow=if(gt(a,2),246,123*a),oh=if(lt(a,2),123,246/a)');
+      filters[1].should.equal('pad=w=246,h=123,x=if(gt(a,2),0,(246-iw*a)/2),y=if(lt(a,2),0,(123-ih/a)/2),color=white');
     });
   });
 });
