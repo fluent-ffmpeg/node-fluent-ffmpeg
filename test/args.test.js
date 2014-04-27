@@ -527,146 +527,179 @@ describe('Command', function() {
         .withSize('42%')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=iw*42/100:ih*42/100');
+      filters[0].should.equal('scale=trunc(iw*0.42/2)*2:trunc(ih*0.42/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('42%')
         .withAspect(4/3)
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=iw*42/100:ih*42/100');
+      filters[0].should.equal('scale=trunc(iw*0.42/2)*2:trunc(ih*0.42/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('42%')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=iw*42/100:ih*42/100');
+      filters[0].should.equal('scale=trunc(iw*0.42/2)*2:trunc(ih*0.42/2)*2');
     });
 
     it('Should add proper scale filter when withSize was called with a fixed size', function() {
       var filters;
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x456')
+        .withSize('100x200')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=123:456');
+      filters[0].should.equal('scale=100:200');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x456')
+        .withSize('100x200')
         .withAspect(4/3)
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=123:456');
+      filters[0].should.equal('scale=100:200');
     });
 
     it('Should add proper scale filter when withSize was called with a "?" and no aspect ratio is specified', function() {
       var filters;
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x?')
+        .withSize('100x?')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=123:-1');
+      filters[0].should.equal('scale=100:-2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x?')
+        .withSize('100x?')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=123:-1');
+      filters[0].should.equal('scale=100:-2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('?x456')
+        .withSize('?x200')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=-1:456');
+      filters[0].should.equal('scale=-2:200');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('?x456')
+        .withSize('?x200')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=-1:456');
+      filters[0].should.equal('scale=-2:200');
     });
 
     it('Should add proper scale filter when withSize was called with a "?" and an aspect ratio is specified', function() {
       var filters;
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x?')
+        .withSize('100x?')
         .withAspect(0.5)
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=123:246');
+      filters[0].should.equal('scale=100:200');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('?x123')
+        .withSize('?x100')
         .withAspect(2)
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=246:123');
+      filters[0].should.equal('scale=200:100');
     });
 
     it('Should add scale and pad filters when withSize was called with a "?", aspect ratio and auto padding are specified', function() {
       var filters;
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x?')
+        .withSize('100x?')
         .withAspect(0.5)
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=\'w=if(gt(a,0.5),123,246*a):h=if(lt(a,0.5),246,123/a)\'');
-      filters[1].should.equal('pad=\'w=123:h=246:x=if(gt(a,0.5),0,(123-iw)/2):y=if(lt(a,0.5),0,(246-ih)/2):color=white\'');
+      filters[0].should.equal('scale=\'w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
+      filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('?x123')
+        .withSize('?x100')
         .withAspect(2)
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=\'w=if(gt(a,2),246,123*a):h=if(lt(a,2),123,246/a)\'');
-      filters[1].should.equal('pad=\'w=246:h=123:x=if(gt(a,2),0,(246-iw)/2):y=if(lt(a,2),0,(123-ih)/2):color=white\'');
+      filters[0].should.equal('scale=\'w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)\'');
+      filters[1].should.equal('pad=\'w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white\'');
     });
 
     it('Should add scale and pad filters when withSize was called with a fixed size and auto padding is specified', function() {
       var filters;
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x246')
+        .withSize('100x200')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=\'w=if(gt(a,0.5),123,246*a):h=if(lt(a,0.5),246,123/a)\'');
-      filters[1].should.equal('pad=\'w=123:h=246:x=if(gt(a,0.5),0,(123-iw)/2):y=if(lt(a,0.5),0,(246-ih)/2):color=white\'');
+      filters[0].should.equal('scale=\'w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
+      filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('123x246')
+        .withSize('100x200')
         .withAspect(4/3)
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=\'w=if(gt(a,0.5),123,246*a):h=if(lt(a,0.5),246,123/a)\'');
-      filters[1].should.equal('pad=\'w=123:h=246:x=if(gt(a,0.5),0,(123-iw)/2):y=if(lt(a,0.5),0,(246-ih)/2):color=white\'');
+      filters[0].should.equal('scale=\'w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
+      filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('246x123')
+        .withSize('200x100')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=\'w=if(gt(a,2),246,123*a):h=if(lt(a,2),123,246/a)\'');
-      filters[1].should.equal('pad=\'w=246:h=123:x=if(gt(a,2),0,(246-iw)/2):y=if(lt(a,2),0,(123-ih)/2):color=white\'');
+      filters[0].should.equal('scale=\'w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)\'');
+      filters[1].should.equal('pad=\'w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withSize('246x123')
+        .withSize('200x100')
         .withAspect(4/3)
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=\'w=if(gt(a,2),246,123*a):h=if(lt(a,2),123,246/a)\'');
-      filters[1].should.equal('pad=\'w=246:h=123:x=if(gt(a,2),0,(246-iw)/2):y=if(lt(a,2),0,(123-ih)/2):color=white\'');
+      filters[0].should.equal('scale=\'w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)\'');
+      filters[1].should.equal('pad=\'w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white\'');
+    });
+
+    it('Should round sizes to multiples of 2', function() {
+      var filters;
+      var aspect = 102/202;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('101x201')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=102:202');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('101x201')
+        .applyAutopadding(true, 'white')
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=\'w=if(gt(a,' + aspect + '),102,trunc(202*a/2)*2):h=if(lt(a,' + aspect + '),202,trunc(102/a/2)*2)\'');
+      filters[1].should.equal('pad=\'w=102:h=202:x=if(gt(a,' + aspect + '),0,(102-iw)/2):y=if(lt(a,' + aspect + '),0,(202-ih)/2):color=white\'');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('101x?')
+        .withAspect('1:2')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=102:202');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('?x201')
+        .withAspect('1:2')
+        .getSizeFilters();
+      filters.length.should.equal(1);
+      filters[0].should.equal('scale=102:202');
     });
   });
 });
