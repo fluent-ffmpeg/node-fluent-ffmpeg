@@ -215,21 +215,6 @@ describe('Command', function() {
     });
   });
 
-  describe('withAspect', function() {
-    it('should apply the aspect ratio argument', function(done) {
-      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .withAspect('16:9')
-        .getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-
-          args.indexOf('-aspect').should.above(-1);
-          args.indexOf('16:9').should.above(-1);
-          done();
-        });
-    });
-  });
-
   describe('withVideoCodec', function() {
     it('should apply the video codec argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
@@ -633,8 +618,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=ow=if(gt(a,0.5),123,246*a),oh=if(lt(a,0.5),246,123/a)');
-      filters[1].should.equal('pad=w=123,h=246,x=if(gt(a,0.5),0,(123-iw*a)/2),y=if(lt(a,0.5),0,(246-ih/a)/2),color=white');
+      filters[0].should.equal('scale=\'w=if(gt(a,0.5),123,246*a):h=if(lt(a,0.5),246,123/a)\'');
+      filters[1].should.equal('pad=\'w=123:h=246:x=if(gt(a,0.5),0,(123-iw)/2):y=if(lt(a,0.5),0,(246-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x123')
@@ -642,8 +627,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=ow=if(gt(a,2),246,123*a),oh=if(lt(a,2),123,246/a)');
-      filters[1].should.equal('pad=w=246,h=123,x=if(gt(a,2),0,(246-iw*a)/2),y=if(lt(a,2),0,(123-ih/a)/2),color=white');
+      filters[0].should.equal('scale=\'w=if(gt(a,2),246,123*a):h=if(lt(a,2),123,246/a)\'');
+      filters[1].should.equal('pad=\'w=246:h=123:x=if(gt(a,2),0,(246-iw)/2):y=if(lt(a,2),0,(123-ih)/2):color=white\'');
     });
 
     it('Should add scale and pad filters when withSize was called with a fixed size and auto padding is specified', function() {
@@ -654,8 +639,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=ow=if(gt(a,0.5),123,246*a),oh=if(lt(a,0.5),246,123/a)');
-      filters[1].should.equal('pad=w=123,h=246,x=if(gt(a,0.5),0,(123-iw*a)/2),y=if(lt(a,0.5),0,(246-ih/a)/2),color=white');
+      filters[0].should.equal('scale=\'w=if(gt(a,0.5),123,246*a):h=if(lt(a,0.5),246,123/a)\'');
+      filters[1].should.equal('pad=\'w=123:h=246:x=if(gt(a,0.5),0,(123-iw)/2):y=if(lt(a,0.5),0,(246-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('123x246')
@@ -663,16 +648,16 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=ow=if(gt(a,0.5),123,246*a),oh=if(lt(a,0.5),246,123/a)');
-      filters[1].should.equal('pad=w=123,h=246,x=if(gt(a,0.5),0,(123-iw*a)/2),y=if(lt(a,0.5),0,(246-ih/a)/2),color=white');
+      filters[0].should.equal('scale=\'w=if(gt(a,0.5),123,246*a):h=if(lt(a,0.5),246,123/a)\'');
+      filters[1].should.equal('pad=\'w=123:h=246:x=if(gt(a,0.5),0,(123-iw)/2):y=if(lt(a,0.5),0,(246-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('246x123')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=ow=if(gt(a,2),246,123*a),oh=if(lt(a,2),123,246/a)');
-      filters[1].should.equal('pad=w=246,h=123,x=if(gt(a,2),0,(246-iw*a)/2),y=if(lt(a,2),0,(123-ih/a)/2),color=white');
+      filters[0].should.equal('scale=\'w=if(gt(a,2),246,123*a):h=if(lt(a,2),123,246/a)\'');
+      filters[1].should.equal('pad=\'w=246:h=123:x=if(gt(a,2),0,(246-iw)/2):y=if(lt(a,2),0,(123-ih)/2):color=white\'');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('246x123')
@@ -680,8 +665,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=ow=if(gt(a,2),246,123*a),oh=if(lt(a,2),123,246/a)');
-      filters[1].should.equal('pad=w=246,h=123,x=if(gt(a,2),0,(246-iw*a)/2),y=if(lt(a,2),0,(123-ih/a)/2),color=white');
+      filters[0].should.equal('scale=\'w=if(gt(a,2),246,123*a):h=if(lt(a,2),123,246/a)\'');
+      filters[1].should.equal('pad=\'w=246:h=123:x=if(gt(a,2),0,(246-iw)/2):y=if(lt(a,2),0,(123-ih)/2):color=white\'');
     });
   });
 });
