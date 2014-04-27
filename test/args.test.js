@@ -137,7 +137,7 @@ describe('Command', function() {
 
           args.indexOf('-an').should.above(-1);
           args.indexOf('-ac').should.equal(-1);
-          args.indexOf('scale=320:-1').should.above(-1);
+          args.indexOf('scale=320:trunc(ow/a/2)*2').should.above(-1);
           done();
         });
     });
@@ -506,7 +506,18 @@ describe('Command', function() {
     });
   });
 
-  describe.only('Size calculations', function() {
+  describe('Size calculations', function() {
+    it('Should add scale and setsar filters when keepPixelAspect was called', function() {
+      var filters;
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .keepPixelAspect(true)
+        .getSizeFilters();
+      filters.length.should.equal(2);
+      filters[0].should.equal('scale=\'w=if(gt(sar,1),iw*sar,iw):h=if(lt(sar,1),ih/sar,ih)\'');
+      filters[1].should.equal('setsar=1');
+    });
+
     it('Should not add scale filters when withSize was not called', function() {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .getSizeFilters().length.should.equal(0);
