@@ -506,7 +506,7 @@ describe('Command', function() {
     });
   });
 
-  describe('Size calculations', function() {
+  describe.only('Size calculations', function() {
     it('Should not add scale filters when withSize was not called', function() {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .getSizeFilters().length.should.equal(0);
@@ -568,27 +568,27 @@ describe('Command', function() {
         .withSize('100x?')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=100:-2');
+      filters[0].should.equal('scale=100:trunc(ow/a/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x?')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=100:-2');
+      filters[0].should.equal('scale=100:trunc(ow/a/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x200')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=-2:200');
+      filters[0].should.equal('scale=trunc(oh*a/2)*2:200');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x200')
         .applyAutopadding(true, 'white')
         .getSizeFilters();
       filters.length.should.equal(1);
-      filters[0].should.equal('scale=-2:200');
+      filters[0].should.equal('scale=trunc(oh*a/2)*2:200');
     });
 
     it('Should add proper scale filter when withSize was called with a "?" and an aspect ratio is specified', function() {
