@@ -6,17 +6,6 @@ var Ffmpeg = require('../index'),
 // kinda nasty...
 var ext = new Ffmpeg({ source: path.join(__dirname, 'assets', 'testvideo-43.avi'), logger: testhelper.logger });
 describe('Extensions', function() {
-  describe('toAspectRatio', function() {
-    it('should convert an aspect ratio string to a proper object', function() {
-      var ret = ext.toAspectRatio('16:9');
-      ret.x.should.equal(16);
-      ret.y.should.equal(9);
-    });
-    it('should return undefined when an invalid aspect ratio is passed', function() {
-      assert.ok(!ext.toAspectRatio('15.929'));
-    });
-  });
-
   describe('parseVersionString', function() {
     it('should parse the major/minor/patch version correctly', function() {
       var ret = ext.parseVersionString('4.5.123');

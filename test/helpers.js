@@ -12,10 +12,10 @@ exports = module.exports = TestHelpers = {
   },
 
   logger: {
-    debug: function(arg) { console.log('[DEBUG] ' + arg); },
-    info: function(arg) { console.log('[INFO] ' + arg); },
-    warn: function(arg) { console.log('[WARN] ' + arg); },
-    error: function(arg) { console.log('[ERROR] ' + arg); }
+    debug: function(arg) { console.log('          [DEBUG] ' + arg); },
+    info: function(arg) { console.log('          [INFO] ' + arg); },
+    warn: function(arg) { console.log('          [WARN] ' + arg); },
+    error: function(arg) { console.log('          [ERROR] ' + arg); }
   },
 
   logArgError: function(err) {

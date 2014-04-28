@@ -36,6 +36,24 @@ Make sure your ffmpeg installation is up-to-date to prevent strange assertion er
 
 You will find a lot of usage examples (including a real-time streaming example using [flowplayer](http://www.flowplayer.org) and [express](https://github.com/visionmedia/express)!) in the `examples` folder.
 
+### Prerequisites
+
+#### ffmpeg and ffprobe
+
+fluent-ffmpeg requires ffmpeg >= 0.9 to work.  It may work with previous versions but several features won't be available (and the library is not tested with lower versions anylonger).
+
+If the `FFMPEG_PATH` environment variable is set, fluent-ffmpeg will use it as the full path to the `ffmpeg` executable.  Otherwise, it will attempt to call `ffmpeg` directly (so it should be in your `PATH`).  You must also have ffprobe installed (it comes with ffmpeg in most distributions).  Similarly, fluent-ffmpeg will use the `FFPROBE_PATH` environment variable if it is set, otherwise it will attempt to call it in the `PATH`.
+
+Most features should work when using avconv and avprobe instead of ffmpeg and ffprobe, but they are not officially supported at the moment.
+
+**Windows users**: most probably ffmpeg and ffprobe will _not_ be in your `%PATH`, so you _must_ set `%FFMPEG_PATH` and `%FFPROBE_PATH`.
+
+**Debian/Ubuntu users**: the official repositories have the ffmpeg/ffprobe executable in the `libav-tools` package, and they are actually rebranded avconv/avprobe executables (avconv is a fork of ffmpeg).  They should be mostly compatible, but should you encounter any issue, you may want to use the real ffmpeg instead.  You can either compile it from source or find a pre-built .deb package at https://ffmpeg.org/download.html (For Ubuntu, the `ppa:jon-severinsson/ffmpeg` PPA provides recent builds).
+
+#### flvtool2 or flvmeta
+
+If you intend to encode FLV videos, you must have either flvtool2 or flvmeta installed and in your `PATH` or fluent-ffmpeg won't be able to produce streamable output files.
+
 ### Creating an FFmpeg command
 
 The fluent-ffmpeg module returns a constructor that you can use to instanciate FFmpeg commands.  You have to supply a configuration object containing at least the input source.
@@ -490,6 +508,142 @@ setTimeout(function() {
 ```
 
 ### Reading video metadata
+
+#### Using ffprobe
+
+You can read metadata from any valid ffmpeg input file with the modules `ffprobe` method.
+
+```js
+var Ffmpeg = require('fluent-ffmpeg');
+
+Ffmpeg.ffprobe('/path/to/file.avi', function(err, metadata) {
+    console.dir(metadata);
+});
+```
+
+The returned object is the same that is returned by running the following command from your shell:
+
+```sh
+$ ffprobe -of json -show_streams -show_format /path/to/file.avi
+```
+
+It will contain information about the container (as a `format` key) and an array of streams (as a `stream` key).  The format object and each stream object also contains metadata tags, depending on the format:
+
+```js
+{
+    "streams": [
+        {
+            "index": 0,
+            "codec_name": "h264",
+            "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+            "profile": "Constrained Baseline",
+            "codec_type": "video",
+            "codec_time_base": "1/48",
+            "codec_tag_string": "avc1",
+            "codec_tag": "0x31637661",
+            "width": 320,
+            "height": 180,
+            "has_b_frames": 0,
+            "sample_aspect_ratio": "1:1",
+            "display_aspect_ratio": "16:9",
+            "pix_fmt": "yuv420p",
+            "level": 13,
+            "r_frame_rate": "24/1",
+            "avg_frame_rate": "24/1",
+            "time_base": "1/24",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "duration_ts": 14315,
+            "duration": "596.458333",
+            "bit_rate": "702655",
+            "nb_frames": "14315",
+            "disposition": {
+                "default": 0,
+                "dub": 0,
+                "original": 0,
+                "comment": 0,
+                "lyrics": 0,
+                "karaoke": 0,
+                "forced": 0,
+                "hearing_impaired": 0,
+                "visual_impaired": 0,
+                "clean_effects": 0,
+                "attached_pic": 0
+            },
+            "tags": {
+                "creation_time": "1970-01-01 00:00:00",
+                "language": "und",
+                "handler_name": "\fVideoHandler"
+            }
+        },
+        {
+            "index": 1,
+            "codec_name": "aac",
+            "codec_long_name": "AAC (Advanced Audio Coding)",
+            "codec_type": "audio",
+            "codec_time_base": "1/48000",
+            "codec_tag_string": "mp4a",
+            "codec_tag": "0x6134706d",
+            "sample_fmt": "fltp",
+            "sample_rate": "48000",
+            "channels": 2,
+            "bits_per_sample": 0,
+            "r_frame_rate": "0/0",
+            "avg_frame_rate": "0/0",
+            "time_base": "1/48000",
+            "start_pts": 0,
+            "start_time": "0.000000",
+            "duration_ts": 28619776,
+            "duration": "596.245333",
+            "bit_rate": "159997",
+            "nb_frames": "27949",
+            "disposition": {
+                "default": 0,
+                "dub": 0,
+                "original": 0,
+                "comment": 0,
+                "lyrics": 0,
+                "karaoke": 0,
+                "forced": 0,
+                "hearing_impaired": 0,
+                "visual_impaired": 0,
+                "clean_effects": 0,
+                "attached_pic": 0
+            },
+            "tags": {
+                "creation_time": "1970-01-01 00:00:00",
+                "language": "und",
+                "handler_name": "\fSoundHandler"
+            }
+        }
+    ],
+    "format": {
+        "filename": "http://download.blender.org/peach/bigbuckbunny_movies/BigBuckBunny_320x180.mp4",
+        "nb_streams": 2,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "596.459000",
+        "size": "64657027",
+        "bit_rate": "867211",
+        "tags": {
+            "major_brand": "isom",
+            "minor_version": "512",
+            "compatible_brands": "mp41",
+            "creation_time": "1970-01-01 00:00:00",
+            "title": "Big Buck Bunny",
+            "artist": "Blender Foundation",
+            "composer": "Blender Foundation",
+            "date": "2008",
+            "encoder": "Lavf52.14.0"
+        }
+    }
+}
+```
+
+#### Using the legacy Metadata object
+
+**Warning:** this method is not very reliable and thus deprecated.  Use at your own risk.
 
 Using a separate object, you can access various metadata of your video file.
 
