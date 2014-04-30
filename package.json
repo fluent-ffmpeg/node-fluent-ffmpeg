@@ -22,11 +22,11 @@
     "should": "latest",
     "grunt-contrib-watch": "~0.4.4",
     "grunt-shell": "~0.3.0",
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "jsdoc": "latest"
   },
   "dependencies": {
-    "async": ">=0.2.9",
-    "exec-queue": ">=0.0.2"
+    "async": ">=0.2.9"
   },
   "engines": {
     "node": ">=0.8.0"
