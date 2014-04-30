@@ -5,6 +5,24 @@ var Ffmpeg = require('../index'),
   exec = require('child_process').exec,
   testhelper = require('./helpers');
 
+
+Ffmpeg.prototype._test_getArgs = function(callback) {
+  var args;
+
+  try {
+    args = this._getArguments();
+  } catch(e) {
+    return callback(null, e);
+  }
+
+  callback(args);
+};
+
+Ffmpeg.prototype._test_getSizeFilters = function() {
+  return this._sizeFilters.get().concat(this._videoFilters.get());
+};
+
+
 describe('Command', function() {
   before(function(done) {
     // check for ffmpeg installation
@@ -32,7 +50,7 @@ describe('Command', function() {
     it('should properly generate the command for the requested preset', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .usingPreset('podcast')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -45,7 +63,7 @@ describe('Command', function() {
     it('should properly generate the command for the requested preset in custom folder', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
         .usingPreset('custompreset')
-        .getArgs(function(args) {
+        ._test_getArgs(function(args) {
           args.length.should.equal(44);
 
         done();
@@ -65,7 +83,7 @@ describe('Command', function() {
 
       cmd
         .usingPreset(presetFunc)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -81,7 +99,7 @@ describe('Command', function() {
       (function() {
         new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
           .usingPreset('NOTFOUND');
-      }).should.throw(/^preset NOTFOUND could not be loaded/);
+      }).should.throw(/NOTFOUND could not be loaded/);
     });
   });
 
@@ -89,7 +107,7 @@ describe('Command', function() {
     it('should apply the skip video argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withNoVideo()
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -102,7 +120,7 @@ describe('Command', function() {
         .withSize('320x?')
         .withNoVideo()
         .withAudioBitrate('256k')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -118,7 +136,7 @@ describe('Command', function() {
     it('should apply the skip audio argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withNoAudio()
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -131,7 +149,7 @@ describe('Command', function() {
         .withAudioChannels(2)
         .withNoAudio()
         .withSize('320x?')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -147,7 +165,7 @@ describe('Command', function() {
     it('should apply default bitrate argument by default', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoBitrate('256k')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -158,7 +176,7 @@ describe('Command', function() {
     it('should apply additional bitrate arguments for constant bitrate', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoBitrate('256k', true)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -174,7 +192,7 @@ describe('Command', function() {
   describe('withMultiFile', function() {
     it('should allow image2 multi-file input format', function(done) {
       new Ffmpeg({ source: 'image-%05d.png', logger: testhelper.logger })
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -189,7 +207,7 @@ describe('Command', function() {
     it('should apply the rate argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withFps(27.77)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -204,7 +222,7 @@ describe('Command', function() {
     it('should allow for additional inputs', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addInput('soundtrack.mp3')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -219,7 +237,7 @@ describe('Command', function() {
     it('should apply the video codec argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoCodec('libx264')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -235,7 +253,7 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoFilter('scale=123:456')
         .withVideoFilter('pad=1230:4560:100:100:yellow')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -250,7 +268,7 @@ describe('Command', function() {
     it('should apply the audio bitrate argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioBitrate(256)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -265,7 +283,7 @@ describe('Command', function() {
     it('should add the -loop 1 argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .loop()
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -280,7 +298,7 @@ describe('Command', function() {
     it('should add the -loop 1 and a time argument (seconds)', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .loop(120)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -298,7 +316,7 @@ describe('Command', function() {
     it('should add the -loop 1 and a time argument (timemark)', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .loop('00:06:46.81')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -318,7 +336,7 @@ describe('Command', function() {
     it('should add the -vframes argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .takeFrames(250)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -333,7 +351,7 @@ describe('Command', function() {
     it('should apply the audio codec argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioCodec('mp3')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -349,7 +367,7 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioFilter('silencedetect=n=-50dB:d=5')
         .withAudioFilter('volume=0.5')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -364,7 +382,7 @@ describe('Command', function() {
     it('should apply the audio channels argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioChannels(1)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -379,7 +397,7 @@ describe('Command', function() {
     it('should apply the audio frequency argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioFrequency(22500)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -394,7 +412,7 @@ describe('Command', function() {
     it('should apply the audio quality argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioQuality(5)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -409,7 +427,7 @@ describe('Command', function() {
     it('should apply the start time offset argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .setStartTime('00:00:10')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -424,7 +442,7 @@ describe('Command', function() {
     it('should apply the record duration argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .setDuration(10)
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -439,7 +457,7 @@ describe('Command', function() {
     it('should apply a single option', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addOption('-ab', '256k')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -451,7 +469,7 @@ describe('Command', function() {
     it('should apply supplied extra options', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions','+parti4x4+partp8x8+partb8x8'])
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -467,7 +485,7 @@ describe('Command', function() {
     it('should apply a single input option', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addInputOption('-r', '29.97')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -479,7 +497,7 @@ describe('Command', function() {
     it('should apply multiple input options', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addInputOptions(['-r 29.97', '-f ogg'])
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -495,7 +513,7 @@ describe('Command', function() {
     it('should apply the target format', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .toFormat('mp4')
-        .getArgs(function(args, err) {
+        ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
@@ -512,23 +530,29 @@ describe('Command', function() {
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .keepPixelAspect(true)
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(sar,1),iw*sar,iw):h=if(lt(sar,1),ih/sar,ih)\'');
       filters[1].should.equal('setsar=1');
     });
 
+    it('Should throw an error when an invalid size was requested', function() {
+      (function() {
+        new Ffmpeg().withSize('aslkdbasd');
+      }).should.throw(/^Invalid size specified/);
+    });
+
     it('Should not add scale filters when withSize was not called', function() {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .getSizeFilters().length.should.equal(0);
+        ._test_getSizeFilters().length.should.equal(0);
 
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAspect(4/3)
-        .getSizeFilters().length.should.equal(0);
+        ._test_getSizeFilters().length.should.equal(0);
 
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .applyAutopadding(true, 'white')
-        .getSizeFilters().length.should.equal(0);
+        ._test_getSizeFilters().length.should.equal(0);
     });
 
     it('Should add proper scale filter when withSize was called with a percent value', function() {
@@ -536,21 +560,21 @@ describe('Command', function() {
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('42%')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=trunc(iw*0.42/2)*2:trunc(ih*0.42/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('42%')
         .withAspect(4/3)
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=trunc(iw*0.42/2)*2:trunc(ih*0.42/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('42%')
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=trunc(iw*0.42/2)*2:trunc(ih*0.42/2)*2');
     });
@@ -560,14 +584,14 @@ describe('Command', function() {
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x200')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=100:200');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x200')
         .withAspect(4/3)
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=100:200');
     });
@@ -577,27 +601,27 @@ describe('Command', function() {
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x?')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=100:trunc(ow/a/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x?')
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=100:trunc(ow/a/2)*2');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x200')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=trunc(oh*a/2)*2:200');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x200')
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=trunc(oh*a/2)*2:200');
     });
@@ -608,14 +632,14 @@ describe('Command', function() {
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x?')
         .withAspect(0.5)
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=100:200');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x100')
         .withAspect(2)
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=200:100');
     });
@@ -627,7 +651,7 @@ describe('Command', function() {
         .withSize('100x?')
         .withAspect(0.5)
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
       filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white\'');
@@ -636,7 +660,7 @@ describe('Command', function() {
         .withSize('?x100')
         .withAspect(2)
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)\'');
       filters[1].should.equal('pad=\'w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white\'');
@@ -648,7 +672,7 @@ describe('Command', function() {
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x200')
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
       filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white\'');
@@ -657,7 +681,7 @@ describe('Command', function() {
         .withSize('100x200')
         .withAspect(4/3)
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
       filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white\'');
@@ -665,7 +689,7 @@ describe('Command', function() {
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('200x100')
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)\'');
       filters[1].should.equal('pad=\'w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white\'');
@@ -674,7 +698,7 @@ describe('Command', function() {
         .withSize('200x100')
         .withAspect(4/3)
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)\'');
       filters[1].should.equal('pad=\'w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white\'');
@@ -686,14 +710,14 @@ describe('Command', function() {
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('101x201')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=102:202');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('101x201')
         .applyAutopadding(true, 'white')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[0].should.equal('scale=\'w=if(gt(a,' + aspect + '),102,trunc(202*a/2)*2):h=if(lt(a,' + aspect + '),202,trunc(102/a/2)*2)\'');
       filters[1].should.equal('pad=\'w=102:h=202:x=if(gt(a,' + aspect + '),0,(102-iw)/2):y=if(lt(a,' + aspect + '),0,(202-ih)/2):color=white\'');
@@ -701,14 +725,14 @@ describe('Command', function() {
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('101x?')
         .withAspect('1:2')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=102:202');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x201')
         .withAspect('1:2')
-        .getSizeFilters();
+        ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=102:202');
     });

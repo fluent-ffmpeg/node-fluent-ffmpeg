@@ -155,7 +155,7 @@ describe('Processor', function() {
   if (!os.match(/win(32|64)/)) {
     it('should properly limit niceness', function() {
       this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
-          .renice(100).options._niceness.should.equal(0);
+          .renice(100).options.niceness.should.equal(20);
     });
 
     it('should dynamically renice process', function(done) {
@@ -384,11 +384,11 @@ describe('Processor', function() {
         .saveToFile(testFile);
   });
 
-  it('should kill the process with .kill', function(done) {
+  it.skip('should kill the process with .kill', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
     this.files.push(testFile);
 
-    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0 })
+    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
         .usingPreset('flashvideo');
 
     var startCalled = false;
@@ -634,23 +634,6 @@ describe('Processor', function() {
           });
         })
         .writeToStream(outstream);
-    });
-  });
-
-  describe('takeScreenshot',function(){
-    it('should return error with wrong size',function(done){
-      var proc = this.getCommand({ source: this.testfile, logger: testhelper.logger })
-      .withSize('aslkdbasd')
-      .on('error', function(err) {
-        assert.ok(!!err);
-        done();
-      })
-      .on('end', function() {
-        console.log('end was emitted, expected error');
-        assert.ok(false);
-        done();
-      })
-      .takeScreenshots(5, path.join(__dirname, 'assets'));
     });
   });
 
