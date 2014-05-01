@@ -1,6 +1,7 @@
 var Ffmpeg = require('../index'),
   assert = require('assert'),
-  testhelper = require('./helpers');
+  testhelper = require('./helpers'),
+  async = require('async');
 
 describe('Capabilities', function() {
   it('should enable querying for available codecs', function(done) {
@@ -79,5 +80,94 @@ describe('Capabilities', function() {
 
       done();
     });
+  });
+
+  it('should enable checking command arguments for available codecs and formats', function(done) {
+    async.waterfall([
+      // Check with everything available
+      function(cb) {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('pcm_u16le')
+          .videoCodec('png')
+          .toFormat('mp4')
+          ._checkCapabilities(cb);
+      },
+
+      // Invalid input format
+      function(cb) {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('invalid-input-format')
+          .audioCodec('pcm_u16le')
+          .videoCodec('png')
+          .toFormat('mp4')
+          ._checkCapabilities(function(err) {
+            assert.ok(!!err);
+            err.message.should.match(/Input format invalid-input-format is not available/);
+
+            cb();
+          });
+      },
+
+      // Invalid output format
+      function(cb) {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('pcm_u16le')
+          .videoCodec('png')
+          .toFormat('invalid-output-format')
+          ._checkCapabilities(function(err) {
+            assert.ok(!!err);
+            err.message.should.match(/Output format invalid-output-format is not available/);
+
+            cb();
+          });
+      },
+
+      // Invalid audio codec
+      function(cb) {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('invalid-audio-codec')
+          .videoCodec('png')
+          .toFormat('mp4')
+          ._checkCapabilities(function(err) {
+            assert.ok(!!err);
+            err.message.should.match(/Audio codec invalid-audio-codec is not available/);
+
+            cb();
+          });
+      },
+
+      // Invalid video codec
+      function(cb) {
+        new Ffmpeg('/path/to/file.avi')
+          .fromFormat('avi')
+          .audioCodec('pcm_u16le')
+          .videoCodec('invalid-video-codec')
+          .toFormat('mp4')
+          ._checkCapabilities(function(err) {
+            assert.ok(!!err);
+            err.message.should.match(/Video codec invalid-video-codec is not available/);
+
+            cb();
+          });
+      }
+    ], function(err) {
+      testhelper.logError(err);
+      assert.ok(!err);
+
+      done();
+    });
+  });
+
+  it('should check capabilities before running a command', function(done) {
+    new Ffmpeg('/path/to/file.avi')
+      .on('error', function(err) {
+        err.message.should.match(/Output format invalid-output-format is not available/);
+        done();
+      })
+      .toFormat('invalid-output-format')
+      .saveToFile('/tmp/will-not-be-created.mp4');
   });
 });

@@ -508,7 +508,7 @@ describe('Processor', function() {
         .saveToFile(testFile);
     })
 
-    it('should accept a stream as its source', function(done) {
+    it.skip('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
       this.files.push(testFile);
 
@@ -603,7 +603,7 @@ describe('Processor', function() {
         .writeToStream(outstream, {end:true});
     });
 
-    it('should accept a stream as its source', function(done) {
+    it.skip('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToStream.flv');
       this.files.push(testFile);
 
