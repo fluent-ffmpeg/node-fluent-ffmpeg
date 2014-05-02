@@ -5,6 +5,7 @@ var FfmpegCommand = require('../index'),
   os = require('os').platform(),
   exec = require('child_process').exec,
   async = require('async'),
+  PassThrough = require('stream').PassThrough,
   testhelper = require('./helpers');
 
 var testHTTP = 'http://www.wowza.com/_h264/BigBuckBunny_115k.mov?test with=space';
@@ -634,6 +635,44 @@ describe('Processor', function() {
           });
         })
         .writeToStream(outstream);
+    });
+
+    it('should return a PassThrough stream when called with no arguments', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertToStream.flv');
+      this.files.push(testFile);
+
+      var outstream = fs.createWriteStream(testFile);
+      var command = this.getCommand({ source: this.testfile, logger: testhelper.logger });
+
+      command
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function(stdout, stderr) {
+          fs.exists(testFile, function(exist) {
+            if (!exist) {
+              console.log(stderr);
+            }
+
+            exist.should.true;
+
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+
+              done();
+            });
+          });
+        })
+
+      var passthrough = command.writeToStream({end: true});
+
+      passthrough.should.instanceof(PassThrough);
+      passthrough.pipe(outstream);
     });
   });
 
