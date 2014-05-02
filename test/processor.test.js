@@ -5,8 +5,9 @@ var FfmpegCommand = require('../index'),
   os = require('os').platform(),
   exec = require('child_process').exec,
   async = require('async'),
-  PassThrough = require('stream').PassThrough,
+  stream = require('stream'),
   testhelper = require('./helpers');
+
 
 var testHTTP = 'http://www.wowza.com/_h264/BigBuckBunny_115k.mov?test with=space';
 var testRTSP = 'rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov?test with=spa ce';
@@ -637,7 +638,7 @@ describe('Processor', function() {
         .writeToStream(outstream);
     });
 
-    it('should return a PassThrough stream when called with no arguments', function(done) {
+    (process.version.match(/v0\.8\./) ? it.skip : it)('should return a PassThrough stream when called with no arguments on node >=0.10', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertToStream.flv');
       this.files.push(testFile);
 
@@ -671,8 +672,14 @@ describe('Processor', function() {
 
       var passthrough = command.writeToStream({end: true});
 
-      passthrough.should.instanceof(PassThrough);
+      passthrough.should.instanceof(stream.PassThrough);
       passthrough.pipe(outstream);
+    });
+
+    (process.version.match(/v0\.8\./) ? it : it.skip)('should throw an error when called with no arguments on node 0.8', function() {
+      (function() {
+        new FfmpegCommand().writeToStream({end: true});
+      }).should.throw(/PassThrough stream is not supported on node v0.8/);
     });
   });
 

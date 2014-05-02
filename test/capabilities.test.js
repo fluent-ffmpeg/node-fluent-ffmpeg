@@ -4,6 +4,9 @@ var Ffmpeg = require('../index'),
   testhelper = require('./helpers'),
   async = require('async');
 
+// delimiter fallback for node 0.8
+var PATH_DELIMITER = path.delimiter || (require('os').platform().match(/win(32|64)/) ? ';' : ':');
+
 
 describe('Capabilities', function() {
   describe('ffmpeg capabilities', function() {
