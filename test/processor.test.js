@@ -384,7 +384,7 @@ describe('Processor', function() {
         .saveToFile(testFile);
   });
 
-  it.skip('should kill the process with .kill', function(done) {
+  it('should kill the process with .kill', function(done) {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
     this.files.push(testFile);
 
@@ -508,7 +508,7 @@ describe('Processor', function() {
         .saveToFile(testFile);
     })
 
-    it.skip('should accept a stream as its source', function(done) {
+    it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
       this.files.push(testFile);
 
@@ -603,7 +603,7 @@ describe('Processor', function() {
         .writeToStream(outstream, {end:true});
     });
 
-    it.skip('should accept a stream as its source', function(done) {
+    it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToStream.flv');
       this.files.push(testFile);
 
