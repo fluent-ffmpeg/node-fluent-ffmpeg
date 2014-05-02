@@ -1,10 +1,10 @@
 var Ffmpeg = require('../index'),
   path = require('path'),
   fs = require('fs'),
+  os = require('os'),
   assert = require('assert'),
   exec = require('child_process').exec,
   testhelper = require('./helpers');
-
 
 Ffmpeg.prototype._test_getArgs = function(callback) {
   var args;
@@ -43,6 +43,12 @@ describe('Command', function() {
       } else {
         done(new Error('cannot run test without ffmpeg installed, aborting test...'));
       }
+    });
+  });
+
+  describe('Constructor', function() {
+    it('should enable calling the constructor without new', function() {
+      (Ffmpeg()).should.instanceof(Ffmpeg);
     });
   });
 
@@ -101,6 +107,12 @@ describe('Command', function() {
           .usingPreset('NOTFOUND');
       }).should.throw(/NOTFOUND could not be loaded/);
     });
+
+    it('should throw an exception when a preset has no load function', function() {
+      (function() {
+        new Ffmpeg({ presets: '../../lib' }).usingPreset('utils');
+      }).should.throw(/has no load\(\) function/);
+    })
   });
 
   describe('withNoVideo', function() {
@@ -231,6 +243,48 @@ describe('Command', function() {
           done();
         });
     });
+
+    it('should fail to add invalid inputs', function() {
+      (function() {
+        new Ffmpeg().addInput({});
+      }).should.throw(/Invalid input/);
+    });
+
+    it('should refuse to add more than 1 input stream', function() {
+      var stream1 = fs.createReadStream(this.testfile);
+      var stream2 = fs.createReadStream(this.testfilewide);
+      var command = new Ffmpeg().addInput(stream1);
+
+      (function() {
+        command.addInput(stream2);
+      }).should.throw(/Only one input stream is supported/);
+    });
+
+    it('should fail on input-related options when no input was added', function() {
+      (function() {
+        new Ffmpeg().inputFormat('avi');
+      }).should.throw(/No input specified/);
+
+      (function() {
+        new Ffmpeg().inputFps(24);
+      }).should.throw(/No input specified/);
+
+      (function() {
+        new Ffmpeg().seek(1);
+      }).should.throw(/No input specified/);
+
+      (function() {
+        new Ffmpeg().fastSeek(1);
+      }).should.throw(/No input specified/);
+
+      (function() {
+        new Ffmpeg().loop();
+      }).should.throw(/No input specified/);
+
+      (function() {
+        new Ffmpeg().inputOptions('-anoption');
+      }).should.throw(/No input specified/);
+    });
   });
 
   describe('withVideoCodec', function() {
@@ -253,12 +307,13 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withVideoFilter('scale=123:456')
         .withVideoFilter('pad=1230:4560:100:100:yellow')
+        .withVideoFilter('multiple=1', 'filters=2')
         ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
           args.indexOf('-filter:v').should.above(-1);
-          args.indexOf('scale=123:456,pad=1230:4560:100:100:yellow').should.above(-1);
+          args.indexOf('scale=123:456,pad=1230:4560:100:100:yellow,multiple=1,filters=2').should.above(-1);
           done();
         });
     });
@@ -367,12 +422,13 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withAudioFilter('silencedetect=n=-50dB:d=5')
         .withAudioFilter('volume=0.5')
+        .withAudioFilter('multiple=1', 'filters=2')
         ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
 
           args.indexOf('-filter:a').should.above(-1);
-          args.indexOf('silencedetect=n=-50dB:d=5,volume=0.5').should.above(-1);
+          args.indexOf('silencedetect=n=-50dB:d=5,volume=0.5,multiple=1,filters=2').should.above(-1);
           done();
         });
     });
@@ -431,8 +487,21 @@ describe('Command', function() {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          args.indexOf('-ss').should.above(-1);
-          args.indexOf('00:00:10').should.above(-1);
+          args.indexOf('-ss').should.above(-1).and.above(args.indexOf('-i'));
+          args.indexOf('00:00:10').should.above(-1).and.above(args.indexOf('-i'));
+          done();
+        });
+    });
+
+    it('should apply the start time fast offset argument', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .setStartTime('00:00:10', true)
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-ss').should.above(-1).and.below(args.indexOf('-i'));
+          args.indexOf('00:00:10').should.above(-1).and.below(args.indexOf('-i'));
           done();
         });
     });
@@ -469,6 +538,8 @@ describe('Command', function() {
     it('should apply supplied extra options', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions','+parti4x4+partp8x8+partb8x8'])
+        .addOptions('-single option')
+        .addOptions('-multiple', '-options')
         ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
@@ -479,6 +550,10 @@ describe('Command', function() {
           args.indexOf('+chroma').should.above(-1);
           args.indexOf('-partitions').should.above(-1);
           args.indexOf('+parti4x4+partp8x8+partb8x8').should.above(-1);
+          args.indexOf('-single').should.above(-1);
+          args.indexOf('option').should.above(-1);
+          args.indexOf('-multiple').should.above(-1);
+          args.indexOf('-options').should.above(-1);
           done();
         });
     });
@@ -497,6 +572,8 @@ describe('Command', function() {
     it('should apply multiple input options', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .addInputOptions(['-r 29.97', '-f ogg'])
+        .addInputOptions('-single option')
+        .addInputOptions('-multiple', '-options')
         ._test_getArgs(function(args, err) {
           testhelper.logArgError(err);
           assert.ok(!err);
@@ -504,6 +581,9 @@ describe('Command', function() {
           var joined = args.join(' ');
           joined.indexOf('-r 29.97').should.above(-1).and.below(joined.indexOf('-i'));
           joined.indexOf('-f ogg').should.above(-1).and.below(joined.indexOf('-i'));
+          joined.indexOf('-single option').should.above(-1).and.below(joined.indexOf('-i'));
+          joined.indexOf('-multiple').should.above(-1).and.below(joined.indexOf('-i'));
+          joined.indexOf('-options').should.above(-1).and.below(joined.indexOf('-i'));
           done();
         });
     });
@@ -525,6 +605,12 @@ describe('Command', function() {
   });
 
   describe('Size calculations', function() {
+    it('Should throw an error when an invalid aspect ratio is passed', function() {
+      (function() {
+        new Ffmpeg().aspect("blah");
+      }).should.throw(/Invalid aspect ratio/);
+    });
+
     it('Should add scale and setsar filters when keepPixelAspect was called', function() {
       var filters;
 

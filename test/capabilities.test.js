@@ -4,6 +4,7 @@ var Ffmpeg = require('../index'),
   testhelper = require('./helpers'),
   async = require('async');
 
+
 describe('Capabilities', function() {
   describe('ffmpeg capabilities', function() {
     it('should enable querying for available codecs', function(done) {
@@ -73,14 +74,30 @@ describe('Capabilities', function() {
     });
 
     it('should enable querying capabilities without instanciating a command', function(done) {
-      Ffmpeg.getAvailableCodecs(function(err, filters) {
+      Ffmpeg.getAvailableCodecs(function(err, codecs) {
         testhelper.logError(err);
         assert.ok(!err);
 
-        (typeof filters).should.equal('object');
-        Object.keys(filters).length.should.not.equal(0);
+        (typeof codecs).should.equal('object');
+        Object.keys(codecs).length.should.not.equal(0);
 
-        done();
+        Ffmpeg.getAvailableFilters(function(err, filters) {
+          testhelper.logError(err);
+          assert.ok(!err);
+
+          (typeof filters).should.equal('object');
+          Object.keys(filters).length.should.not.equal(0);
+
+          Ffmpeg.getAvailableFormats(function(err, formats) {
+            testhelper.logError(err);
+            assert.ok(!err);
+
+            (typeof formats).should.equal('object');
+            Object.keys(formats).length.should.not.equal(0);
+
+            done();
+          });
+        });
       });
     });
 
@@ -210,7 +227,7 @@ describe('Capabilities', function() {
         ffmpeg.should.String;
         ffmpeg.length.should.above(0);
 
-        var paths = process.env.PATH.split(path.delimiter);
+        var paths = process.env.PATH.split(PATH_DELIMITER);
         paths.indexOf(path.dirname(ffmpeg)).should.above(-1);
         done();
       });
@@ -244,7 +261,7 @@ describe('Capabilities', function() {
         ffmpeg.should.String;
         ffmpeg.length.should.above(0);
 
-        var paths = process.env.PATH.split(path.delimiter);
+        var paths = process.env.PATH.split(PATH_DELIMITER);
         paths.indexOf(path.dirname(ffmpeg)).should.above(-1);
         done();
       });
@@ -318,7 +335,7 @@ describe('Capabilities', function() {
         ffprobe.should.String;
         ffprobe.length.should.above(0);
 
-        var paths = process.env.PATH.split(path.delimiter);
+        var paths = process.env.PATH.split(PATH_DELIMITER);
         paths.indexOf(path.dirname(ffprobe)).should.above(-1);
         done();
       });
@@ -352,7 +369,7 @@ describe('Capabilities', function() {
         ffprobe.should.String;
         ffprobe.length.should.above(0);
 
-        var paths = process.env.PATH.split(path.delimiter);
+        var paths = process.env.PATH.split(PATH_DELIMITER);
         paths.indexOf(path.dirname(ffprobe)).should.above(-1);
         done();
       });
