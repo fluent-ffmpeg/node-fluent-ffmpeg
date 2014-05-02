@@ -5,6 +5,9 @@ before_script:
   - tar jxf ffmpeg-2.1.3-64bit-static.tar.bz2
   - sudo cp ffmpeg-2.1.3-64bit-static/ffmpeg ffmpeg-2.1.3-64bit-static/ffprobe /usr/bin
   - ffmpeg -version
+env:
+  ALT_FFMPEG_PATH=ffmpeg-2.1.3-64bit-static/ffmpeg
+  ALT_FFPROBE_PATH=ffmpeg-2.1.3-64bit-static/ffprobe
 language: node_js
 node_js:
   - "0.8"
