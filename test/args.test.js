@@ -230,6 +230,21 @@ describe('Command', function() {
     });
   });
 
+  describe('withInputFPS', function() {
+    it('should apply the rate argument', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withInputFPS(27.77)
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-r').should.above(-1).and.below(args.indexOf('-i'));
+          args.indexOf(27.77).should.above(-1).and.below(args.indexOf('-i'));
+          done();
+        });
+    });
+  });
+
   describe('addingAdditionalInput', function() {
     it('should allow for additional inputs', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
@@ -821,6 +836,34 @@ describe('Command', function() {
         ._test_getSizeFilters();
       filters.length.should.equal(1);
       filters[0].should.equal('scale=102:202');
+    });
+
+    it('Should apply autopadding when no boolean argument was passed to applyAutopadding', function() {
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('100x?')
+        .withAspect(0.5)
+        .applyAutopadding('white')
+        ._test_getSizeFilters();
+      filters.length.should.equal(2);
+      filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white\'');
+    });
+
+    it('Should default to black padding', function() {
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('100x?')
+        .withAspect(0.5)
+        .applyAutopadding()
+        ._test_getSizeFilters();
+      filters.length.should.equal(2);
+      filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=black\'');
+
+      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withSize('100x?')
+        .withAspect(0.5)
+        .applyAutopadding(true)
+        ._test_getSizeFilters();
+      filters.length.should.equal(2);
+      filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=black\'');
     });
   });
 });
