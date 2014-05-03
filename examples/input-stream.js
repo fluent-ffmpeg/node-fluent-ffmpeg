@@ -10,8 +10,8 @@ infs.on('error', function(err) {
 
 // create new ffmpeg processor instance using input stream
 // instead of file path (can be any ReadableStream)
-var proc = new ffmpeg({ source: infs, nolog: true })
-  .usingPreset('flashvideo')
+var proc = ffmpeg(infs)
+  .preset('flashvideo')
   // setup event handlers
   .on('end', function() {
     console.log('done processing input stream');
@@ -20,4 +20,4 @@ var proc = new ffmpeg({ source: infs, nolog: true })
     console.log('an error happened: ' + err.message);
   })
   // save to file
-  .saveToFile('/path/to/your_target.flv');
+  .save('/path/to/your_target.flv');

@@ -1,4 +1,31 @@
-/*jshint node:true*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: processor.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: processor.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*jshint node:true*/
 'use strict';
 
 var spawn = require('child_process').spawn;
@@ -160,14 +187,14 @@ function _process(command, target, pipeOptions) {
         ffmpegProc.stderr.on('data', function (data) {
           stderr += data;
 
-          if (!command._codecDataSent && command.listeners('codecData').length) {
+          if (!command._codecDataSent &amp;&amp; command.listeners('codecData').length) {
             utils.extractCodecData(command, stderr);
           }
 
           if (command.listeners('progress').length) {
             var duration = 0;
 
-            if (command._ffprobeData && command._ffprobeData.format && command._ffprobeData.format.duration) {
+            if (command._ffprobeData &amp;&amp; command._ffprobeData.format &amp;&amp; command._ffprobeData.format.duration) {
               duration = Number(command._ffprobeData.format.duration);
             }
 
@@ -270,7 +297,7 @@ module.exports = function(proto) {
       }
 
       // Apply niceness
-      if (options.niceness && !utils.isWindows) {
+      if (options.niceness &amp;&amp; !utils.isWindows) {
         args.unshift('-n', options.niceness, command);
         command = 'nice';
       }
@@ -284,7 +311,7 @@ module.exports = function(proto) {
       // Spawn process
       var ffmpegProc = spawn(command, args, options);
 
-      if (ffmpegProc.stderr && options.captureStderr) {
+      if (ffmpegProc.stderr &amp;&amp; options.captureStderr) {
         ffmpegProc.stderr.setEncoding('utf8');
       }
 
@@ -299,8 +326,8 @@ module.exports = function(proto) {
           exitError = err;
         }
 
-        if (processExited &&
-          (stdoutClosed || !options.captureStdout) &&
+        if (processExited &amp;&amp;
+          (stdoutClosed || !options.captureStdout) &amp;&amp;
           (stderrClosed || !options.captureStderr)) {
           endCB(exitError, stdout, stderr);
         }
@@ -489,7 +516,7 @@ module.exports = function(proto) {
   proto.writeToStream =
   proto.pipe =
   proto.stream = function(stream, options) {
-    if (stream && !('writable' in stream)) {
+    if (stream &amp;&amp; !('writable' in stream)) {
       options = stream;
       stream = undefined;
     }
@@ -582,7 +609,7 @@ module.exports = function(proto) {
       self.emit('progress', progress);
     }
 
-    if (this._inputs.length < 2) {
+    if (this._inputs.length &lt; 2) {
       return this.emit('error', new Error('No file added to be merged'));
     }
 
@@ -685,7 +712,7 @@ module.exports = function(proto) {
       // Select video stream with biggest resolution
       var vstream = self._ffprobeData.streams.reduce(function(max, stream) {
         if (stream.codec_type !== 'video') return max;
-        return max.width * max.height < stream.width * stream.height ? stream : max;
+        return max.width * max.height &lt; stream.width * stream.height ? stream : max;
       }, { width: 0, height: 0 });
 
       var w = vstream.width;
@@ -715,7 +742,7 @@ module.exports = function(proto) {
 
     function _zeroPad(number, len) {
       len = len-String(number).length+2;
-      return new Array(len<0?0:len).join('0')+number;
+      return new Array(len&lt;0?0:len).join('0')+number;
     }
 
     function _renderOutputName(j, offset) {
@@ -742,7 +769,7 @@ module.exports = function(proto) {
         _computeSize(self._sizeData.size);
 
         var duration = 0;
-        if (self._ffprobeData && self._ffprobeData.format && self._ffprobeData.format.duration) {
+        if (self._ffprobeData &amp;&amp; self._ffprobeData.format &amp;&amp; self._ffprobeData.format.duration) {
           duration = Number(self._ffprobeData.format.duration);
         }
 
@@ -753,7 +780,7 @@ module.exports = function(proto) {
 
         // check if all timemarks are inside duration
         if (Array.isArray(timemarks)) {
-          for (var i = 0; i < timemarks.length; i++) {
+          for (var i = 0; i &lt; timemarks.length; i++) {
             /* convert percentage to seconds */
             if( timemarks[i].indexOf('%') > 0 ) {
               timemarks[i] = (parseInt(timemarks[i], 10) / 100) * duration;
@@ -849,7 +876,7 @@ module.exports = function(proto) {
     var inputfile = this._currentInput.source;
 
     filename = config.filename || 'tn_%ss';
-    if(!/%0*i/.test(filename) && Array.isArray(timemarks) && timemarks.length > 1 ) {
+    if(!/%0*i/.test(filename) &amp;&amp; Array.isArray(timemarks) &amp;&amp; timemarks.length > 1 ) {
       // if there are multiple timemarks but no %i in filename add one
       // so we won't overwrite the same thumbnail with each timemark
       filename += '_%i';
@@ -886,7 +913,7 @@ module.exports = function(proto) {
     if (!utils.isWindows) {
       niceness = niceness || 0;
 
-      if (niceness < -20 || niceness > 20) {
+      if (niceness &lt; -20 || niceness > 20) {
         this.logger.warn('Invalid niceness value: ' + niceness + ', must be between -20 and 20');
       }
 
@@ -935,3 +962,26 @@ module.exports = function(proto) {
     return this;
   };
 };
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li></ul><h3>Events</h3><ul><li><a href="FfmpegCommand.html#event:codecData">codecData</a></li><li><a href="FfmpegCommand.html#event:end">end</a></li><li><a href="FfmpegCommand.html#event:error">error</a></li><li><a href="FfmpegCommand.html#event:progress">progress</a></li><li><a href="FfmpegCommand.html#event:start">start</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 03 2014 20:15:59 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
