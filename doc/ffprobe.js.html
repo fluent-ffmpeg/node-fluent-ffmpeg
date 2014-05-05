@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: ffprobe.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: ffprobe.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*jshint node:true, laxcomma:true*/
+'use strict';
+
+var spawn = require('child_process').spawn;
+
+
+function legacyTag(key) { return key.match(/^TAG:/); }
+function legacyDisposition(key) { return key.match(/^DISPOSITION:/); }
+
+
+module.exports = function(proto) {
+  /**
+   * Run ffprobe on last specified input
+   *
+   * Callback will receive an object as its second argument.  This object
+   * has the same format as what the following command returns:
+   *
+   *   ffprobe -print_format json -show_streams -show_format INPUTFILE
+   *
+   * @param {Function} callback callback with signature (err, ffprobeData)
+   *
+   */
+  proto.ffprobe = function(callback) {
+    if (!this._currentInput) {
+      return callback(new Error('No input specified'));
+    }
+
+    if (typeof this._currentInput.source !== 'string') {
+      return callback(new Error('Cannot run ffprobe on non-file input'));
+    }
+
+    // Find ffprobe
+    var self = this;
+    this._getFfprobePath(function(err, path) {
+      if (err) {
+        return callback(err);
+      } else if (!path) {
+        return callback(new Error('Cannot find ffprobe'));
+      }
+
+      var stdout = '';
+      var stdoutClosed = false;
+      var stderr = '';
+      var stderrClosed = false;
+
+      // Spawn ffprobe
+      var ffprobe = spawn(path, [
+        '-print_format', 'json',
+        '-show_streams',
+        '-show_format',
+        self._currentInput.source
+      ]);
+
+      ffprobe.on('error', function(err) {
+        callback(err);
+      });
+
+      // Ensure we wait for captured streams to end before calling callback
+      var exitError = null;
+      function handleExit(err) {
+        if (err) {
+          exitError = err;
+        }
+
+        if (processExited &amp;&amp; stdoutClosed &amp;&amp; stderrClosed) {
+          if (exitError) {
+            if (stderr) {
+              exitError.message += '\n' + stderr;
+            }
+
+            return callback(exitError);
+          }
+
+          // Process output
+          var data;
+
+          try {
+            data = JSON.parse(stdout);
+          } catch(e) {
+            return callback(e);
+          }
+
+          // Handle legacy output with "TAG:x" and "DISPOSITION:x" keys
+          [data.format].concat(data.streams).forEach(function(target) {
+            var legacyTagKeys = Object.keys(target).filter(legacyTag);
+
+            if (legacyTagKeys.length) {
+              target.tags = target.tags || {};
+
+              legacyTagKeys.forEach(function(tagKey) {
+                target.tags[tagKey.substr(4)] = target[tagKey];
+                delete target[tagKey];
+              });
+            }
+
+            var legacyDispositionKeys = Object.keys(target).filter(legacyDisposition);
+
+            if (legacyDispositionKeys.length) {
+              target.disposition = target.disposition || {};
+
+              legacyDispositionKeys.forEach(function(dispositionKey) {
+                target.disposition[dispositionKey.substr(12)] = target[dispositionKey];
+                delete target[dispositionKey];
+              });
+            }
+          });
+
+          callback(null, data);
+        }
+      }
+
+      // Handle ffprobe exit
+      var processExited = false;
+      ffprobe.on('exit', function(code, signal) {
+        processExited = true;
+
+        if (code) {
+          handleExit(new Error('ffprobe exited with code ' + code));
+        } else if (signal) {
+          handleExit(new Error('ffprobe was killed with signal ' + signal));
+        } else {
+          handleExit();
+        }
+      });
+
+      // Handle stdout/stderr streams
+      ffprobe.stdout.on('data', function(data) {
+        stdout += data;
+      });
+
+      ffprobe.stdout.on('close', function() {
+        stdoutClosed = true;
+        handleExit();
+      });
+
+      ffprobe.stderr.on('data', function(data) {
+        stderr += data;
+      });
+
+      ffprobe.stderr.on('close', function() {
+        stderrClosed = true;
+        handleExit();
+      });
+    });
+  };
+};
+
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li></ul><h3>Events</h3><ul><li><a href="FfmpegCommand.html#event:codecData">codecData</a></li><li><a href="FfmpegCommand.html#event:end">end</a></li><li><a href="FfmpegCommand.html#event:error">error</a></li><li><a href="FfmpegCommand.html#event:progress">progress</a></li><li><a href="FfmpegCommand.html#event:start">start</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 03 2014 20:15:59 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

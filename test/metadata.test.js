@@ -95,4 +95,24 @@ describe('Metadata', function() {
         done();
       });
   });
+
+  it('should fail calling ffprobe on a command without input', function(done) {
+    new Ffmpeg().ffprobe(function(err, data) {
+      assert.ok(!!err);
+      err.message.should.match(/No input specified/);
+      done();
+    });
+  });
+
+  it('should fail calling ffprobe on a command with stream input', function(done) {
+    var stream = fs.createReadStream(this.testfile);
+
+    new Ffmpeg()
+      .addInput(stream)
+      .ffprobe(function(err, data) {
+        assert.ok(!!err);
+        err.message.should.match(/Cannot run ffprobe on non-file input/);
+        done();
+      });
+  });
 });
