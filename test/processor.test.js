@@ -5,7 +5,9 @@ var FfmpegCommand = require('../index'),
   os = require('os').platform(),
   exec = require('child_process').exec,
   async = require('async'),
+  stream = require('stream'),
   testhelper = require('./helpers');
+
 
 var testHTTP = 'http://www.wowza.com/_h264/BigBuckBunny_115k.mov?test with=space';
 var testRTSP = 'rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov?test with=spa ce';
@@ -155,7 +157,7 @@ describe('Processor', function() {
   if (!os.match(/win(32|64)/)) {
     it('should properly limit niceness', function() {
       this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
-          .renice(100).options._niceness.should.equal(0);
+          .renice(100).options.niceness.should.equal(20);
     });
 
     it('should dynamically renice process', function(done) {
@@ -388,7 +390,7 @@ describe('Processor', function() {
     var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
     this.files.push(testFile);
 
-    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0 })
+    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
         .usingPreset('flashvideo');
 
     var startCalled = false;
@@ -635,22 +637,49 @@ describe('Processor', function() {
         })
         .writeToStream(outstream);
     });
-  });
 
-  describe('takeScreenshot',function(){
-    it('should return error with wrong size',function(done){
-      var proc = this.getCommand({ source: this.testfile, logger: testhelper.logger })
-      .withSize('aslkdbasd')
-      .on('error', function(err) {
-        assert.ok(!!err);
-        done();
-      })
-      .on('end', function() {
-        console.log('end was emitted, expected error');
-        assert.ok(false);
-        done();
-      })
-      .takeScreenshots(5, path.join(__dirname, 'assets'));
+    (process.version.match(/v0\.8\./) ? it.skip : it)('should return a PassThrough stream when called with no arguments on node >=0.10', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertToStream.flv');
+      this.files.push(testFile);
+
+      var outstream = fs.createWriteStream(testFile);
+      var command = this.getCommand({ source: this.testfile, logger: testhelper.logger });
+
+      command
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function(stdout, stderr) {
+          fs.exists(testFile, function(exist) {
+            if (!exist) {
+              console.log(stderr);
+            }
+
+            exist.should.true;
+
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.true;
+
+              done();
+            });
+          });
+        })
+
+      var passthrough = command.writeToStream({end: true});
+
+      passthrough.should.instanceof(stream.PassThrough);
+      passthrough.pipe(outstream);
+    });
+
+    (process.version.match(/v0\.8\./) ? it : it.skip)('should throw an error when called with no arguments on node 0.8', function() {
+      (function() {
+        new FfmpegCommand().writeToStream({end: true});
+      }).should.throw(/PassThrough stream is not supported on node v0.8/);
     });
   });
 

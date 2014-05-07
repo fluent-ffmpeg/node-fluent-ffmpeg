@@ -1,19 +1,19 @@
 var ffmpeg = require('../index');
 
 // make sure you set the correct path to your video file
-var proc = new ffmpeg({ source: 'rtmp://path/to/live/stream', nolog: true, timeout: 432000, inputlive:true })
+var proc = ffmpeg('rtmp://path/to/live/stream', { timeout: 432000 })
   // set video bitrate
-  .withVideoBitrate(1024)
+  .videoBitrate(1024)
   // set h264 preset
   .addOption('preset','superfast')
   // set target codec
-  .withVideoCodec('libx264')
+  .videoCodec('libx264')
   // set audio bitrate
-  .withAudioBitrate('128k')
+  .audioBitrate('128k')
   // set audio codec
-  .withAudioCodec('libfaac')
+  .audioCodec('libfaac')
   // set number of audio channels
-  .withAudioChannels(2)
+  .audioChannels(2)
   // set hls segments time
   .addOption('-hls_time', 10)
   // include all the segments in the list
@@ -26,4 +26,4 @@ var proc = new ffmpeg({ source: 'rtmp://path/to/live/stream', nolog: true, timeo
     console.log('an error happened: ' + err.message);
   })
   // save to file
-  .saveToFile('/path/to/your_target.m3u8');
+  .save('/path/to/your_target.m3u8');

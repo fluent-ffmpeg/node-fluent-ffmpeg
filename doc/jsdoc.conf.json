@@ -1,0 +1,15 @@
+{
+	"opts": {
+		"recurse": true,
+		"destination": "doc"
+	},
+
+	"source": {
+		"include": ["README.md", "lib"],
+		"excludePattern": "lib\/presets"
+	},
+
+	"plugins": [
+		"plugins/markdown"
+	]
+}

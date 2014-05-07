@@ -1,8 +1,8 @@
 var ffmpeg = require('../index');
 
-var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
+var proc = ffmpeg('/path/to/your_movie.avi')
   // set the size of your thumbnails
-  .withSize('150x100')
+  .size('150x100')
   // setup event handlers
   .on('end', function(files) {
     console.log('screenshots were saved as ' + files.join(', '));

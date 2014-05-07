@@ -8,8 +8,8 @@ infs.on('error', function(err) {
   console.log(err);
 });
 
-var proc = new ffmpeg({ source: infs, nolog: true })
-  .usingPreset('flashvideo')
+var proc = ffmpeg(infs)
+  .preset('flashvideo')
   // setup event handlers
   .on('progress', function(info) {
     console.log('progress ' + info.percent + '%');
@@ -20,4 +20,4 @@ var proc = new ffmpeg({ source: infs, nolog: true })
   .on('error', function(err) {
     console.log('an error happened: ' + err.message);
   })
-  .saveToFile('/path/to/your_target.flv');
+  .save('/path/to/your_target.flv');
