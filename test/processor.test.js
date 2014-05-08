@@ -154,56 +154,60 @@ describe('Processor', function() {
     );
   });
 
-  if (!os.match(/win(32|64)/)) {
-    it('should properly limit niceness', function() {
-      this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
-          .renice(100).options.niceness.should.equal(20);
-    });
+  // Skip all niceness tests on windows
+  var skipNiceness = os.match(/win(32|64)/);
 
-    it('should dynamically renice process', function(done) {
-      this.timeout(60000);
+  // Skip renice test on OSX + travis (not enough permissions to renice)
+  var skipRenice = process.env.TRAVIS && os.match(/darwin/);
 
-      var testFile = path.join(__dirname, 'assets', 'testProcessRenice.flv');
-      this.files.push(testFile);
+  (skipNiceness ? it.skip : it)('should properly limit niceness', function() {
+    this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
+        .renice(100).options.niceness.should.equal(20);
+  });
 
-      var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
-          .usingPreset('flashvideo')
+  ((skipNiceness || skipRenice) ? it.skip : it)('should dynamically renice process', function(done) {
+    this.timeout(60000);
 
-      var startCalled = false;
-      var reniced = false;
+    var testFile = path.join(__dirname, 'assets', 'testProcessRenice.flv');
+    this.files.push(testFile);
 
-      ffmpegJob
-          .on('start', function() {
-            startCalled = true;
+    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
+        .usingPreset('flashvideo')
+
+    var startCalled = false;
+    var reniced = false;
+
+    ffmpegJob
+        .on('start', function() {
+          startCalled = true;
+          setTimeout(function() {
+            ffmpegJob.renice(5);
+
             setTimeout(function() {
-              ffmpegJob.renice(5);
-
-              setTimeout(function() {
-                exec("ps h p " + ffmpegJob.ffmpegProc.pid + " -o ni", function(err, stdout, stderr) {
-                  assert.ok(!err);
-                  parseInt(stdout).should.equal(5);
-                  reniced = true;
-                });
-              }, 500);
+              exec('ps -p ' + ffmpegJob.ffmpegProc.pid + ' -o ni=', function(err, stdout, stderr) {
+                assert.ok(!err);
+                parseInt(stdout).should.equal(5);
+                reniced = true;
+              });
             }, 500);
+          }, 500);
 
-            ffmpegJob.ffmpegProc.on('exit', function() {
-              reniced.should.be.true;
-              done();
-            });
-          })
-          .on('error', function(err) {
+          ffmpegJob.ffmpegProc.on('exit', function() {
             reniced.should.be.true;
-            startCalled.should.be.true;
-          })
-          .on('end', function() {
-            console.log('end was called, expected a timeout');
-            assert.ok(false);
             done();
-          })
-          .saveToFile(testFile);
-    });
-  }
+          });
+        })
+        .on('error', function(err) {
+          reniced.should.be.true;
+          startCalled.should.be.true;
+        })
+        .on('end', function() {
+          console.log('end was called, expected a timeout');
+          assert.ok(false);
+          done();
+        })
+        .saveToFile(testFile);
+  });
 
   it('should report codec data through \'codecData\' event', function(done) {
     this.timeout(60000);
