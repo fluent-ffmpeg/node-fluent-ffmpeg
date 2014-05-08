@@ -51,13 +51,6 @@
 <p>Can be called with or without the 'new' operator, and the 'input' parameter
 may be specified as 'options.source' instead (or passed later with the
 addInput method).</p>
-<p>Available options:</p>
-<ul>
-<li>'logger': logger object with 'error', 'warning', 'info' and 'debug' methods (default to no logging)</li>
-<li>'niceness' or 'priority': ffmpeg process niceness, ignored on Windows (defaults to 0)</li>
-<li>'presets' or 'preset': directory to load presets from (defaults to fluent-ffmpegs 'presets' subdirectory)</li>
-<li>'timeout': ffmpeg processing timeout in seconds (defaults to no timeout)</li>
-</ul>
     </div>
     
 
@@ -155,104 +148,9 @@ addInput method).</p>
 
             
 
-            <td class="description last"><p>command options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="fluent-ffmpeg.js.html">fluent-ffmpeg.js</a>, <a href="fluent-ffmpeg.js.html#line28">line 28</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dd>
-
-    
-    </div>
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        <dl>
-            
-<dt>
-    <h4 class="name" id="aspect"><span class="type-signature"></span>aspect<span class="signature">(aspect)</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Set output aspect ratio</p>
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
+            <td class="description last"><p>command options</p>
+                <h6>Properties</h6>
+                
 
 <table class="params">
     <thead>
@@ -264,7 +162,11 @@ addInput method).</p>
         <th>Type</th>
 
         
+        <th>Argument</th>
+        
 
+        
+        <th>Default</th>
         
 
         <th class="last">Description</th>
@@ -276,7 +178,241 @@ addInput method).</p>
 
         <tr>
             
-                <td class="name"><code>aspect</code></td>
+                <td class="name"><code>logger</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    &lt;no logging>
+                
+                </td>
+            
+
+            <td class="description last"><p>logger object with 'error', 'warning', 'info' and 'debug' methods</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>niceness</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>ffmpeg process niceness, ignored on Windows</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>priority</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
+
+            <td class="description last"><p>alias for <code>niceness</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>presets</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "fluent-ffmpeg/lib/presets"
+                
+                </td>
+            
+
+            <td class="description last"><p>directory to load presets from</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>preset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    "fluent-ffmpeg/lib/presets"
+                
+                </td>
+            
+
+            <td class="description last"><p>alias for <code>presets</code></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>timeout</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    &lt;no timeout>
+                
+                </td>
+            
+
+            <td class="description last"><p>ffmpeg processing timeout in seconds</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
             
 
             <td class="type">
@@ -285,17 +421,39 @@ addInput method).</p>
 <span class="param-type">String</span>
 |
 
-<span class="param-type">Number</span>
+<span class="param-type">ReadableStream</span>
 
 
             
             </td>
 
             
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
 
+                
+
+                
+                </td>
             
 
-            <td class="description last"><p>aspect ratio (number or 'X:Y' string)</p></td>
+            
+                <td class="default">
+                
+                    &lt;no input>
+                
+                </td>
+            
+
+            <td class="description last"><p>alias for the <code>input</code> parameter</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+            </td>
         </tr>
 
     
@@ -326,7 +484,7 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line189">line 189</a>
+        <a href="fluent-ffmpeg.js.html">fluent-ffmpeg.js</a>, <a href="fluent-ffmpeg.js.html#line29">line 29</a>
     </li></ul></dd>
     
 
@@ -349,21 +507,31 @@ addInput method).</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
 
-        
+    
+    </div>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Audio methods</h3>
+
+        <dl>
             
 <dt>
     <h4 class="name" id="audioBitrate"><span class="type-signature"></span>audioBitrate<span class="signature">(bitrate)</span><span class="type-signature"></span></h4>
@@ -458,7 +626,7 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line38">line 38</a>
+        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line43">line 43</a>
     </li></ul></dd>
     
 
@@ -491,6 +659,14 @@ addInput method).</p>
 
 
         
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withAudioBitrate
 
     
 </dd>
@@ -587,7 +763,7 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line52">line 52</a>
+        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line60">line 60</a>
     </li></ul></dd>
     
 
@@ -620,6 +796,14 @@ addInput method).</p>
 
 
         
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withAudioChannels
 
     
 </dd>
@@ -716,7 +900,7 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line24">line 24</a>
+        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line26">line 26</a>
     </li></ul></dd>
     
 
@@ -749,6 +933,82 @@ addInput method).</p>
 
 
         
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withAudioCodec
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="audioFilter"><span class="type-signature"></span>audioFilter<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioFilters">FfmpegCommand#audioFilters</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -849,7 +1109,7 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line94">line 94</a>
+        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line111">line 111</a>
     </li></ul></dd>
     
 
@@ -884,13 +1144,29 @@ addInput method).</p>
         
 
     
-        <h5>Examples</h5>
+        <h5>Examples:</h5>
         
     <pre class="prettyprint"><code>command.audioFilters('filter1');</code></pre>
 
     <pre class="prettyprint"><code>command.audioFilters('filter1', 'filter2');</code></pre>
 
     <pre class="prettyprint"><code>command.audioFilters(['filter1', 'filter2']);</code></pre>
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withAudioFilter</li>
+	
+		<li>withAudioFilters</li>
+	
+		<li>audioFilter</li>
+	
+</ul>
 
     
 </dd>
@@ -987,7 +1263,7 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line66">line 66</a>
+        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line77">line 77</a>
     </li></ul></dd>
     
 
@@ -1020,6 +1296,14 @@ addInput method).</p>
 
 
         
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withAudioFrequency
 
     
 </dd>
@@ -1116,7 +1400,7 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line80">line 80</a>
+        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line94">line 94</a>
     </li></ul></dd>
     
 
@@ -1151,12 +1435,20 @@ addInput method).</p>
         
 
     
+
+    
+        <h5>Alias:</h5>
+        
+
+	withAudioQuality
+
+    
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="autopad"><span class="type-signature"></span>autopad<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="noAudio"><span class="type-signature"></span>noAudio<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -1164,7 +1456,7 @@ addInput method).</p>
 
     
     <div class="description">
-        <p>Enable auto-padding the output</p>
+        <p>Disable audio in the output</p>
     </div>
     
 
@@ -1172,113 +1464,6 @@ addInput method).</p>
 
     
 
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>pad</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    true
-                
-                </td>
-            
-
-            <td class="description last"><p>enable/disable auto-padding</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>color</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    'black'
-                
-                </td>
-            
-
-            <td class="description last"><p>pad color</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
     
 
     
@@ -1304,8 +1489,92 @@ addInput method).</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line221">line 221</a>
+        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line9">line 9</a>
     </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withNoAudio
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAudioBitrate"><span class="type-signature"></span>withAudioBitrate<span class="signature">(bitrate)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioBitrate">FfmpegCommand#audioBitrate</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -1329,9 +1598,491 @@ addInput method).</p>
     
 
     
+
+    
 </dd>
 
         
+            
+<dt>
+    <h4 class="name" id="withAudioChannels"><span class="type-signature"></span>withAudioChannels<span class="signature">(channels)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioChannels">FfmpegCommand#audioChannels</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAudioCodec"><span class="type-signature"></span>withAudioCodec<span class="signature">(codec)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioCodec">FfmpegCommand#audioCodec</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAudioFilter"><span class="type-signature"></span>withAudioFilter<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioFilters">FfmpegCommand#audioFilters</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAudioFilters"><span class="type-signature"></span>withAudioFilters<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioFilters">FfmpegCommand#audioFilters</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAudioFrequency"><span class="type-signature"></span>withAudioFrequency<span class="signature">(freq)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioFrequency">FfmpegCommand#audioFrequency</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAudioQuality"><span class="type-signature"></span>withAudioQuality<span class="signature">(quality)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#audioQuality">FfmpegCommand#audioQuality</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withNoAudio"><span class="type-signature"></span>withNoAudio<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#noAudio">FfmpegCommand#noAudio</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Capabilities methods</h3>
+
+        <dl>
             
 <dt>
     <h4 class="name" id="availableCodecs"><span class="type-signature"></span>availableCodecs<span class="signature">(callback)</span><span class="type-signature"></span></h4>
@@ -1432,7 +2183,7 @@ with codec data:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="capabilities.js.html">capabilities.js</a>, <a href="capabilities.js.html#line287">line 287</a>
+        <a href="capabilities.js.html">capabilities.js</a>, <a href="capabilities.js.html#line290">line 290</a>
     </li></ul></dd>
     
 
@@ -1455,6 +2206,14 @@ with codec data:</p>
     
 
     
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	getAvailableCodecs
 
     
 </dd>
@@ -1586,6 +2345,14 @@ with filter data:</p>
     
 
     
+
+    
+        <h5>Alias:</h5>
+        
+
+	getAvailableFilters
+
+    
 </dd>
 
         
@@ -1688,7 +2455,7 @@ with format data:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="capabilities.js.html">capabilities.js</a>, <a href="capabilities.js.html#line378">line 378</a>
+        <a href="capabilities.js.html">capabilities.js</a>, <a href="capabilities.js.html#line384">line 384</a>
     </li></ul></dd>
     
 
@@ -1713,136 +2480,12 @@ with format data:</p>
     
 
     
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="duration"><span class="type-signature"></span>duration<span class="signature">(duration)</span><span class="type-signature"></span></h4>
 
     
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Set output duration</p>
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
+        <h5>Alias:</h5>
         
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>duration</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>duration in seconds or as a '[[hh:]mm:]ss[.xxx]' string</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="output.js.html">options/output.js</a>, <a href="output.js.html#line9">line 9</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
+	getAvailableFormats
 
     
 </dd>
@@ -1850,7 +2493,7 @@ with format data:</p>
         
             
 <dt>
-    <h4 class="name" id="fastSeek"><span class="type-signature"></span>fastSeek<span class="signature">(seek)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getAvailableCodecs"><span class="type-signature"></span>getAvailableCodecs<span class="signature">(callback)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -1858,139 +2501,7 @@ with format data:</p>
 
     
     <div class="description">
-        <p>Specify input fast-seek time for the last specified input</p>
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>seek</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>fast-seek time in seconds or as a '[[hh:]mm:]ss[.xxx]' string</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line121">line 121</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="flvmeta"><span class="type-signature"></span>flvmeta<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Run flvtool2/flvmeta on output</p>
+        Alias for <a href="#availableCodecs">FfmpegCommand#availableCodecs</a>
     </div>
     
 
@@ -2021,11 +2532,6 @@ with format data:</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="misc.js.html">options/misc.js</a>, <a href="misc.js.html#line53">line 53</a>
-    </li></ul></dd>
-    
 
     
 
@@ -2046,16 +2552,8 @@ with format data:</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
@@ -2063,7 +2561,7 @@ with format data:</p>
         
             
 <dt>
-    <h4 class="name" id="format"><span class="type-signature"></span>format<span class="signature">(format)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getAvailableFilters"><span class="type-signature"></span>getAvailableFilters<span class="signature">(callback)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -2071,7 +2569,7 @@ with format data:</p>
 
     
     <div class="description">
-        <p>Set output format</p>
+        Alias for <a href="#availableFilters">FfmpegCommand#availableFilters</a>
     </div>
     
 
@@ -2079,54 +2577,6 @@ with format data:</p>
 
     
 
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>format</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>output format name</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
     
 
     
@@ -2150,11 +2600,6 @@ with format data:</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="output.js.html">options/output.js</a>, <a href="output.js.html#line24">line 24</a>
-    </li></ul></dd>
-    
 
     
 
@@ -2175,16 +2620,8 @@ with format data:</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
@@ -2192,7 +2629,7 @@ with format data:</p>
         
             
 <dt>
-    <h4 class="name" id="fps"><span class="type-signature"></span>fps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="getAvailableFormats"><span class="type-signature"></span>getAvailableFormats<span class="signature">(callback)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -2200,7 +2637,7 @@ with format data:</p>
 
     
     <div class="description">
-        <p>Specify output FPS</p>
+        Alias for <a href="#availableFormats">FfmpegCommand#availableFormats</a>
     </div>
     
 
@@ -2208,54 +2645,6 @@ with format data:</p>
 
     
 
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>fps</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>output FPS</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
     
 
     
@@ -2279,11 +2668,6 @@ with format data:</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line99">line 99</a>
-    </li></ul></dd>
-    
 
     
 
@@ -2304,24 +2688,20 @@ with format data:</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
 
-        
+        </dl>
+    
+        <h3 class="subsection-title">Custom options methods</h3>
+
+        <dl>
             
 <dt>
-    <h4 class="name" id="frames"><span class="type-signature"></span>frames<span class="signature">(frames)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addInputOption"><span class="type-signature"></span>addInputOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -2329,7 +2709,7 @@ with format data:</p>
 
     
     <div class="description">
-        <p>Only transcode a certain number of frames</p>
+        Alias for <a href="#inputOptions">FfmpegCommand#inputOptions</a>
     </div>
     
 
@@ -2337,54 +2717,6 @@ with format data:</p>
 
     
 
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>frames</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>frame count</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
     
 
     
@@ -2408,11 +2740,6 @@ with format data:</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line123">line 123</a>
-    </li></ul></dd>
-    
 
     
 
@@ -2433,16 +2760,8 @@ with format data:</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
@@ -2450,7 +2769,7 @@ with format data:</p>
         
             
 <dt>
-    <h4 class="name" id="input"><span class="type-signature"></span>input<span class="signature">(source)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addInputOptions"><span class="type-signature"></span>addInputOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -2458,10 +2777,7 @@ with format data:</p>
 
     
     <div class="description">
-        <p>Add an input to command</p>
-<p>Also switches &quot;current input&quot;, that is the input that will be affected
-by subsequent input-related methods.</p>
-<p>Note: only one stream input is supported for now.</p>
+        Alias for <a href="#inputOptions">FfmpegCommand#inputOptions</a>
     </div>
     
 
@@ -2469,57 +2785,6 @@ by subsequent input-related methods.</p>
 
     
 
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>source</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Readable</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>input file path or readable stream</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
     
 
     
@@ -2543,11 +2808,6 @@ by subsequent input-related methods.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line11">line 11</a>
-    </li></ul></dd>
-    
 
     
 
@@ -2568,16 +2828,8 @@ by subsequent input-related methods.</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
@@ -2585,7 +2837,7 @@ by subsequent input-related methods.</p>
         
             
 <dt>
-    <h4 class="name" id="inputFormat"><span class="type-signature"></span>inputFormat<span class="signature">(format)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addOption"><span class="type-signature"></span>addOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -2593,7 +2845,7 @@ by subsequent input-related methods.</p>
 
     
     <div class="description">
-        <p>Specify input format for the last specified input</p>
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
     </div>
     
 
@@ -2601,54 +2853,6 @@ by subsequent input-related methods.</p>
 
     
 
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>format</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>input format</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
     
 
     
@@ -2672,11 +2876,6 @@ by subsequent input-related methods.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line52">line 52</a>
-    </li></ul></dd>
-    
 
     
 
@@ -2697,16 +2896,8 @@ by subsequent input-related methods.</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
@@ -2714,7 +2905,7 @@ by subsequent input-related methods.</p>
         
             
 <dt>
-    <h4 class="name" id="inputFps"><span class="type-signature"></span>inputFps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="addOptions"><span class="type-signature"></span>addOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -2722,8 +2913,7 @@ by subsequent input-related methods.</p>
 
     
     <div class="description">
-        <p>Specify input FPS for the last specified input
-(only valid for raw video formats)</p>
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
     </div>
     
 
@@ -2731,54 +2921,6 @@ by subsequent input-related methods.</p>
 
     
 
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>fps</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>input FPS</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
     
 
     
@@ -2802,10 +2944,73 @@ by subsequent input-related methods.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line71">line 71</a>
-    </li></ul></dd>
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="addOutputOption"><span class="type-signature"></span>addOutputOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -2827,16 +3032,144 @@ by subsequent input-related methods.</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
 
-
+    
+</dd>
 
         
+            
+<dt>
+    <h4 class="name" id="addOutputOptions"><span class="type-signature"></span>addOutputOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="inputOption"><span class="type-signature"></span>inputOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputOptions">FfmpegCommand#inputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -2984,7 +3317,7 @@ one argument.</p>
         
 
     
-        <h5>Examples</h5>
+        <h5>Examples:</h5>
         
     <pre class="prettyprint"><code>command.inputOptions('option1');</code></pre>
 
@@ -2993,12 +3326,32 @@ one argument.</p>
     <pre class="prettyprint"><code>command.inputOptions(['option1', 'option2']);</code></pre>
 
     
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>addInputOption</li>
+	
+		<li>addInputOptions</li>
+	
+		<li>withInputOption</li>
+	
+		<li>withInputOptions</li>
+	
+		<li>inputOption</li>
+	
+</ul>
+
+    
 </dd>
 
         
             
 <dt>
-    <h4 class="name" id="keepDisplayAspect"><span class="type-signature"></span>keepDisplayAspect<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="outputOption"><span class="type-signature"></span>outputOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -3006,10 +3359,7 @@ one argument.</p>
 
     
     <div class="description">
-        <p>Keep display aspect ratio</p>
-<p>This method is useful when converting an input with non-square pixels to an output format
-that does not support non-square pixels.  It rescales the input so that the display aspect
-ratio is the same.</p>
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
     </div>
     
 
@@ -3040,11 +3390,6 @@ ratio is the same.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line141">line 141</a>
-    </li></ul></dd>
-    
 
     
 
@@ -3065,16 +3410,8 @@ ratio is the same.</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
@@ -3082,7 +3419,7 @@ ratio is the same.</p>
         
             
 <dt>
-    <h4 class="name" id="kill"><span class="type-signature"></span>kill<span class="signature">(<span class="optional">signal</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="outputOptions"><span class="type-signature"></span>outputOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -3090,7 +3427,7 @@ ratio is the same.</p>
 
     
     <div class="description">
-        <p>Kill current ffmpeg process, if any</p>
+        <p>Add custom output option(s)</p>
     </div>
     
 
@@ -3116,8 +3453,6 @@ ratio is the same.</p>
         
 
         
-        <th>Default</th>
-        
 
         <th class="last">Description</th>
     </tr>
@@ -3128,7 +3463,7 @@ ratio is the same.</p>
 
         <tr>
             
-                <td class="name"><code>signal</code></td>
+                <td class="name"><code>options</code></td>
             
 
             <td class="type">
@@ -3143,24 +3478,18 @@ ratio is the same.</p>
             
                 <td class="attributes">
                 
-                    &lt;optional><br>
-                
 
                 
 
+                
+                    &lt;repeatable><br>
                 
                 </td>
             
 
             
-                <td class="default">
-                
-                    SIGKILL
-                
-                </td>
-            
 
-            <td class="description last"><p>signal name</p></td>
+            <td class="description last"><p>option string(s) or string array</p></td>
         </tr>
 
     
@@ -3191,7 +3520,7 @@ ratio is the same.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line921">line 921</a>
+        <a href="custom.js.html">options/custom.js</a>, <a href="custom.js.html#line69">line 69</a>
     </li></ul></dd>
     
 
@@ -3224,6 +3553,1449 @@ ratio is the same.</p>
 
 
         
+
+    
+        <h5>Examples:</h5>
+        
+    <pre class="prettyprint"><code>command.outputOptions('option1');</code></pre>
+
+    <pre class="prettyprint"><code>command.outputOptions('option1', 'option2');</code></pre>
+
+    <pre class="prettyprint"><code>command.outputOptions(['option1', 'option2']);</code></pre>
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>addOutputOption</li>
+	
+		<li>addOutputOptions</li>
+	
+		<li>addOption</li>
+	
+		<li>addOptions</li>
+	
+		<li>withOutputOption</li>
+	
+		<li>withOutputOptions</li>
+	
+		<li>withOption</li>
+	
+		<li>withOptions</li>
+	
+		<li>outputOption</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withInputOption"><span class="type-signature"></span>withInputOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputOptions">FfmpegCommand#inputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withInputOptions"><span class="type-signature"></span>withInputOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputOptions">FfmpegCommand#inputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withOption"><span class="type-signature"></span>withOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withOptions"><span class="type-signature"></span>withOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withOutputOption"><span class="type-signature"></span>withOutputOption<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withOutputOptions"><span class="type-signature"></span>withOutputOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#outputOptions">FfmpegCommand#outputOptions</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Input methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="addInput"><span class="type-signature"></span>addInput<span class="signature">(source)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#input">FfmpegCommand#input</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="fastSeek"><span class="type-signature"></span>fastSeek<span class="signature">(seek)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Specify input fast-seek time for the last specified input</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>seek</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>fast-seek time in seconds or as a '[[hh:]mm:]ss[.xxx]' string</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line133">line 133</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	fastSeekTo
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="fastSeekTo"><span class="type-signature"></span>fastSeekTo<span class="signature">(seek)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fastSeek">FfmpegCommand#fastSeek</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="fpsInput"><span class="type-signature"></span>fpsInput<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFps">FfmpegCommand#inputFps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="fromFormat"><span class="type-signature"></span>fromFormat<span class="signature">(format)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFormat">FfmpegCommand#inputFormat</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="input"><span class="type-signature"></span>input<span class="signature">(source)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Add an input to command</p>
+<p>Also switches &quot;current input&quot;, that is the input that will be affected
+by subsequent input-related methods.</p>
+<p>Note: only one stream input is supported for now.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>source</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Readable</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>input file path or readable stream</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line11">line 11</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>mergeAdd</li>
+	
+		<li>addInput</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="inputFormat"><span class="type-signature"></span>inputFormat<span class="signature">(format)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Specify input format for the last specified input</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>format</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>input format</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line55">line 55</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withInputFormat</li>
+	
+		<li>fromFormat</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="inputFps"><span class="type-signature"></span>inputFps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFps">FfmpegCommand#inputFps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="inputFPS"><span class="type-signature"></span>inputFPS<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFps">FfmpegCommand#inputFps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="inputFps"><span class="type-signature"></span>inputFps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Specify input FPS for the last specified input
+(only valid for raw video formats)</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fps</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>input FPS</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line77">line 77</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withInputFps</li>
+	
+		<li>withInputFPS</li>
+	
+		<li>withFpsInput</li>
+	
+		<li>withFPSInput</li>
+	
+		<li>inputFPS</li>
+	
+		<li>inputFps</li>
+	
+		<li>fpsInput</li>
+	
+</ul>
 
     
 </dd>
@@ -3335,7 +5107,7 @@ ratio is the same.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line134">line 134</a>
+        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line149">line 149</a>
     </li></ul></dd>
     
 
@@ -3368,6 +5140,2187 @@ ratio is the same.</p>
 
 
         
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="mergeAdd"><span class="type-signature"></span>mergeAdd<span class="signature">(source)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#input">FfmpegCommand#input</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="seek"><span class="type-signature"></span>seek<span class="signature">(seek, <span class="optional">fast</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Specify input seek time for the last specified input</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>seek</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>seek time in seconds or as a '[hh:[mm:]]ss[.xxx]' string</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>fast</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    false
+                
+                </td>
+            
+
+            <td class="description last"><p>use fast (but inexact) seek</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line105">line 105</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>setStartTime</li>
+	
+		<li>seekTo</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="seekTo"><span class="type-signature"></span>seekTo<span class="signature">(seek, <span class="optional">fast</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#seek">FfmpegCommand#seek</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setStartTime"><span class="type-signature"></span>setStartTime<span class="signature">(seek, <span class="optional">fast</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#seek">FfmpegCommand#seek</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withFPSInput"><span class="type-signature"></span>withFPSInput<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFps">FfmpegCommand#inputFps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withFpsInput"><span class="type-signature"></span>withFpsInput<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFps">FfmpegCommand#inputFps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withInputFormat"><span class="type-signature"></span>withInputFormat<span class="signature">(format)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFormat">FfmpegCommand#inputFormat</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withInputFps"><span class="type-signature"></span>withInputFps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFps">FfmpegCommand#inputFps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withInputFPS"><span class="type-signature"></span>withInputFPS<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#inputFps">FfmpegCommand#inputFps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Metadata methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="ffprobe"><span class="type-signature"></span>ffprobe<span class="signature">(callback)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Run ffprobe on last specified input</p>
+<p>Callback will receive an object as its second argument.  This object
+has the same format as what the following command returns:</p>
+<p>  ffprobe -print_format json -show_streams -show_format INPUTFILE</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>callback with signature (err, ffprobeData)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="ffprobe.js.html">ffprobe.js</a>, <a href="ffprobe.js.html#line12">line 12</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Miscellaneous methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="flvmeta"><span class="type-signature"></span>flvmeta<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Run flvtool2/flvmeta on output</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="misc.js.html">options/misc.js</a>, <a href="misc.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	updateFlvMetadata
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="preset"><span class="type-signature"></span>preset<span class="signature">(preset)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Use preset</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>preset</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>preset name or preset function</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="misc.js.html">options/misc.js</a>, <a href="misc.js.html#line11">line 11</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	usingPreset
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="strict"><span class="type-signature"></span>strict<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Enable experimental codecs</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="misc.js.html">options/misc.js</a>, <a href="misc.js.html#line43">line 43</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withStrictExperimental
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="updateFlvMetadata"><span class="type-signature"></span>updateFlvMetadata<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#flvmeta">FfmpegCommand#flvmeta</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="usingPreset"><span class="type-signature"></span>usingPreset<span class="signature">(preset)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#preset">FfmpegCommand#preset</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withStrictExperimental"><span class="type-signature"></span>withStrictExperimental<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#strict">FfmpegCommand#strict</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Output methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="duration"><span class="type-signature"></span>duration<span class="signature">(duration)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set output duration</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>duration</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>duration in seconds or as a '[[hh:]mm:]ss[.xxx]' string</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="output.js.html">options/output.js</a>, <a href="output.js.html#line9">line 9</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withDuration</li>
+	
+		<li>setDuration</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="format"><span class="type-signature"></span>format<span class="signature">(format)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set output format</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>format</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>output format name</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="output.js.html">options/output.js</a>, <a href="output.js.html#line27">line 27</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>toFormat</li>
+	
+		<li>withOutputFormat</li>
+	
+		<li>outputFormat</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="outputFormat"><span class="type-signature"></span>outputFormat<span class="signature">(format)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#format">FfmpegCommand#format</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setDuration"><span class="type-signature"></span>setDuration<span class="signature">(duration)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#duration">FfmpegCommand#duration</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="toFormat"><span class="type-signature"></span>toFormat<span class="signature">(format)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#format">FfmpegCommand#format</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withDuration"><span class="type-signature"></span>withDuration<span class="signature">(duration)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#duration">FfmpegCommand#duration</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withOutputFormat"><span class="type-signature"></span>withOutputFormat<span class="signature">(format)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#format">FfmpegCommand#format</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Processing methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="kill"><span class="type-signature"></span>kill<span class="signature">(<span class="optional">signal</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Kill current ffmpeg process, if any</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>signal</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    SIGKILL
+                
+                </td>
+            
+
+            <td class="description last"><p>signal name</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line946">line 946</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
 
     
 </dd>
@@ -3465,7 +7418,7 @@ ratio is the same.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line510">line 510</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line529">line 529</a>
     </li></ul></dd>
     
 
@@ -3490,316 +7443,6 @@ ratio is the same.</p>
     
 
     
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="noAudio"><span class="type-signature"></span>noAudio<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Disable audio in the output</p>
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="audio.js.html">options/audio.js</a>, <a href="audio.js.html#line9">line 9</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="noVideo"><span class="type-signature"></span>noVideo<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Disable video in the output</p>
-    </div>
-    
-
-    
-
-    
-
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line9">line 9</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="outputOptions"><span class="type-signature"></span>outputOptions<span class="signature">(options)</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Add custom output option(s)</p>
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>option string(s) or string array</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="custom.js.html">options/custom.js</a>, <a href="custom.js.html#line66">line 66</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
-
-    
-        <h5>Examples</h5>
-        
-    <pre class="prettyprint"><code>command.outputOptions('option1');</code></pre>
-
-    <pre class="prettyprint"><code>command.outputOptions('option1', 'option2');</code></pre>
-
-    <pre class="prettyprint"><code>command.outputOptions(['option1', 'option2']);</code></pre>
 
     
 </dd>
@@ -3956,7 +7599,7 @@ ratio is the same.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line477">line 477</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line493">line 493</a>
     </li></ul></dd>
     
 
@@ -3991,126 +7634,18 @@ ratio is the same.</p>
         
 
     
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="preset"><span class="type-signature"></span>preset<span class="signature">(preset)</span><span class="type-signature"></span></h4>
 
     
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Use preset</p>
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
+        <h5>Aliases:</h5>
         
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>preset</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>preset name (in presets/ folder) or preset function</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="misc.js.html">options/misc.js</a>, <a href="misc.js.html#line11">line 11</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
+<ul>
+	
+		<li>stream</li>
+	
+		<li>writeToStream</li>
+	
+</ul>
 
     
 </dd>
@@ -4153,6 +7688,8 @@ ratio is the same.</p>
         
 
         
+        <th>Default</th>
+        
 
         <th class="last">Description</th>
     </tr>
@@ -4188,8 +7725,14 @@ ratio is the same.</p>
             
 
             
+                <td class="default">
+                
+                    0
+                
+                </td>
+            
 
-            <td class="description last"><p>niceness value between -20 and 20, defaults to 0</p></td>
+            <td class="description last"><p>niceness value between -20 (highest priority) and 20 (lowest priority)</p></td>
         </tr>
 
     
@@ -4220,7 +7763,7 @@ ratio is the same.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line876">line 876</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line899">line 899</a>
     </li></ul></dd>
     
 
@@ -4253,6 +7796,8 @@ ratio is the same.</p>
 
 
         
+
+    
 
     
 </dd>
@@ -4349,7 +7894,7 @@ ratio is the same.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line464">line 464</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line477">line 477</a>
     </li></ul></dd>
     
 
@@ -4384,191 +7929,12 @@ ratio is the same.</p>
         
 
     
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="seek"><span class="type-signature"></span>seek<span class="signature">(seek, <span class="optional">fast</span>)</span><span class="type-signature"></span></h4>
 
     
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Specify input seek time for the last specified input</p>
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
+        <h5>Alias:</h5>
         
 
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Argument</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>seek</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>seek time in seconds or as a '[hh:[mm:]]ss[.xxx]' string</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>fast</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Boolean</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    false
-                
-                </td>
-            
-
-            <td class="description last"><p>use fast (but inexact) seek</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="inputs.js.html">options/inputs.js</a>, <a href="inputs.js.html#line96">line 96</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
+	saveToFile
 
     
 </dd>
@@ -4576,7 +7942,7 @@ ratio is the same.</p>
         
             
 <dt>
-    <h4 class="name" id="size"><span class="type-signature"></span>size<span class="signature">(size)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="saveToFile"><span class="type-signature"></span>saveToFile<span class="signature">(output)</span><span class="type-signature"></span></h4>
 
     
 </dt>
@@ -4584,144 +7950,7 @@ ratio is the same.</p>
 
     
     <div class="description">
-        <p>Set output size</p>
-<p>The 'size' parameter can have one of 4 forms:</p>
-<ul>
-<li>'X%': rescale to xx % of the original size</li>
-<li>'WxH': specify width and height</li>
-<li>'Wx?': specify width and compute height from input aspect ratio</li>
-<li>'?xH': specify height and compute width from input aspect ratio</li>
-</ul>
-<p>Note: both dimensions will be truncated to multiples of 2.</p>
-    </div>
-    
-
-    
-
-    
-
-    
-        <h5>Parameters:</h5>
-        
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>size</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>size string, eg. '33%', '320x240', '320x?', '?x240'</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-    
-
-    
-<dl class="details">
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line162">line 162</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <h5>Returns:</h5>
-    
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
-
-    
-</dd>
-
-        
-            
-<dt>
-    <h4 class="name" id="strict"><span class="type-signature"></span>strict<span class="signature">()</span><span class="type-signature"></span></h4>
-
-    
-</dt>
-<dd>
-
-    
-    <div class="description">
-        <p>Enable experimental codecs</p>
+        Alias for <a href="#save">FfmpegCommand#save</a>
     </div>
     
 
@@ -4752,10 +7981,73 @@ ratio is the same.</p>
     
 
     
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="misc.js.html">options/misc.js</a>, <a href="misc.js.html#line40">line 40</a>
-    </li></ul></dd>
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="stream"><span class="type-signature"></span>stream<span class="signature">(<span class="optional">stream</span>, <span class="optional">options</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#pipe">FfmpegCommand#pipe</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     
 
     
@@ -4777,16 +8069,8 @@ ratio is the same.</p>
     
 
     
-    <h5>Returns:</h5>
+
     
-            
-<div class="param-desc">
-    <p>FfmpegCommand</p>
-</div>
-
-
-
-        
 
     
 </dd>
@@ -4958,7 +8242,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line658">line 658</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line679">line 679</a>
     </li></ul></dd>
     
 
@@ -4969,6 +8253,881 @@ with the following keys:</p>
     
 </dl>
 
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="writeToStream"><span class="type-signature"></span>writeToStream<span class="signature">(<span class="optional">stream</span>, <span class="optional">options</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#pipe">FfmpegCommand#pipe</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Video methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="fps"><span class="type-signature"></span>fps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Specify output FPS</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>fps</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>output FPS</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line111">line 111</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withOutputFps</li>
+	
+		<li>withOutputFPS</li>
+	
+		<li>withFpsOutput</li>
+	
+		<li>withFPSOutput</li>
+	
+		<li>withFps</li>
+	
+		<li>withFPS</li>
+	
+		<li>outputFPS</li>
+	
+		<li>outputFps</li>
+	
+		<li>fpsOutput</li>
+	
+		<li>FPSOutput</li>
+	
+		<li>FPS</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="FPS"><span class="type-signature"></span>FPS<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="fpsOutput"><span class="type-signature"></span>fpsOutput<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="FPSOutput"><span class="type-signature"></span>FPSOutput<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="frames"><span class="type-signature"></span>frames<span class="signature">(frames)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Only transcode a certain number of frames</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>frames</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>frame count</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line138">line 138</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>takeFrames</li>
+	
+		<li>withFrames</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="noVideo"><span class="type-signature"></span>noVideo<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Disable video in the output</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line9">line 9</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withNoVideo
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="outputFps"><span class="type-signature"></span>outputFps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="outputFPS"><span class="type-signature"></span>outputFPS<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="takeFrames"><span class="type-signature"></span>takeFrames<span class="signature">(frames)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#frames">FfmpegCommand#frames</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
 
     
 
@@ -5135,7 +9294,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line38">line 38</a>
+        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line44">line 44</a>
     </li></ul></dd>
     
 
@@ -5168,6 +9327,14 @@ with the following keys:</p>
 
 
         
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withVideoBitrate
 
     
 </dd>
@@ -5264,7 +9431,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line24">line 24</a>
+        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line27">line 27</a>
     </li></ul></dd>
     
 
@@ -5297,6 +9464,82 @@ with the following keys:</p>
 
 
         
+
+    
+
+    
+        <h5>Alias:</h5>
+        
+
+	withVideoCodec
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="videoFilter"><span class="type-signature"></span>videoFilter<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#videoFilters">FfmpegCommand#videoFilters</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -5397,7 +9640,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line63">line 63</a>
+        <a href="video.js.html">options/video.js</a>, <a href="video.js.html#line72">line 72</a>
     </li></ul></dd>
     
 
@@ -5432,13 +9675,2750 @@ with the following keys:</p>
         
 
     
-        <h5>Examples</h5>
+        <h5>Examples:</h5>
         
     <pre class="prettyprint"><code>command.videoFilters('filter1');</code></pre>
 
     <pre class="prettyprint"><code>command.videoFilters('filter1', 'filter2');</code></pre>
 
     <pre class="prettyprint"><code>command.videoFilters(['filter1', 'filter2']);</code></pre>
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withVideoFilter</li>
+	
+		<li>withVideoFilters</li>
+	
+		<li>videoFilter</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withFPS"><span class="type-signature"></span>withFPS<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withFps"><span class="type-signature"></span>withFps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withFPSOutput"><span class="type-signature"></span>withFPSOutput<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withFpsOutput"><span class="type-signature"></span>withFpsOutput<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withFrames"><span class="type-signature"></span>withFrames<span class="signature">(frames)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#frames">FfmpegCommand#frames</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withNoVideo"><span class="type-signature"></span>withNoVideo<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#noVideo">FfmpegCommand#noVideo</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withOutputFPS"><span class="type-signature"></span>withOutputFPS<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withOutputFps"><span class="type-signature"></span>withOutputFps<span class="signature">(fps)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#fps">FfmpegCommand#fps</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withVideoBitrate"><span class="type-signature"></span>withVideoBitrate<span class="signature">(bitrate, <span class="optional">constant</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#videoBitrate">FfmpegCommand#videoBitrate</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withVideoCodec"><span class="type-signature"></span>withVideoCodec<span class="signature">(codec)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#videoCodec">FfmpegCommand#videoCodec</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withVideoFilter"><span class="type-signature"></span>withVideoFilter<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#videoFilters">FfmpegCommand#videoFilters</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withVideoFilters"><span class="type-signature"></span>withVideoFilters<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#videoFilters">FfmpegCommand#videoFilters</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+        <h3 class="subsection-title">Video size methods</h3>
+
+        <dl>
+            
+<dt>
+    <h4 class="name" id="applyAutoPad"><span class="type-signature"></span>applyAutoPad<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="applyAutopad"><span class="type-signature"></span>applyAutopad<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="applyAutopadding"><span class="type-signature"></span>applyAutopadding<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="applyAutoPadding"><span class="type-signature"></span>applyAutoPadding<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="aspect"><span class="type-signature"></span>aspect<span class="signature">(aspect)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set output aspect ratio</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>aspect</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+|
+
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>aspect ratio (number or 'X:Y' string)</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line195">line 195</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withAspect</li>
+	
+		<li>withAspectRatio</li>
+	
+		<li>setAspect</li>
+	
+		<li>setAspectRatio</li>
+	
+		<li>aspectRatio</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="aspectRatio"><span class="type-signature"></span>aspectRatio<span class="signature">(aspect)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#aspect">FfmpegCommand#aspect</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="autoPad"><span class="type-signature"></span>autoPad<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="autopad"><span class="type-signature"></span>autopad<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Enable auto-padding the output</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>pad</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    true
+                
+                </td>
+            
+
+            <td class="description last"><p>enable/disable auto-padding</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>color</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    'black'
+                
+                </td>
+            
+
+            <td class="description last"><p>pad color</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line230">line 230</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>applyAutopadding</li>
+	
+		<li>applyAutoPadding</li>
+	
+		<li>applyAutopad</li>
+	
+		<li>applyAutoPad</li>
+	
+		<li>withAutopadding</li>
+	
+		<li>withAutoPadding</li>
+	
+		<li>withAutopad</li>
+	
+		<li>withAutoPad</li>
+	
+		<li>autoPad</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="keepDAR"><span class="type-signature"></span>keepDAR<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Keep display aspect ratio</p>
+<p>This method is useful when converting an input with non-square pixels to an output format
+that does not support non-square pixels.  It rescales the input so that the display aspect
+ratio is the same.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line141">line 141</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>keepPixelAspect</li>
+	
+		<li>keepDisplayAspect</li>
+	
+		<li>keepDisplayAspectRatio</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="keepDisplayAspect"><span class="type-signature"></span>keepDisplayAspect<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#keepDAR">FfmpegCommand#keepDAR</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="keepDisplayAspectRatio"><span class="type-signature"></span>keepDisplayAspectRatio<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#keepDAR">FfmpegCommand#keepDAR</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="keepPixelAspect"><span class="type-signature"></span>keepPixelAspect<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#keepDAR">FfmpegCommand#keepDAR</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setAspect"><span class="type-signature"></span>setAspect<span class="signature">(aspect)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#aspect">FfmpegCommand#aspect</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setAspectRatio"><span class="type-signature"></span>setAspectRatio<span class="signature">(aspect)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#aspect">FfmpegCommand#aspect</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="setSize"><span class="type-signature"></span>setSize<span class="signature">(size)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#size">FfmpegCommand#size</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="size"><span class="type-signature"></span>size<span class="signature">(size)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set output size</p>
+<p>The 'size' parameter can have one of 4 forms:</p>
+<ul>
+<li>'X%': rescale to xx % of the original size</li>
+<li>'WxH': specify width and height</li>
+<li>'Wx?': specify width and compute height from input aspect ratio</li>
+<li>'?xH': specify height and compute width from input aspect ratio</li>
+</ul>
+<p>Note: both dimensions will be truncated to multiples of 2.</p>
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>size</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>size string, eg. '33%', '320x240', '320x?', '?x240'</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="videosize.js.html">options/videosize.js</a>, <a href="videosize.js.html#line165">line 165</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <h5>Returns:</h5>
+    
+            
+<div class="param-desc">
+    <p>FfmpegCommand</p>
+</div>
+
+
+
+        
+
+    
+
+    
+        <h5>Aliases:</h5>
+        
+
+<ul>
+	
+		<li>withSize</li>
+	
+		<li>setSize</li>
+	
+</ul>
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAspect"><span class="type-signature"></span>withAspect<span class="signature">(aspect)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#aspect">FfmpegCommand#aspect</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAspectRatio"><span class="type-signature"></span>withAspectRatio<span class="signature">(aspect)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#aspect">FfmpegCommand#aspect</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAutopad"><span class="type-signature"></span>withAutopad<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAutoPad"><span class="type-signature"></span>withAutoPad<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAutoPadding"><span class="type-signature"></span>withAutoPadding<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withAutopadding"><span class="type-signature"></span>withAutopadding<span class="signature">(<span class="optional">pad</span>, <span class="optional">color</span>)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#autopad">FfmpegCommand#autopad</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    <h4 class="name" id="withSize"><span class="type-signature"></span>withSize<span class="signature">(size)</span><span class="type-signature"></span></h4>
+
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Alias for <a href="#size">FfmpegCommand#size</a>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
 
     
 </dd>
@@ -5460,6 +12440,10 @@ with the following keys:</p>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>Emitted when ffmpeg reports input codec data</p>
+    </div>
     
 
     
@@ -5539,7 +12523,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line26">line 26</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line218">line 218</a>
     </li></ul></dd>
     
 
@@ -5550,6 +12534,8 @@ with the following keys:</p>
     
 </dl>
 
+
+    
 
     
 
@@ -5576,11 +12562,78 @@ with the following keys:</p>
 <dd>
 
     
-
+    <div class="description">
+        <p>Emitted when a command finishes processing</p>
+    </div>
     
 
     
 
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Argument</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>filenames</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>generated filenames when taking screenshots, null otherwise</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
     
 
     
@@ -5606,7 +12659,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line38">line 38</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line234">line 234</a>
     </li></ul></dd>
     
 
@@ -5617,6 +12670,8 @@ with the following keys:</p>
     
 </dl>
 
+
+    
 
     
 
@@ -5642,6 +12697,10 @@ with the following keys:</p>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>Emitted when an error happens when preparing or running a command</p>
+    </div>
     
 
     
@@ -5716,7 +12775,7 @@ with the following keys:</p>
 
             
 
-            <td class="description last"><p>ffmpeg stdout</p></td>
+            <td class="description last"><p>ffmpeg stdout, unless outputting to a stream</p></td>
         </tr>
 
     
@@ -5773,7 +12832,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line31">line 31</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line225">line 225</a>
     </li></ul></dd>
     
 
@@ -5784,6 +12843,8 @@ with the following keys:</p>
     
 </dl>
 
+
+    
 
     
 
@@ -5809,6 +12870,10 @@ with the following keys:</p>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>Emitted when ffmpeg reports progress information</p>
+    </div>
     
 
     
@@ -5888,7 +12953,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line21">line 21</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line211">line 211</a>
     </li></ul></dd>
     
 
@@ -5899,6 +12964,8 @@ with the following keys:</p>
     
 </dl>
 
+
+    
 
     
 
@@ -5924,6 +12991,10 @@ with the following keys:</p>
 </dt>
 <dd>
 
+    
+    <div class="description">
+        <p>Emitted just after ffmpeg has been spawned.</p>
+    </div>
     
 
     
@@ -6003,7 +13074,7 @@ with the following keys:</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line16">line 16</a>
+        <a href="processor.js.html">processor.js</a>, <a href="processor.js.html#line204">line 204</a>
     </li></ul></dd>
     
 
@@ -6014,6 +13085,8 @@ with the following keys:</p>
     
 </dl>
 
+
+    
 
     
 
@@ -6042,13 +13115,13 @@ with the following keys:</p>
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li></ul><h3>Events</h3><ul><li><a href="FfmpegCommand.html#event:codecData">codecData</a></li><li><a href="FfmpegCommand.html#event:end">end</a></li><li><a href="FfmpegCommand.html#event:error">error</a></li><li><a href="FfmpegCommand.html#event:progress">progress</a></li><li><a href="FfmpegCommand.html#event:start">start</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Sat May 03 2014 20:15:59 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Thu May 08 2014 10:38:29 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

@@ -1,7 +1,9 @@
 {
 	"opts": {
 		"recurse": true,
-		"destination": "doc"
+		"verbose": true,
+		"destination": "doc",
+		"template": "tools/jsdoc-template"
 	},
 
 	"source": {
@@ -10,6 +12,7 @@
 	},
 
 	"plugins": [
-		"plugins/markdown"
+		"plugins/markdown",
+		"tools/jsdoc-aliases.js"
 	]
 }

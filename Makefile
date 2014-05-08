@@ -19,7 +19,7 @@ publish:
 	@npm publish
 
 JSDOC = node_modules/.bin/jsdoc
-JSDOC_CONF = doc/jsdoc.conf.json
+JSDOC_CONF = tools/jsdoc-conf.json
 
 doc:
 	$(JSDOC) --configure $(JSDOC_CONF)
