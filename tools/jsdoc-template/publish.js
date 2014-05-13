@@ -28,6 +28,10 @@ function getAncestorLinks(doclet) {
     return helper.getAncestorLinks(data, doclet);
 }
 
+function getCategoryLink(className, cat) {
+    return '<a href="' + className + '.html#' + cat.toLowerCase().replace(/[^a-z0-9]/gi, '-') + '-methods">' + cat + ' methods</a>';
+}
+
 function hashToLink(doclet, hash) {
     if ( !/^(#.+)/.test(hash) ) { return hash; }
 
@@ -223,6 +227,11 @@ function buildNav(members) {
         members.classes.forEach(function(c) {
             if ( !hasOwnProp.call(seen, c.longname) ) {
                 classNav += '<li>'+linkto(c.longname, c.name)+'</li>';
+                if (c.longname in members.categories) {
+                    classNav += '<ul>' + members.categories[c.longname].reduce(function(nav, cat) {
+                        return nav + '<li> ' + getCategoryLink(c.longname, cat) + '</li>';
+                    }, '') + '</ul>';
+                }
             }
             seen[c.longname] = true;
         });
@@ -465,6 +474,19 @@ exports.publish = function(taffyData, opts, tutorials) {
 
     var members = helper.getMembers(data);
     members.tutorials = tutorials.children;
+    members.categories = data('method').get().reduce(function(cats, method) {
+        if (!(method.memberof in cats)) {
+            cats[method.memberof] = [];
+        }
+
+        var cat = method.category || 'Other';
+        if (cats[method.memberof].indexOf(cat) === -1) {
+            cats[method.memberof].push(cat);
+            cats[method.memberof] = cats[method.memberof].sort();
+        }
+
+        return cats;
+    }, {});
 
     // output pretty-printed source files by default
     var outputSourceFiles = conf['default'] && conf['default'].outputSourceFiles !== false ? true :

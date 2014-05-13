@@ -125,7 +125,7 @@
 
             Object.keys(categories).sort().forEach(function(category) {
     ?>
-        <h3 class="subsection-title"><?js= category ?></h3>
+        <h3 class="subsection-title"><a name="<?js= category.toLowerCase().replace(/[^a-z0-9]/gi, '-') ?>"></a><?js= category ?></h3>
 
         <dl><?js categories[category].forEach(function(m) { ?>
             <?js= self.partial('method.tmpl', m) ?>

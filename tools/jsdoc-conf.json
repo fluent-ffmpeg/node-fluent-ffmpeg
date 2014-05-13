@@ -14,5 +14,10 @@
 	"plugins": [
 		"plugins/markdown",
 		"tools/jsdoc-aliases.js"
-	]
+	],
+
+	"markdown": {
+		"parser": "evilstreak",
+		"dialect": "Markuru"
+	}
 }
