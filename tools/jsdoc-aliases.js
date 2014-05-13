@@ -1,12 +1,29 @@
 /*jshint node:true*/
 'use strict';
 
-function cloneDoclet(doclet) {
+function createAlias(doclet, alias) {
 	var clone = {};
 
 	Object.keys(doclet).forEach(function(key) {
 		clone[key] = doclet[key];
 	});
+
+	if (alias.indexOf('#') !== -1) {
+		clone.longname = alias;
+		clone.memberof = alias.split('#')[0];
+		clone.name = alias.split('#')[1];
+	} else {
+		clone.longname = clone.memberof + '#' + alias;
+		clone.name = alias;
+	}
+
+	delete clone.returns;
+	delete clone.examples;
+	delete clone.meta;
+	delete clone.aliases;
+
+	clone.isAlias = true;
+	clone.description = 'Alias for <a href="#' + doclet.name + '">' + doclet.longname + '</a>';
 
 	return clone;
 }
@@ -19,27 +36,7 @@ exports.handlers = {
 			// Duplicate doclets with aliases
 			if (doclet.aliases) {
 				doclet.aliases.forEach(function(alias) {
-					var clone = cloneDoclet(doclet);
-					//console.dir(doclet);
-
-					if (alias.indexOf('#') !== -1) {
-						clone.longname = alias;
-						clone.memberof = alias.split('#')[0];
-						clone.name = alias.split('#')[1];
-					} else {
-						clone.longname = clone.memberof + '#' + alias;
-						clone.name = alias;
-					}
-
-					delete clone.returns;
-					delete clone.examples;
-					delete clone.meta;
-					delete clone.aliases;
-
-					clone.isAlias = true;
-					clone.description = 'Alias for <a href="#' + doclet.name + '">' + doclet.longname + '</a>';
-
-					e.doclets.push(clone);
+					e.doclets.push(createAlias(doclet, alias));
 				});
 			}
 		});
