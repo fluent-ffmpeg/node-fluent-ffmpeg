@@ -1061,6 +1061,34 @@ The returned object for filters looks like:
 * `output` tells the output type this filter generates, one of "audio", "video" or "none".  When "none", the filter has no output (sink only)
 * `multipleInputs` tells whether the filter can generate multiple outputs
 
+### Cloning an FfmpegCommand
+
+You can create clones of an FfmpegCommand instance by calling the `clone()` method.  The clone will be an exact copy of the original at the time it has been called (same inputs, same options, same event handlers, etc.).  This is mainly useful when you want to apply different processing options on the same input.
+
+Setting options, adding inputs or event handlers on a clone will not affect the original command.
+
+```js
+// Create a command to convert source.avi to MP4
+var command = ffmpeg('/path/to/source.avi')
+  .audioCodec('libfaac')
+  .videoCodec('libx264')
+  .format('mp4');
+
+// Create a clone to save a small resized version
+command.clone()
+  .size('320x200')
+  .save('/path/to/output-small.mp4');
+
+// Create a clone to save a medium resized version
+command.clone()
+  .size('640x400')
+  .save('/path/to/output-medium.mp4');
+
+// Save a converted version with the original size
+command.save('/path/to/output-original-size.mp4');
+```
+
+
 ## Migrating from fluent-ffmpeg 1.x
 
 fluent-ffmpeg 2.0 is mostly compatible with previous versions, as all previous method names have been kept as aliases.  The paragraphs below explain how to get around the few remaining incompatibilities.

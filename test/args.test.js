@@ -866,4 +866,45 @@ describe('Command', function() {
       filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=black\'');
     });
   });
+
+  describe('clone', function() {
+    it('should return a new FfmpegCommand instance', function() {
+      var command = new Ffmpeg({ source: this.testfile, logger: testhelper.logger });
+      var clone = command.clone();
+
+      clone.should.instanceof(Ffmpeg);
+      clone.should.not.equal(command);
+    });
+
+    it('should duplicate FfmpegCommand options at the time of the call', function(done) {
+      var command = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .preset('flashvideo');
+
+      var clone = command.clone();
+
+      command._test_getArgs(function(originalArgs, err) {
+        clone._test_getArgs(function(cloneArgs, err) {
+          cloneArgs.length.should.equal(originalArgs.length);
+          originalArgs.forEach(function(arg, index) {
+            cloneArgs[index].should.equal(arg);
+          });
+          done();
+        });
+      });
+    });
+
+    it('should have separate argument lists', function(done) {
+      var command = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .preset('flashvideo');
+
+      var clone = command.clone().audioFrequency(22050);
+
+      command._test_getArgs(function(originalArgs, err) {
+        clone._test_getArgs(function(cloneArgs, err) {
+          cloneArgs.length.should.equal(originalArgs.length + 2);
+          done();
+        });
+      });
+    });
+  });
 });
