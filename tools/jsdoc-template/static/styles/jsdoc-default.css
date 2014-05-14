@@ -69,12 +69,13 @@ section
 nav
 {
     display: block;
-    float: left;
-    margin-left: -230px;
-    margin-top: 28px;
     width: 220px;
     border-left: 1px solid #ccc;
     padding-left: 9px;
+
+    position: fixed;
+    top: 28px;
+    right: 0;
 }
 
 nav ul {
