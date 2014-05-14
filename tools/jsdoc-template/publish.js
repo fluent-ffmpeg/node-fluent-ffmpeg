@@ -126,6 +126,9 @@ function generate(title, docs, filename, resolveLinks) {
         html = helper.resolveLinks(html); // turn {@link foo} into <a href="foodoc.html">foo</a>
     }
 
+    // Ensure <pre> tags have pretty print class
+    html = html.replace(/<pre>/g, '<pre class="prettyprint">');
+
     fs.writeFileSync(outpath, html, 'utf8');
 }
 

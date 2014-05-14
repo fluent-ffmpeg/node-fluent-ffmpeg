@@ -93,7 +93,7 @@ nav ul ul {
 }
 
 nav h2 a, nav h2 a:visited {
-    color: #A35A00;
+    color: #526492;
     text-decoration: none;
 }
 
@@ -138,7 +138,11 @@ h2
     font-size: 170%;
     font-weight: bold;
     letter-spacing: -0.01em;
-    margin: 6px 0 3px 0;
+    margin: 50px 0 3px 0;
+}
+
+nav > h2 {
+    margin-top: 6px;
 }
 
 h3
@@ -147,7 +151,7 @@ h3
     font-weight: bold;
     letter-spacing: -0.01em;
     margin-top: 16px;
-    margin: 6px 0 3px 0;
+    margin: 50px 0 3px 0;
 }
 
 h4
@@ -157,7 +161,7 @@ h4
     letter-spacing: -0.01em;
     margin-top: 16px;
     margin: 18px 0 3px 0;
-    color: #A35A00;
+    color: #526492;
 }
 
 h5, .container-overview .subsection-title
@@ -176,7 +180,7 @@ h6
     font-style: italic;
 }
 
-article > dl {
+article > dl, article > pre {
     margin-left: 2em;
 }
 
@@ -297,7 +301,7 @@ article > dl {
 }
 
 .params .name, .props .name, .name code {
-    color: #A35A00;
+    color: #526492;
     font-family: Consolas, 'Lucida Console', Monaco, monospace;
     font-size: 100%;
 }
