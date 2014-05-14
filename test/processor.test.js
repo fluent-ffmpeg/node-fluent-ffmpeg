@@ -154,94 +154,168 @@ describe('Processor', function() {
     );
   });
 
-  // Skip all niceness tests on windows
-  var skipNiceness = os.match(/win(32|64)/);
+  describe('Process controls', function() {
+    // Skip all niceness tests on windows
+    var skipNiceness = os.match(/win(32|64)/);
 
-  // Skip renice test on OSX + travis (not enough permissions to renice)
-  var skipRenice = process.env.TRAVIS && os.match(/darwin/);
+    // Skip renice test on OSX + travis (not enough permissions to renice)
+    var skipRenice = process.env.TRAVIS && os.match(/darwin/);
 
-  (skipNiceness ? it.skip : it)('should properly limit niceness', function() {
-    this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
-        .renice(100).options.niceness.should.equal(20);
-  });
+    (skipNiceness ? it.skip : it)('should properly limit niceness', function() {
+      this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
+          .renice(100).options.niceness.should.equal(20);
+    });
 
-  ((skipNiceness || skipRenice) ? it.skip : it)('should dynamically renice process', function(done) {
-    this.timeout(60000);
+    ((skipNiceness || skipRenice) ? it.skip : it)('should dynamically renice process', function(done) {
+      this.timeout(60000);
 
-    var testFile = path.join(__dirname, 'assets', 'testProcessRenice.flv');
-    this.files.push(testFile);
+      var testFile = path.join(__dirname, 'assets', 'testProcessRenice.flv');
+      this.files.push(testFile);
 
-    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
-        .usingPreset('flashvideo')
+      var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
+          .usingPreset('flashvideo')
 
-    var startCalled = false;
-    var reniced = false;
+      var startCalled = false;
+      var reniced = false;
 
-    ffmpegJob
-        .on('start', function() {
-          startCalled = true;
-          setTimeout(function() {
-            ffmpegJob.renice(5);
-
+      ffmpegJob
+          .on('start', function() {
+            startCalled = true;
             setTimeout(function() {
-              exec('ps -p ' + ffmpegJob.ffmpegProc.pid + ' -o ni=', function(err, stdout, stderr) {
-                assert.ok(!err);
-                parseInt(stdout).should.equal(5);
-                reniced = true;
-              });
+              ffmpegJob.renice(5);
+
+              setTimeout(function() {
+                exec('ps -p ' + ffmpegJob.ffmpegProc.pid + ' -o ni=', function(err, stdout, stderr) {
+                  assert.ok(!err);
+                  parseInt(stdout).should.equal(5);
+                  reniced = true;
+                });
+              }, 500);
             }, 500);
-          }, 500);
 
-          ffmpegJob.ffmpegProc.on('exit', function() {
+            ffmpegJob.ffmpegProc.on('exit', function() {
+              reniced.should.be.true;
+              done();
+            });
+          })
+          .on('error', function(err) {
             reniced.should.be.true;
+            startCalled.should.be.true;
+          })
+          .on('end', function() {
+            console.log('end was called, expected a timeout');
+            assert.ok(false);
             done();
-          });
-        })
-        .on('error', function(err) {
-          reniced.should.be.true;
-          startCalled.should.be.true;
-        })
-        .on('end', function() {
-          console.log('end was called, expected a timeout');
-          assert.ok(false);
-          done();
-        })
-        .saveToFile(testFile);
+          })
+          .saveToFile(testFile);
+    });
+
+    it('should kill the process on timeout', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testProcessKillTimeout.flv');
+      this.files.push(testFile);
+
+      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.02 });
+
+      command
+          .usingPreset('flashvideo')
+          .on('start', function() {
+            command.ffmpegProc.on('exit', function() {
+              done();
+            });
+          })
+          .on('error', function(err) {
+            err.message.indexOf('timeout').should.not.equal(-1);
+          })
+          .on('end', function() {
+            console.log('end was called, expected a timeout');
+            assert.ok(false);
+            done();
+          })
+          .saveToFile(testFile);
+    });
+
+    it('should kill the process with .kill', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
+      this.files.push(testFile);
+
+      var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+          .usingPreset('flashvideo');
+
+      var startCalled = false;
+      var errorCalled = false;
+
+      ffmpegJob
+          .on('start', function() {
+            startCalled = true;
+            setTimeout(function() { ffmpegJob.kill(); }, 500);
+            ffmpegJob.ffmpegProc.on('exit', function() {
+              errorCalled.should.be.true;
+              done();
+            });
+          })
+          .on('error', function(err) {
+            err.message.indexOf('ffmpeg was killed with signal SIGKILL').should.not.equal(-1);
+            startCalled.should.be.true;
+            errorCalled = true;
+          })
+          .on('end', function() {
+            console.log('end was called, expected an error');
+            assert.ok(false);
+            done();
+          })
+          .saveToFile(testFile);
+    });
+
+    it('should send the process custom signals with .kill(signal)', function(done) {
+      this.timeout(60000);
+
+      var testFile = path.join(__dirname, 'assets', 'testProcessKillCustom.flv');
+      this.files.push(testFile);
+
+      var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
+          .usingPreset('flashvideo');
+
+      var startCalled = true;
+      var errorCalled = false;
+      ffmpegJob
+          .on('start', function() {
+            startCalled = true;
+
+            setTimeout(function() { ffmpegJob.kill('SIGSTOP'); }, 500);
+
+            ffmpegJob.ffmpegProc.on('exit', function() {
+              errorCalled.should.be.true;
+              done();
+            });
+          })
+          .on('error', function(err) {
+            startCalled.should.be.true;
+            err.message.indexOf('timeout').should.not.equal(-1);
+
+            errorCalled = true;
+            ffmpegJob.kill('SIGCONT');
+          })
+          .on('end', function() {
+            console.log('end was called, expected a timeout');
+            assert.ok(false);
+            done();
+          })
+          .saveToFile(testFile);
+
+    });
   });
 
-  it('should report codec data through \'codecData\' event', function(done) {
-    this.timeout(60000);
+  describe('Events', function() {
+    it('should report codec data through \'codecData\' event', function(done) {
+      this.timeout(60000);
 
-    var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
-    this.files.push(testFile);
+      var testFile = path.join(__dirname, 'assets', 'testOnCodecData.flv');
+      this.files.push(testFile);
 
-    this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
-      .on('codecData', function(data) {
-        data.should.have.property('audio');
-        data.should.have.property('video');
-      })
-      .usingPreset('flashvideo')
-      .on('error', function(err, stdout, stderr) {
-        testhelper.logError(err, stdout, stderr);
-        assert.ok(!err);
-      })
-      .on('end', function() {
-        done();
-      })
-      .saveToFile(testFile);
-  });
-
-  it('should report progress through \'progress\' event', function(done) {
-    this.timeout(60000)
-
-    var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
-      , gotProgress = false;
-
-    this.files.push(testFile);
-
-    this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
-        .on('progress', function(data) {
-          gotProgress = true;
+      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+        .on('codecData', function(data) {
+          data.should.have.property('audio');
+          data.should.have.property('video');
         })
         .usingPreset('flashvideo')
         .on('error', function(err, stdout, stderr) {
@@ -249,215 +323,131 @@ describe('Processor', function() {
           assert.ok(!err);
         })
         .on('end', function() {
-          gotProgress.should.be.true;
           done();
         })
         .saveToFile(testFile);
+    });
+
+    it('should report progress through \'progress\' event', function(done) {
+      this.timeout(60000)
+
+      var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
+        , gotProgress = false;
+
+      this.files.push(testFile);
+
+      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+          .on('progress', function(data) {
+            gotProgress = true;
+          })
+          .usingPreset('flashvideo')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr);
+            assert.ok(!err);
+          })
+          .on('end', function() {
+            gotProgress.should.be.true;
+            done();
+          })
+          .saveToFile(testFile);
+    });
+
+    it('should report start of ffmpeg process through \'start\' event', function(done) {
+      this.timeout(60000)
+
+      var testFile = path.join(__dirname, 'assets', 'testStart.flv')
+        , startCalled = false;
+
+      this.files.push(testFile);
+
+      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+          .on('start', function(cmdline) {
+            startCalled = true;
+
+            // Only test a subset of command line
+            cmdline.indexOf('ffmpeg').should.equal(0);
+            cmdline.indexOf('testvideo-5m').should.not.equal(-1);
+            cmdline.indexOf('-b:a 96k').should.not.equal(-1);
+          })
+          .usingPreset('flashvideo')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr);
+            assert.ok(!err);
+          })
+          .on('end', function() {
+            startCalled.should.be.true;
+            done();
+          })
+          .saveToFile(testFile);
+    });
   });
 
-  it('should report start of ffmpeg process through \'start\' event', function(done) {
-    this.timeout(60000)
+  describe('takeScreenshots', function() {
+    it('should properly take a certain amount of screenshots at defined timemarks', function(done) {
+      var testFolder = path.join(__dirname, 'assets', 'screenshots');
 
-    var testFile = path.join(__dirname, 'assets', 'testStart.flv')
-      , startCalled = false;
+      this.files.push(path.join(testFolder, 'tn_0.5s_1.jpg'));
+      this.files.push(path.join(testFolder, 'tn_1s_2.jpg'));
+      this.dirs.push(testFolder);
 
-    this.files.push(testFile);
-
-    this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
-        .on('start', function(cmdline) {
-          startCalled = true;
-
-          // Only test a subset of command line
-          cmdline.indexOf('ffmpeg').should.equal(0);
-          cmdline.indexOf('testvideo-5m').should.not.equal(-1);
-          cmdline.indexOf('-b:a 96k').should.not.equal(-1);
-        })
-        .usingPreset('flashvideo')
+      var args = this.getCommand({ source: this.testfile, logger: testhelper.logger })
+        .withSize('150x?')
         .on('error', function(err, stdout, stderr) {
           testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
         })
         .on('end', function() {
-          startCalled.should.be.true;
-          done();
-        })
-        .saveToFile(testFile);
-  });
-
-  it('should properly take a certain amount of screenshots at defined timemarks', function(done) {
-    var testFolder = path.join(__dirname, 'assets', 'screenshots');
-
-    this.files.push(path.join(testFolder, 'tn_0.5s_1.jpg'));
-    this.files.push(path.join(testFolder, 'tn_1s_2.jpg'));
-    this.dirs.push(testFolder);
-
-    var args = this.getCommand({ source: this.testfile, logger: testhelper.logger })
-      .withSize('150x?')
-      .on('error', function(err, stdout, stderr) {
-        testhelper.logError(err, stdout, stderr);
-        assert.ok(!err);
-      })
-      .on('end', function() {
-        fs.readdir(testFolder, function(err, files) {
-          var tnCount = 0;
-          files.forEach(function(file) {
-            if (file.indexOf('.jpg') > -1) {
-              tnCount++;
-            }
-          });
-          tnCount.should.equal(2);
-          done();
-        });
-      })
-      .takeScreenshots({
-        count: 2,
-        timemarks: [ '0.5', '1' ]
-      }, testFolder);
-  });
-
-  it('should report all generated filenames as an argument to the \'end\' event', function(done) {
-    var testFolder = path.join(__dirname, 'assets', 'screenshots_end');
-
-    this.files.push(path.join(testFolder, 'shot_001.jpg'));
-    this.files.push(path.join(testFolder, 'shot_002.jpg'));
-    this.dirs.push(testFolder);
-
-    var args = this.getCommand({ source: this.testfile, logger: testhelper.logger })
-      .withSize('150x?')
-      .on('error', function(err, stdout, stderr) {
-        testhelper.logError(err, stdout, stderr);
-        assert.ok(!err);
-      })
-      .on('end', function(names) {
-        names.length.should.equal(2);
-        names[0].should.equal('shot_001.jpg');
-        names[1].should.equal('shot_002.jpg');
-        fs.readdir(testFolder, function(err, files) {
-          var tnCount = 0;
-          files.forEach(function(file) {
-            if (file.indexOf('.jpg') > -1) {
-              tnCount++;
-            }
-          });
-          tnCount.should.equal(2);
-          done();
-        });
-      })
-      .takeScreenshots({
-        count: 2,
-        timemarks: [ '0.5', '1' ],
-        filename: 'shot_%00i'
-      }, testFolder);
-  });
-
-  it('should save an output file with special characters properly to disk', function(done) {
-    var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .flv');
-    this.files.push(testFile);
-
-    this.getCommand({ source: this.testfile, logger: testhelper.logger })
-      .usingPreset('flashvideo')
-      .on('error', function(err, stdout, stderr) {
-        testhelper.logError(err, stdout, stderr);
-        assert.ok(!err);
-      })
-      .on('end', function() {
-        done();
-      })
-      .saveToFile(testFile);
-  });
-
-  it('should kill the process on timeout', function(done) {
-    var testFile = path.join(__dirname, 'assets', 'testProcessKillTimeout.flv');
-    this.files.push(testFile);
-
-    var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.02 });
-
-    command
-        .usingPreset('flashvideo')
-        .on('start', function() {
-          command.ffmpegProc.on('exit', function() {
+          fs.readdir(testFolder, function(err, files) {
+            var tnCount = 0;
+            files.forEach(function(file) {
+              if (file.indexOf('.jpg') > -1) {
+                tnCount++;
+              }
+            });
+            tnCount.should.equal(2);
             done();
           });
         })
-        .on('error', function(err) {
-          err.message.indexOf('timeout').should.not.equal(-1);
+        .takeScreenshots({
+          count: 2,
+          timemarks: [ '0.5', '1' ]
+        }, testFolder);
+    });
+
+    it('should report all generated filenames as an argument to the \'end\' event', function(done) {
+      var testFolder = path.join(__dirname, 'assets', 'screenshots_end');
+
+      this.files.push(path.join(testFolder, 'shot_001.jpg'));
+      this.files.push(path.join(testFolder, 'shot_002.jpg'));
+      this.dirs.push(testFolder);
+
+      var args = this.getCommand({ source: this.testfile, logger: testhelper.logger })
+        .withSize('150x?')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
         })
-        .on('end', function() {
-          console.log('end was called, expected a timeout');
-          assert.ok(false);
-          done();
-        })
-        .saveToFile(testFile);
-  });
-
-  it('should kill the process with .kill', function(done) {
-    var testFile = path.join(__dirname, 'assets', 'testProcessKill.flv');
-    this.files.push(testFile);
-
-    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
-        .usingPreset('flashvideo');
-
-    var startCalled = false;
-    var errorCalled = false;
-
-    ffmpegJob
-        .on('start', function() {
-          startCalled = true;
-          setTimeout(function() { ffmpegJob.kill(); }, 500);
-          ffmpegJob.ffmpegProc.on('exit', function() {
-            errorCalled.should.be.true;
+        .on('end', function(names) {
+          names.length.should.equal(2);
+          names[0].should.equal('shot_001.jpg');
+          names[1].should.equal('shot_002.jpg');
+          fs.readdir(testFolder, function(err, files) {
+            var tnCount = 0;
+            files.forEach(function(file) {
+              if (file.indexOf('.jpg') > -1) {
+                tnCount++;
+              }
+            });
+            tnCount.should.equal(2);
             done();
           });
         })
-        .on('error', function(err) {
-          err.message.indexOf('ffmpeg was killed with signal SIGKILL').should.not.equal(-1);
-          startCalled.should.be.true;
-          errorCalled = true;
-        })
-        .on('end', function() {
-          console.log('end was called, expected an error');
-          assert.ok(false);
-          done();
-        })
-        .saveToFile(testFile);
-  });
-
-  it('should send the process custom signals with .kill(signal)', function(done) {
-    this.timeout(60000);
-
-    var testFile = path.join(__dirname, 'assets', 'testProcessKillCustom.flv');
-    this.files.push(testFile);
-
-    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
-        .usingPreset('flashvideo');
-
-    var startCalled = true;
-    var errorCalled = false;
-    ffmpegJob
-        .on('start', function() {
-          startCalled = true;
-
-          setTimeout(function() { ffmpegJob.kill('SIGSTOP'); }, 500);
-
-          ffmpegJob.ffmpegProc.on('exit', function() {
-            errorCalled.should.be.true;
-            done();
-          });
-        })
-        .on('error', function(err) {
-          startCalled.should.be.true;
-          err.message.indexOf('timeout').should.not.equal(-1);
-
-          errorCalled = true;
-          ffmpegJob.kill('SIGCONT');
-        })
-        .on('end', function() {
-          console.log('end was called, expected a timeout');
-          assert.ok(false);
-          done();
-        })
-        .saveToFile(testFile);
-
+        .takeScreenshots({
+          count: 2,
+          timemarks: [ '0.5', '1' ],
+          filename: 'shot_%00i'
+        }, testFolder);
+    });
   });
 
   describe('saveToFile', function() {
@@ -488,6 +478,22 @@ describe('Processor', function() {
         .saveToFile(testFile);
     });
 
+    it('should save an output file with special characters properly to disk', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .flv');
+      this.files.push(testFile);
+
+      this.getCommand({ source: this.testfile, logger: testhelper.logger })
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          done();
+        })
+        .saveToFile(testFile);
+    });
+
     it('should save output files with special characters', function(done) {
       var testFile = path.join(__dirname, 'assets', '[test "special \' char*cters \n.flv');
       this.files.push(testFile);
@@ -512,7 +518,7 @@ describe('Processor', function() {
           });
         })
         .saveToFile(testFile);
-    })
+    });
 
     it('should accept a stream as its source', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFile.flv');
@@ -687,7 +693,7 @@ describe('Processor', function() {
     });
   });
 
-  describe('inputs', function() {
+  describe('Inputs', function() {
     it('should take input from a file with special characters', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testSpecialInput.flv');
       this.files.push(testFile);
@@ -803,6 +809,43 @@ describe('Processor', function() {
           });
         })
         .saveToFile(testFile);
+    });
+  });
+
+  describe('Errors', function() {
+    it('should report an error when ffmpeg has been killed', function(done) {
+      this.timeout(10000);
+
+      var testFile = path.join(__dirname, 'assets', 'testErrorKill.flv');
+      this.files.push(testFile);
+
+      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger });
+
+      command
+        .usingPreset('flashvideo')
+        .on('start', function() {
+          setTimeout(function() {
+            command.kill('SIGKILL');
+          }, 1000);
+        })
+        .on('error', function(err) {
+          err.message.should.match(/ffmpeg was killed with signal SIGKILL/);
+          done();
+        })
+        .on('end', function() {
+          assert.ok(false);
+        })
+        .saveToFile(testFile);
+    });
+
+    it('should report ffmpeg errors', function(done) {
+      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+        .addOption('-invalidoption')
+        .on('error', function(err) {
+          err.message.should.match(/Unrecognized option 'invalidoption'/);
+          done();
+        })
+        .saveToFile('/will/not/be/created/anyway');
     });
   });
 });
