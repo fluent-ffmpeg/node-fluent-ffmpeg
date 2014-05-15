@@ -332,7 +332,49 @@ describe('Command', function() {
           done();
         });
     });
-  })
+
+    it('should accept filter arrays', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withVideoFilter(['multiple=1', 'filters=2'])
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-filter:v').should.above(-1);
+          args.indexOf('multiple=1,filters=2').should.above(-1);
+          done();
+        });
+    });
+
+    it('should enable using filter objects', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withVideoFilter(
+          {
+            filter: 'option_string',
+            options: 'opt1=value1:opt2=value2'
+          },
+          {
+            filter: 'unnamed_options',
+            options: ['opt1', 'opt2']
+          },
+          {
+            filter: 'named_options',
+            options: {
+              opt1: 'value1',
+              opt2: 'value2'
+            }
+          }
+        )
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-filter:v').should.above(-1);
+          args.indexOf('option_string=opt1=value1:opt2=value2,unnamed_options=opt1:opt2,named_options=opt1=value1:opt2=value2').should.above(-1);
+          done();
+        });
+    });
+  });
 
   describe('withAudioBitrate', function() {
     it('should apply the audio bitrate argument', function(done) {
@@ -444,6 +486,48 @@ describe('Command', function() {
 
           args.indexOf('-filter:a').should.above(-1);
           args.indexOf('silencedetect=n=-50dB:d=5,volume=0.5,multiple=1,filters=2').should.above(-1);
+          done();
+        });
+    });
+
+    it('should accept filter arrays', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withAudioFilter(['multiple=1', 'filters=2'])
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-filter:a').should.above(-1);
+          args.indexOf('multiple=1,filters=2').should.above(-1);
+          done();
+        });
+    });
+
+    it('should enable using filter objects', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .withAudioFilter(
+          {
+            filter: 'option_string',
+            options: 'opt1=value1:opt2=value2'
+          },
+          {
+            filter: 'unnamed_options',
+            options: ['opt1', 'opt2']
+          },
+          {
+            filter: 'named_options',
+            options: {
+              opt1: 'value1',
+              opt2: 'value2'
+            }
+          }
+        )
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-filter:a').should.above(-1);
+          args.indexOf('option_string=opt1=value1:opt2=value2,unnamed_options=opt1:opt2,named_options=opt1=value1:opt2=value2').should.above(-1);
           done();
         });
     });
@@ -864,6 +948,140 @@ describe('Command', function() {
         ._test_getSizeFilters();
       filters.length.should.equal(2);
       filters[1].should.equal('pad=\'w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=black\'');
+    });
+  });
+
+  describe('complexFilter', function() {
+    it('should generate a complex filter from a single filter', function() {
+      var filters = new Ffmpeg()
+        .complexFilter('filterstring')
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[0].should.equal('-filter_complex');
+      filters[1].should.equal('filterstring');
+    });
+
+    it('should generate a complex filter from a filter array', function() {
+      var filters = new Ffmpeg()
+        .complexFilter(['filter1', 'filter2'])
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[1].should.equal('filter1;filter2');
+    });
+
+    it('should support filter objects', function() {
+      var filters = new Ffmpeg()
+        .complexFilter([
+          'filter1',
+          { filter: 'filter2' }
+        ])
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[1].should.equal('filter1;filter2');
+    });
+
+    it('should support filter options', function() {
+      var filters = new Ffmpeg()
+        .complexFilter([
+          { filter: 'filter1', options: 'optionstring' },
+          { filter: 'filter2', options: ['opt1', 'opt2', 'opt3'] },
+          { filter: 'filter3', options: { opt1: 'value1', opt2: 'value2' } }
+        ])
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[1].should.equal('filter1=optionstring;filter2=opt1:opt2:opt3;filter3=opt1=value1:opt2=value2');
+    });
+
+    it('should support filter input streams', function() {
+      var filters = new Ffmpeg()
+        .complexFilter([
+          { filter: 'filter1', inputs: 'input' },
+          { filter: 'filter2', inputs: '[input]' },
+          { filter: 'filter3', inputs: ['[input1]', 'input2'] }
+        ])
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[1].should.equal('[input]filter1;[input]filter2;[input1][input2]filter3');
+    });
+
+    it('should support filter output streams', function() {
+      var filters = new Ffmpeg()
+        .complexFilter([
+          { filter: 'filter1', options: 'opt', outputs: 'output' },
+          { filter: 'filter2', options: 'opt', outputs: '[output]' },
+          { filter: 'filter3', options: 'opt', outputs: ['[output1]', 'output2'] }
+        ])
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[1].should.equal('filter1=opt[output];filter2=opt[output];filter3=opt[output1][output2]');
+    });
+
+    it('should support an additional mapping argument', function() {
+      var filters = new Ffmpeg()
+        .complexFilter(['filter1', 'filter2'], 'output')
+        ._getArguments();
+
+      filters.length.should.equal(4);
+      filters[2].should.equal('-map');
+      filters[3].should.equal('[output]');
+
+      filters = new Ffmpeg()
+        .complexFilter(['filter1', 'filter2'], '[output]')
+        ._getArguments();
+
+      filters.length.should.equal(4);
+      filters[2].should.equal('-map');
+      filters[3].should.equal('[output]');
+
+      filters = new Ffmpeg()
+        .complexFilter(['filter1', 'filter2'], ['[output1]', 'output2'])
+        ._getArguments();
+
+      filters.length.should.equal(6);
+      filters[2].should.equal('-map');
+      filters[3].should.equal('[output1]');
+      filters[4].should.equal('-map');
+      filters[5].should.equal('[output2]');
+    });
+
+    it('should override any previously set complex filtergraphs', function() {
+      var filters = new Ffmpeg()
+        .complexFilter(['filter1a', 'filter1b'], 'output1')
+        .complexFilter(['filter2a', 'filter2b'], 'output2')
+        ._getArguments();
+
+      filters.length.should.equal(4);
+      filters[1].should.equal('filter2a;filter2b');
+      filters[2].should.equal('-map');
+      filters[3].should.equal('[output2]');
+    });
+
+    it('should regroup audio and video filters into filtergraph', function() {
+      var filters = new Ffmpeg()
+        .audioFilters('audio1', 'audio2')
+        .videoFilters('video1', 'video2')
+        .complexFilter(['complex1', 'complex2'])
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[1].should.equal('audio1;audio2;video1;video2;complex1;complex2');
+
+      filters = new Ffmpeg()
+        .audioFilters('audio1', 'audio2')
+        .videoFilters('video1', 'video2')
+        .complexFilter(['complex1', 'complex2'], 'output')
+        ._getArguments();
+
+      filters.length.should.equal(4);
+      filters[1].should.equal('audio1;audio2;video1;video2;complex1;complex2');
+      filters[2].should.equal('-map');
+      filters[3].should.equal('[output]');
     });
   });
 

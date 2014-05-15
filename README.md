@@ -171,7 +171,7 @@ ffmpeg('/path/to/file.avi').loop(134.5);
 ffmpeg('/path/to/file.avi').loop('2:14.500');
 ```
 
-#### inputOptions(option[, option...]): add custom input options
+#### inputOptions(option...): add custom input options
 
 **Aliases**: `inputOption()`, `addInputOption()`, `addInputOptions()`, `withInputOption()`, `withInputOptions()`.
 
@@ -250,11 +250,15 @@ ffmpeg('/path/to/file.avi')
   .audioQuality(0);
 ```
 
-#### audioFilters(filter[, filter...]): add custom audio filters
+#### audioFilters(filter...): add custom audio filters
 
 **Aliases**: `audioFilter()`, `withAudioFilter()`, `withAudioFilters()`.
 
-This method enables adding custom audio filters.  You may add multiple filters at once by passing either several arguments or a string array.  See the Ffmpeg documentation for available filters and their syntax.
+This method enables adding custom audio filters.  You may add multiple filters at once by passing either several arguments or an array.  See the Ffmpeg documentation for available filters and their syntax.
+
+Each filter pased to this method can be either a filter string (eg. `volume=0.5`) or a filter specification object with the following keys:
+* `filter`: filter name
+* `options`: optional; either an option string for the filter (eg. `n=-50dB:d=5`), an options array for unnamed options (eg. `['-50dB', 5]`) or an object mapping option names to values (eg. `{ n: '-50dB', d: 5 }`).  When `options` is not specified, the filter will be added without any options.
 
 ```js
 ffmpeg('/path/to/file.avi')
@@ -266,6 +270,30 @@ ffmpeg('/path/to/file.avi')
 
 ffmpeg('/path/to/file.avi')
   .audioFilters(['volume=0.5', 'silencedetect=n=-50dB:d=5']);
+
+ffmpeg('/path/to/file.avi')
+  .audioFilters([
+    {
+      filter: 'volume',
+      options: '0.5'
+    },
+    {
+      filter: 'silencedetect',
+      options: 'n=-50dB:d=5'
+    }
+  ]);
+
+ffmpeg('/path/to/file.avi')
+  .audioFilters(
+    {
+      filter: 'volume',
+      options: ['0.5']
+    },
+    {
+      filter: 'silencedetect',
+      options: { n: '-50dB', d: 5 }
+    }
+  ]);
 ```
 
 
@@ -308,11 +336,15 @@ ffmpeg('/path/to/file.avi').videoBitrate('1000k');
 ffmpeg('/path/to/file.avi').videoBitrate('1000k', true);
 ```
 
-#### videoFilters(filter[, filter...]): add custom video filters
+#### videoFilters(filter...): add custom video filters
 
 **Aliases**: `videoFilter()`, `withVideoFilter()`, `withVideoFilters()`.
 
-This method enables adding custom video filters.  You may add multiple filters at once by passing either several arguments or a string array.  See the Ffmpeg documentation for available filters and their syntax.
+This method enables adding custom video filters.  You may add multiple filters at once by passing either several arguments or an array.  See the Ffmpeg documentation for available filters and their syntax.
+
+Each filter pased to this method can be either a filter string (eg. `fade=in:0:30`) or a filter specification object with the following keys:
+* `filter`: filter name
+* `options`: optional; either an option string for the filter (eg. `in:0:30`), an options array for unnamed options (eg. `['in', 0, 30]`) or an object mapping option names to values (eg. `{ t: 'in', s: 0, n: 30 }`).  When `options` is not specified, the filter will be added without any options.
 
 ```js
 ffmpeg('/path/to/file.avi')
@@ -324,6 +356,30 @@ ffmpeg('/path/to/file.avi')
 
 ffmpeg('/path/to/file.avi')
   .videoFilters(['fade=in:0:30', 'pad=640:480:0:40:violet']);
+
+ffmpeg('/path/to/file.avi')
+  .videoFilters([
+    {
+      filter: 'fade',
+      options: 'in:0:30'
+    },
+    {
+      filter: 'pad',
+      options: '640:480:0:40:violet'
+    }
+  ]);
+
+ffmpeg('/path/to/file.avi')
+    .videoFilters(
+    {
+      filter: 'fade',
+      options: ['in', 0, 30]
+    },
+    {
+      filter: 'filter2',
+      options: { w: 640, h: 480, x: 0, y: 40, color: 'violet' }
+    }
+  );
 ```
 
 #### fps(fps): set output framerate
@@ -468,7 +524,7 @@ ffmpeg('/path/to/file.avi').duration('2:14.500');
 ffmpeg('/path/to/file.avi').format('flv');
 ```
 
-#### outputOptions(option[, option...]): add custom output options
+#### outputOptions(option...): add custom output options
 
 **Aliases**: `outputOption()`, `addOutputOption()`, `addOutputOptions()`, `withOutputOption()`, `withOutputOptions()`, `addOption()`, `addOptions()`.
 
@@ -547,6 +603,74 @@ Calling this method makes fluent-ffmpeg run `flvmeta` or `flvtool2` on the outpu
 
 ```js
 ffmpeg('/path/to/file.avi').flvmeta().format('flv');
+```
+
+#### complexFilter(filters[, map]): set complex filtergraph
+
+**Aliases**: `filterGraph()`
+
+The `complexFilter()` method enables setting a complex filtergraph for a command.  It expects a filter specification (or a filter specification array) and an optional output mapping parameter as arguments.
+
+Filter specifications may be either plain ffmpeg filter strings (eg. `split=3[a][b][c]`) or objects with the following keys:
+* `filter`: filter name
+* `options`: optional; either an option string for the filter (eg. `in:0:30`), an options array for unnamed options (eg. `['in', 0, 30]`) or an object mapping option names to values (eg. `{ t: 'in', s: 0, n: 30 }`).  When `options` is not specified, the filter will be added without any options.
+* `inputs`: optional; input stream specifier(s) for the filter.  The value may be either a single stream specifier string or an array of stream specifiers.  Each specifier can be optionally enclosed in square brackets.  When input streams are not specified, ffmpeg will use the first unused streams of the correct type.
+* `outputs`: optional; output stream specifier(s) for the filter.  The value may be either a single stream specifier string or an array of stream specifiers.  Each specifier can be optionally enclosed in square brackets.
+
+The output mapping parameter specifies which stream(s) to include in the output from the filtergraph.  It may be either a single stream specifier string or an array of stream specifiers.  Each specifier can be optionally enclosed in square brackets.  When this parameter is not present, ffmpeg will default to saving all unused outputs to the output file.
+
+Note that only one complex filtergraph may be set on a given command.  Calling `complexFilter()` again will override any previously set filtergraph, but you can set as many filters as needed in a single call.
+
+```js
+ffmpeg('/path/to/file.avi')
+  .complexFilter([
+    // Rescale input stream into stream 'rescaled'
+    'scale=640:480[rescaled]',
+
+    // Duplicate rescaled stream 3 times into streams a, b, and c
+    {
+      filter: 'split', options: '3',
+      inputs: 'rescaled', outputs: ['a', 'b', 'c']
+    },
+
+    // Create stream 'red' by removing green and blue channels from stream 'a'
+    {
+      filter: 'lutrgb', options: { g: 0, b: 0 },
+      inputs: 'a', outputs: 'red'
+    },
+
+    // Create stream 'green' by removing red and blue channels from stream 'b'
+    {
+      filter: 'lutrgb', options: { r: 0, b: 0 },
+      inputs: 'b', outputs: 'green'
+    },
+
+    // Create stream 'blue' by removing red and green channels from stream 'c'
+    {
+      filter: 'lutrgb', options: { r: 0, g: 0 },
+      inputs: 'c', outputs: 'blue'
+    },
+
+    // Pad stream 'red' to 3x width, keeping the video on the left,
+    // and name output 'padded'
+    {
+      filter: 'pad', options: { w: 'iw*3', h: 'ih' },
+      inputs: 'red', outputs: 'padded'
+    },
+
+    // Overlay 'green' onto 'padded', moving it to the center,
+    // and name output 'redgreen'
+    {
+      filter: 'overlay', options: { x: 'w', y: 0 },
+      inputs: ['padded', 'green'], outputs: 'redgreen'
+    },
+
+    // Overlay 'blue' onto 'redgreen', moving it to the right
+    {
+      filter: 'overlay', options: { x: '2*w', y: 0 },
+      inputs: ['redgreen', 'blue'], outputs: 'output'
+    },
+  ], 'output');
 ```
 
 
@@ -1091,9 +1215,223 @@ command.save('/path/to/output-original-size.mp4');
 
 ## Migrating from fluent-ffmpeg 1.x
 
-fluent-ffmpeg 2.0 is mostly compatible with previous versions, as all previous method names have been kept as aliases.  The paragraphs below explain how to get around the few remaining incompatibilities.
+fluent-ffmpeg 2.0 is mostly compatible with previous versions, as all previous method names have been kept as aliases.  The paragraphs below list new features and explain how to get around the few remaining incompatibilities.
 
-### Callbacks and event handling
+### New features
+
+#### New constructor syntax
+
+The fluent-ffmpeg constructor now supports multiple calling syntaxes.  The 1.x syntax is still valid, though.
+
+Passing an input file or stream to the constructor is optional, you can add input(s) later with the `input()` method (which is an alias for the legacy `addInput()` method).
+
+```js
+var Ffmpeg = require('fluent-ffmpeg');
+var command1 = new Ffmpeg().input('input1.avi').input('input2.avi');
+var command2 = new Ffmpeg({ timeout: 30 }).input('input1.avi');
+var command3 = new Ffmpeg({ timeout: 30 }).addInput('input1.avi');
+```
+
+Instead of passing the first input in the options object, you can now pass it as the first argument to the constructor.
+
+```js
+var Ffmpeg = require('fluent-ffmpeg');
+var command1 = new Ffmpeg('input.avi');
+var command2 = new Ffmpeg('input.avi', { timeout: 30 });
+var command3 = new Ffmpeg({ source: 'input.avi', timeout: 30 });
+```
+
+The fluent-ffmpeg constructor can also be called without the `new` operator.
+
+```js
+var ffmpeg = require('fluent-ffmpeg');
+var command1 = ffmpeg();
+var command2 = ffmpeg('input.avi');
+var command3 = ffmpeg({ source: 'input.avi', timeout: 30 });
+var command4 = ffmpeg('input.avi', { timeout: 30 });
+```
+
+#### New method names
+
+Most methods now have multiple aliases (including short ones).  All method names from previous versions have been kept for compatibility.  See the documentation for the complete list of available methods and their aliases.
+
+```js
+// 1.x code
+var Ffmpeg = require('fluent-ffmpeg');
+new Ffmpeg({source:'file.avi'})
+  .withSize('320x?')
+  .usingPreset('flashvideo')
+  .saveToFile('out.avi');
+
+// 2.x code
+var ffmpeg = require('fluent-ffmpeg');
+ffmpeg('file.avi')
+  .size('320x?')
+  .preset('flashvideo')
+  .save('out.avi');
+
+```
+
+#### Better input options handling
+
+In previous versions, when using multiple inputs, you had no way of specifying which inputs the options applied to.  From now on, every input-related method applies to the last input that was specified (including the one passed to the constructor, if any).
+
+```js
+var ffmpeg = require('fluent-ffmpeg');
+var command1 = ffmpeg('input1.avi')
+  // Those apply to input1
+  .fromFormat('avi') 
+  .inputFps(24)
+  
+  .input('input2.mov')
+  // Those apply to input2
+  .fromFormat('mov') 
+  .inputFps(30);
+
+var command2 = ffmpeg()
+  .input('input1.avi')
+  // Those apply to input1
+  .fromFormat('avi') 
+  .inputFps(24)
+
+  .input('input2.mov')
+  // Those apply to input2
+  .fromFormat('mov') 
+  .inputFps(30);
+
+var command3 = ffmpeg()
+  // Throws an error, no input specified yet
+  .inputFps(24);
+```
+
+#### Output streaming
+
+When using nodejs v0.10 or later, passing a writable stream to the `stream()` method (an alias for `writeToStream()`) is now optional.  When no stream has been passed, fluent-ffmpeg will create a PassThrough stream, have ffmpeg write its output to it and return it.
+
+```js
+var ffmpeg = require('fluent-ffmpeg');
+var outStream = require('fs').createWriteStream('out.avi');
+
+// Passing a readable stream
+ffmpeg('input.avi').stream(outStream);
+
+// Not passing a readable stream
+var stream = ffmpeg('input.avi').stream();
+stream.pipe(outStream);
+```
+
+#### Filter syntax
+
+A new syntax is supported for audio and video filters.  You can still pass them as filter strings, but you can now also pass filter specification objects.
+
+A filter specification object contains the following keys:
+* `filter`: filter name
+* `options` (optional): filter options, either as a plain string, a string array (for multiple unnamed options) or an object (to specify options as key-value pairs).
+* `inputs` (optional): input stream(s) specification, either as a string or a string array.  Each stream specification may or may not be enclosed in square brackets (fluent-ffmpeg will add them if not present).
+* `outputs` (optional): output stream(s) specification, either as a string or a string array.  Each stream specification may or may not be enclosed in square brackets (fluent-ffmpeg will add them if not present).
+
+```js
+var ffmpeg = require('fluent-ffmpeg');
+
+ffmpeg()
+  // Same as .audioFilters('volume=2')
+  .audioFilters({
+    filter: 'volume',
+    options: '2'
+  });
+  .videoFilters([
+    // Generates 'scale=320:200[scaled]'
+    {
+      filter: 'scale',
+      options: [320, 200],
+      outputs: 'scaled'
+    },
+
+    // Generates '[scaled]pad=w=iw*2:h=ih*2:color=black[padded]'
+    {
+      filter: 'pad',
+      options: {
+        w: 'iw*2',
+        h: 'ih*2',
+        color: 'black'
+      },
+      inputs: ['scaled'],
+      outputs: 'padded'
+    }
+  ]);
+```
+
+Filters may be passed to the filter methods either as multiple arguments or as a single array argument.
+
+#### Complex filters
+
+fluent-ffmpeg now supports complex filtergraphs.  The `complexFilter()` method expects an array of filter specifications (either as filter strings or filter specification objects) and an optional output stream list (or single stream name) as arguments.
+
+Note that only one complex filtergraph may be set on a given command.  Calling `complexFilter()` again will override any previously set filtergraph, but you can set as many filters as needed in a single call.
+
+```js
+ffmpeg('video.avi')
+  .complexFilter([
+    // Duplicate video stream 3 times into streams a, b, and c
+    {
+      filter: 'split', options: '3',
+      outputs: ['a', 'b', 'c']
+    },
+
+    // Create stream 'red' by removing green and blue channels from stream 'a'
+    {
+      filter: 'lutrgb', options: { g: 0, b: 0 },
+      inputs: 'a', outputs: 'red'
+    },
+
+    // Create stream 'green' by removing red and blue channels from stream 'b'
+    {
+      filter: 'lutrgb', options: { r: 0, b: 0 },
+      inputs: 'b', outputs: 'green'
+    },
+
+    // Create stream 'blue' by removing red and green channels from stream 'c'
+    {
+      filter: 'lutrgb', options: { r: 0, g: 0 },
+      inputs: 'c', outputs: 'blue'
+    },
+
+    // Pad stream 'red' to 3x width, keeping the video on the left,
+    // and name output 'padded'
+    {
+      filter: 'pad', options: { w: 'iw*3', h: 'ih' },
+      inputs: 'red', outputs: 'padded'
+    },
+
+    // Overlay 'green' onto 'padded', moving it to the center,
+    // and name output 'redgreen'
+    {
+      filter: 'overlay', options: { x: 'w', y: 0 },
+      inputs: ['padded', 'green'], outputs: 'redgreen'
+    },
+
+    // Overlay 'blue' onto 'redgreen', moving it to the right
+    {
+      filter: 'overlay', options: { x: '2*w', y: 0 },
+      inputs: ['redgreen', 'blue'], outputs: 'output'
+    },
+  ], 'output');
+```
+
+#### Command cloning
+
+fluent-ffmpeg now enables cloning a command to run several transcoding operations with the same options.
+
+```js
+var command = ffmpeg('/path/to/file.avi').withSomeOption(...);
+var clone = command.clone();
+```
+
+Note: you should not use the `clone()` method when using an input stream, as both commands will fight to read input from it.  Either one command will get the full input data and the other will get nothing, or both will get parts of the input.
+
+### Incompatible changes
+
+#### Callbacks and event handling
 
 Passing callback to the `saveToFile()`, `writeToStream()`, `takeScreenshots()` and `mergeToFile()` methods has been deprecated for some time now, and is now unsupported from version 2.0 onwards.  You must use event handlers instead.  
 
@@ -1137,7 +1475,7 @@ Note that you should always set a handler for the `error` event.  If an error ha
 
 See the [events documentation](#setting-event-handlers) above for more information.
 
-### Metadata and Calculate submodules
+#### Metadata and Calculate submodules
 
 Both the Metadata and Calculate submodules have been removed, as they were pretty unreliable.
 
