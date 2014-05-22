@@ -1061,22 +1061,123 @@ The returned object for filters looks like:
 * `output` tells the output type this filter generates, one of "audio", "video" or "none".  When "none", the filter has no output (sink only)
 * `multipleInputs` tells whether the filter can generate multiple outputs
 
-## Contributors
+## Migrating from fluent-ffmpeg 1.x
 
-* [enobrev](http://github.com/enobrev)
-* [njoyard](http://github.com/njoyard)
-* [sadikzzz](http://github.com/sadikzzz)
-* [smremde](http://github.com/smremde)
-* [spruce](http://github.com/spruce)
-* [tagedieb](http://github.com/tagedieb)
-* [tommadema](http://github.com/tommadema)
-* [Weltschmerz](http://github.com/Weltschmerz)
+fluent-ffmpeg 2.0 is mostly compatible with previous versions, as all previous method names have been kept as aliases.  The paragraphs below explain how to get around the few remaining incompatibilities.
+
+### Callbacks and event handling
+
+Passing callback to the `saveToFile()`, `writeToStream()`, `takeScreenshots()` and `mergeToFile()` methods has been deprecated for some time now, and is now unsupported from version 2.0 onwards.  You must use event handlers instead.  
+
+```js
+// 1.x code
+command
+  .saveToFile('/path/to/output.avi', function(err) {
+    if (err) {
+      console.log('An error occurred: ' + err.message);
+    } else {
+      console.log('Processing finished');
+    }
+  });
+
+// 2.x code
+command
+  .on('error', function(err) {
+    console.log('An error occurred: ' + err.message);
+  })
+  .on('end', function() {
+    console.log('Processing finished');
+  })
+  .saveToFile('/path/to/output.avi');
+```
+
+The same goes for the `onProgress` and `onCodecData` methods.
+
+```js
+// 1.x code
+command
+  .onProgress(function(progress) { ... })
+  .onCodecData(function(data) { ... });
+
+// 2.x code
+command
+  .on('progress', function(progress) { ... })
+  .on('codecData', function(data) { ... };
+```
+
+Note that you should always set a handler for the `error` event.  If an error happens without an `error` handler, nodejs will terminate your program.
+
+See the [events documentation](#setting-event-handlers) above for more information.
+
+### Metadata and Calculate submodules
+
+Both the Metadata and Calculate submodules have been removed, as they were pretty unreliable.
+
+The Calculate submodule has no replacement, as fluent-ffmpeg does not do size calculations anymore (we use ffmpeg filters instead).
+
+The Metadata submodule is replaced by the `ffprobe()` method which is much more reliable.  Have a look at [its documentation](#reading-video-metadata) above for more information.
+
+```js
+var ffmpeg = require('fluent-ffmpeg');
+
+ffmpeg('/path/to/file.avi').ffprobe(function(err, data) {
+  console.dir(data.streams);
+  console.dir(data.format);
+});
+
+ffmpeg.ffprobe('/path/to/file.avi', function(err, data) {
+  console.dir(data.streams);
+  console.dir(data.format);
+});
+```
 
 ## Contributing
 
 Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!
 
-## Tests
+### Code contributions
+
+If you want to add new features or change the API, please submit an issue first to make sure no one else is already working on the same thing and discuss the implementation and API details with maintainers and users.  When everything is settled down, you can submit a pull request.
+
+When fixing bugs, you can directly submit a pull request.
+
+Make sure to add tests for your features and bugfixes and update the documentation (see below) before submitting your code!
+
+### Documentation contributions
+
+You can directly submit pull requests for documentation changes.  Make sure to regenerate the documentation before submitting (see below).
+
+### Updating the documentation
+
+When contributing API changes (new methods for example), be sure to update the README file and JSDoc comments in the code.  fluent-ffmpeg comes with a plugin that enables two additional JSDoc tags:
+
+* `@aliases`: document method aliases
+
+```js
+/**
+ * ...
+ * @method FfmpegCommand#myMethod
+ * @aliases myMethodAlias,myOtherMethodAlias
+ */
+```
+
+* `@category`: set method category
+
+```js
+/**
+ * ...
+ * @category Audio
+ */
+```
+
+You can regenerate the JSDoc documentation by running the following command:
+
+```sh
+$ make doc
+```
+
+### Running tests
+
 To run unit tests, first make sure you installed npm dependencies (run `npm install`).
 
 ```sh
@@ -1090,6 +1191,17 @@ $ make test-cov
 ```
 
 Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
+
+## Main contributors
+
+* [enobrev](http://github.com/enobrev)
+* [njoyard](http://github.com/njoyard)
+* [sadikzzz](http://github.com/sadikzzz)
+* [smremde](http://github.com/smremde)
+* [spruce](http://github.com/spruce)
+* [tagedieb](http://github.com/tagedieb)
+* [tommadema](http://github.com/tommadema)
+* [Weltschmerz](http://github.com/Weltschmerz)
 
 ## License
 
