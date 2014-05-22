@@ -19,7 +19,7 @@ Ffmpeg.prototype._test_getArgs = function(callback) {
 };
 
 Ffmpeg.prototype._test_getSizeFilters = function() {
-  return this._sizeFilters.get().concat(this._videoFilters.get());
+  return this._currentOutput.sizeFilters.get().concat(this._currentOutput.videoFilters.get());
 };
 
 
@@ -285,11 +285,7 @@ describe('Command', function() {
       }).should.throw(/No input specified/);
 
       (function() {
-        new Ffmpeg().seek(1);
-      }).should.throw(/No input specified/);
-
-      (function() {
-        new Ffmpeg().fastSeek(1);
+        new Ffmpeg().seekInput(1);
       }).should.throw(/No input specified/);
 
       (function() {
@@ -586,21 +582,8 @@ describe('Command', function() {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          args.indexOf('-ss').should.above(-1).and.above(args.indexOf('-i'));
-          args.indexOf('00:00:10').should.above(-1).and.above(args.indexOf('-i'));
-          done();
-        });
-    });
-
-    it('should apply the start time fast offset argument', function(done) {
-      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
-        .setStartTime('00:00:10', true)
-        ._test_getArgs(function(args, err) {
-          testhelper.logArgError(err);
-          assert.ok(!err);
-
           args.indexOf('-ss').should.above(-1).and.below(args.indexOf('-i'));
-          args.indexOf('00:00:10').should.above(-1).and.below(args.indexOf('-i'));
+          args.indexOf('00:00:10').should.above(args.indexOf('-ss')).and.below(args.indexOf('-i'));
           done();
         });
     });
@@ -1060,28 +1043,6 @@ describe('Command', function() {
       filters[1].should.equal('filter2a;filter2b');
       filters[2].should.equal('-map');
       filters[3].should.equal('[output2]');
-    });
-
-    it('should regroup audio and video filters into filtergraph', function() {
-      var filters = new Ffmpeg()
-        .audioFilters('audio1', 'audio2')
-        .videoFilters('video1', 'video2')
-        .complexFilter(['complex1', 'complex2'])
-        ._getArguments();
-
-      filters.length.should.equal(2);
-      filters[1].should.equal('audio1;audio2;video1;video2;complex1;complex2');
-
-      filters = new Ffmpeg()
-        .audioFilters('audio1', 'audio2')
-        .videoFilters('video1', 'video2')
-        .complexFilter(['complex1', 'complex2'], 'output')
-        ._getArguments();
-
-      filters.length.should.equal(4);
-      filters[1].should.equal('audio1;audio2;video1;video2;complex1;complex2');
-      filters[2].should.equal('-map');
-      filters[3].should.equal('[output]');
     });
   });
 

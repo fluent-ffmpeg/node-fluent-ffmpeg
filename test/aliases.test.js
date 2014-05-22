@@ -13,15 +13,15 @@ var aliases = {
 
   custom: {
     addInputOption: ['addInputOptions','withInputOption','withInputOptions','inputOption','inputOptions'],
-    addOutputOption: ['addOutputOptions','addOption','addOptions','withOutputOption','withOutputOptions','withOption','withOptions','outputOption','outputOptions']
+    addOutputOption: ['addOutputOptions','addOption','addOptions','withOutputOption','withOutputOptions','withOption','withOptions','outputOption','outputOptions'],
+    complexFilter: ['filterGraph']
   },
 
   inputs: {
     addInput: ['input','mergeAdd'],
     fromFormat: ['withInputFormat','inputFormat'],
     withInputFps: ['withInputFPS','withFpsInput','withFPSInput','inputFPS','inputFps','fpsInput','FPSInput'],
-    setStartTime: ['seekTo', 'seek'],
-    fastSeek: ['fastSeekTo']
+    setStartTime: ['seekInput']
   },
 
   misc: {
@@ -31,8 +31,10 @@ var aliases = {
   },
 
   output: {
+    addOutput: ['output'],
     withDuration: ['duration','setDuration'],
-    toFormat: ['withOutputFormat','outputFormat','format']
+    toFormat: ['withOutputFormat','outputFormat','format'],
+    seek: ['seekOutput']
   },
 
   video: {
@@ -49,6 +51,12 @@ var aliases = {
     withSize: ['setSize', 'size'],
     withAspect: ['withAspectRatio','setAspect','setAspectRatio','aspect','aspectRatio'],
     applyAutopadding: ['applyAutoPadding','applyAutopad','applyAutoPad','withAutopadding','withAutoPadding','withAutopad','withAutoPad','autoPad','autopad']
+  },
+
+  processing: {
+    saveToFile: ['save'],
+    writeToStream: ['stream', 'pipe'],
+    run: ['exec', 'execute']
   }
 };
 
