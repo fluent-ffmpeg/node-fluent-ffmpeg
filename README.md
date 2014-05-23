@@ -1036,13 +1036,20 @@ ffmpeg.ffprobe('/path/to/file.avi', function(err, metadata) {
 });
 ```
 
-You may also call the ffprobe method on an FfmpegCommand, in which case it will probe its last added input.
+You may also call the ffprobe method on an FfmpegCommand to probe one of its input.  You may pass a 0-based input number as a first argument to specify which input to read metadata from, otherwise the method will probe the last added input.
 
 ```js
 ffmpeg('/path/to/file1.avi')
   .input('/path/to/file2.avi')
   .ffprobe(function(err, data) {
     console.log('file2 metadata:');
+    console.dir(data);
+  });
+
+ffmpeg('/path/to/file1.avi')
+  .input('/path/to/file2.avi')
+  .ffprobe(0, function(err, data) {
+    console.log('file1 metadata:');
     console.dir(data);
   });
 ```
