@@ -7,8 +7,10 @@ test:
 test-colors:
 	@NODE_ENV=test $(MOCHA) --require should --reporter $(REPORTER) --colors
 
-test-cov: lib-cov
-	@FLUENTFFMPEG_COV=1 $(MAKE) test REPORTER=html-cov > test/coverage.html
+test-cov: test/coverage.html
+
+test/coverage.html: lib-cov
+	@FLUENTFFMPEG_COV=1 NODE_ENV=test $(MOCHA) --require should --reporter html-cov > test/coverage.html
 
 lib-cov:
 	@rm -fr ./$@
