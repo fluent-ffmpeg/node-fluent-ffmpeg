@@ -56,7 +56,9 @@ var aliases = {
   processing: {
     saveToFile: ['save'],
     writeToStream: ['stream', 'pipe'],
-    run: ['exec', 'execute']
+    run: ['exec', 'execute'],
+    concat: ['concatenate', 'mergeToFile'],
+    screenshots: ['screenshot', 'thumbnails', 'thumbnail', 'takeScreenshots']
   }
 };
 
