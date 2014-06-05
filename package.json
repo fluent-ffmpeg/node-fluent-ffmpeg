@@ -1,6 +1,6 @@
 {
   "name": "fluent-ffmpeg",
-  "version": "1.7.1",
+  "version": "1.7.2",
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
     "ffmpeg"
