@@ -60,16 +60,16 @@ The fluent-ffmpeg module returns a constructor that you can use to instanciate F
 
 ```js
 var FFmpeg = require('fluent-ffmpeg');
-var command = FFmpeg({ source: '/path/to/file.avi' });
+var command = new FFmpeg({ source: '/path/to/file.avi' });
 ```
 
 The input file can also be an image or an image pattern.
 
 ```js
-var imageCommand = FFmpeg({ source: '/path/to/file.png' });
+var imageCommand = new FFmpeg({ source: '/path/to/file.png' });
 
 // Will use file000.png, file001.png, etc.
-var patternCommand = FFmpeg({ source: '/path/to/file%03d.png' });
+var patternCommand = new FFmpeg({ source: '/path/to/file%03d.png' });
 ```
 
 You can also pass a Readable stream instead of a source path.
