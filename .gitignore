@@ -4,3 +4,4 @@ lib-cov
 *.swp
 .idea
 *.iml
+.DS_store
