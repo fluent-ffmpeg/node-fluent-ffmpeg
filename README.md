@@ -37,6 +37,13 @@ Most features should work when using avconv and avprobe instead of ffmpeg and ff
 
 **Debian/Ubuntu users**: the official repositories have the ffmpeg/ffprobe executable in the `libav-tools` package, and they are actually rebranded avconv/avprobe executables (avconv is a fork of ffmpeg).  They should be mostly compatible, but should you encounter any issue, you may want to use the real ffmpeg instead.  You can either compile it from source or find a pre-built .deb package at https://ffmpeg.org/download.html (For Ubuntu, the `ppa:jon-severinsson/ffmpeg` PPA provides recent builds).
 
+##### Setting binary paths manually
+
+Alternatively, you may set the ffmpeg and ffprobe binary paths manually by using the following API commands:
+
+* **Ffmpeg.setFfmpegPath(path)** Argument `path` is a string with the full path to the ffmpeg binary.
+* **Ffmpeg.setFfprobePath(path)** Argument `path` is a string with the full path to the ffprobe binary.
+
 #### flvtool2 or flvmeta
 
 If you intend to encode FLV videos, you must have either flvtool2 or flvmeta installed and in your `PATH` or fluent-ffmpeg won't be able to produce streamable output files.  If you set either the `FLVTOOL2_PATH` or `FLVMETA_PATH`, fluent-ffmpeg will try to use it instead of searching in the `PATH`.
