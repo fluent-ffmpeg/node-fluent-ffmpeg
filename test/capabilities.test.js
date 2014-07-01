@@ -2,7 +2,8 @@ var Ffmpeg = require('../index'),
   path = require('path'),
   assert = require('assert'),
   testhelper = require('./helpers'),
-  async = require('async');
+  async = require('async'),
+  should = require('should');
 
 // delimiter fallback for node 0.8
 var PATH_DELIMITER = path.delimiter || (require('os').platform().match(/win(32|64)/) ? ';' : ':');
@@ -194,7 +195,7 @@ describe('Capabilities', function() {
     });
   });
 
-  describe.only('ffmpeg path', function() {
+  describe('ffmpeg path', function() {
     var FFMPEG_PATH;
     var ALT_FFMPEG_PATH;
     var skipAltTest = false;
