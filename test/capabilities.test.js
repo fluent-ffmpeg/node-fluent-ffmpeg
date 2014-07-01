@@ -2,7 +2,8 @@ var Ffmpeg = require('../index'),
   path = require('path'),
   assert = require('assert'),
   testhelper = require('./helpers'),
-  async = require('async');
+  async = require('async'),
+  should = require('should');
 
 // delimiter fallback for node 0.8
 var PATH_DELIMITER = path.delimiter || (require('os').platform().match(/win(32|64)/) ? ';' : ':');
@@ -216,14 +217,24 @@ describe('Capabilities', function() {
       process.env.FFMPEG_PATH = FFMPEG_PATH;
     });
 
+    it('should allow manual definition of ffmpeg binary path', function(done) {
+      Ffmpeg.setFfmpegPath('/doom/di/dom');
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        ffmpeg.should.equal('/doom/di/dom');
+        done();
+      });
+    });
 
     it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', function(done) {
       var ff = new Ffmpeg();
 
       delete process.env.FFMPEG_PATH;
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -241,8 +252,8 @@ describe('Capabilities', function() {
 
       process.env.FFMPEG_PATH = ALT_FFMPEG_PATH;
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -256,8 +267,8 @@ describe('Capabilities', function() {
 
       process.env.FFMPEG_PATH = '/nope/not-here/nothing-to-see-here';
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -275,8 +286,8 @@ describe('Capabilities', function() {
 
       delete process.env.FFMPEG_PATH;
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -286,7 +297,7 @@ describe('Capabilities', function() {
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
-        ff._getFfmpegPath(function(err, ffmpeg) {
+        Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
           testhelper.logError(err);
           assert.ok(!err);
 
@@ -324,17 +335,27 @@ describe('Capabilities', function() {
       process.env.FFPROBE_PATH = FFPROBE_PATH;
     });
 
+    it('should allow manual definition of ffprobe binary path', function(done) {
+      Ffmpeg.setFfprobePath('/doom/di/dom');
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        ffprobe.should.equal('/doom/di/dom');
+        done();
+      });
+    });
 
     it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', function(done) {
       var ff = new Ffmpeg();
 
       delete process.env.FFPROBE_PATH;
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
-
+        
         ffprobe.should.String;
         ffprobe.length.should.above(0);
 
@@ -349,8 +370,8 @@ describe('Capabilities', function() {
 
       process.env.FFPROBE_PATH = ALT_FFPROBE_PATH;
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -364,8 +385,8 @@ describe('Capabilities', function() {
 
       process.env.FFPROBE_PATH = '/nope/not-here/nothing-to-see-here';
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -383,8 +404,8 @@ describe('Capabilities', function() {
 
       delete process.env.FFPROBE_PATH;
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -394,7 +415,7 @@ describe('Capabilities', function() {
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
-        ff._getFfprobePath(function(err, ffprobe) {
+        Ffmpeg.getFfprobePath(function(err, ffprobe) {
           testhelper.logError(err);
           assert.ok(!err);
 
@@ -409,4 +430,122 @@ describe('Capabilities', function() {
       });
     });
   });
+  describe.only('flvtool path', function() {
+    var FLVTOOL2_PATH;
+    var ALT_FLVTOOL_PATH;
+    var skipAltTest = false;
+
+    // Only test with FLVTOOL2_PATH when we actually have an alternative path
+    if (process.env.ALT_FLVTOOL_PATH) {
+      ALT_FLVTOOL_PATH = process.env.ALT_FLVTOOL_PATH;
+    } else {
+      skipAltTest = true;
+    }
+
+    beforeEach(function() {
+      // Save environment before each test
+      FLVTOOL2_PATH = process.env.FLVTOOL2_PATH;
+    });
+
+    afterEach(function() {
+      // Restore environment before each test
+      process.env.FLVTOOL2_PATH = FLVTOOL2_PATH;
+    });
+
+    it('should allow manual definition of fflvtool binary path', function(done) {
+      Ffmpeg.setFlvtoolPath('/doom/di/dom');
+      Ffmpeg.getFlvtoolPath(function(err, fflvtool) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        fflvtool.should.equal('/doom/di/dom');
+        done();
+      });
+    });
+
+    it('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', function(done) {
+      var ff = new Ffmpeg();
+
+      delete process.env.FLVTOOL2_PATH;
+
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFlvtoolPath(function(err, fflvtool) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        fflvtool.should.String;
+        fflvtool.length.should.above(0);
+
+        var paths = process.env.PATH.split(PATH_DELIMITER);
+        paths.indexOf(path.dirname(fflvtool)).should.above(-1);
+        done();
+      });
+    });
+
+    (skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', function(done) {
+      var ff = new Ffmpeg();
+
+      process.env.FLVTOOL2_PATH = ALT_FLVTOOL_PATH;
+
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFlvtoolPath(function(err, fflvtool) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        fflvtool.should.equal(ALT_FLVTOOL_PATH);
+        done();
+      });
+    });
+
+    it('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', function(done) {
+      var ff = new Ffmpeg();
+
+      process.env.FLVTOOL2_PATH = '/nope/not-here/nothing-to-see-here';
+
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFlvtoolPath(function(err, fflvtool) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        fflvtool.should.String;
+        fflvtool.length.should.above(0);
+
+        var paths = process.env.PATH.split(PATH_DELIMITER);
+        paths.indexOf(path.dirname(fflvtool)).should.above(-1);
+        done();
+      });
+    });
+
+    it('should remember fflvtool path', function(done) {
+      var ff = new Ffmpeg();
+
+      delete process.env.FLVTOOL2_PATH;
+
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFlvtoolPath(function(err, fflvtool) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        fflvtool.should.String;
+        fflvtool.length.should.above(0);
+
+        // Just check that the callback is actually called synchronously
+        // (which indicates no which call was made)
+        var after = 0;
+        Ffmpeg.getFlvtoolPath(function(err, fflvtool) {
+          testhelper.logError(err);
+          assert.ok(!err);
+
+          fflvtool.should.String;
+          fflvtool.length.should.above(0);
+          after.should.equal(0);
+
+          done();
+        });
+
+        after = 1;
+      });
+    });
+  });
+
 });
