@@ -194,7 +194,7 @@ describe('Capabilities', function() {
     });
   });
 
-  describe('ffmpeg path', function() {
+  describe.only('ffmpeg path', function() {
     var FFMPEG_PATH;
     var ALT_FFMPEG_PATH;
     var skipAltTest = false;
@@ -216,6 +216,16 @@ describe('Capabilities', function() {
       process.env.FFMPEG_PATH = FFMPEG_PATH;
     });
 
+    it('should allow manual definition of ffmpeg binary path', function(done) {
+      Ffmpeg.setFfmpegPath('/doom/di/dom');
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        ffmpeg.should.equal('/doom/di/dom');
+        done();
+      });
+    });
 
     it('should look for ffmpeg in the PATH if FFMPEG_PATH is not defined', function(done) {
       var ff = new Ffmpeg();
@@ -324,6 +334,16 @@ describe('Capabilities', function() {
       process.env.FFPROBE_PATH = FFPROBE_PATH;
     });
 
+    it('should allow manual definition of ffprobe binary path', function(done) {
+      Ffmpeg.setFfprobePath('/doom/di/dom');
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        ffprobe.should.equal('/doom/di/dom');
+        done();
+      });
+    });
 
     it('should look for ffprobe in the PATH if FFPROBE_PATH is not defined', function(done) {
       var ff = new Ffmpeg();
