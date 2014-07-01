@@ -222,8 +222,8 @@ describe('Capabilities', function() {
 
       delete process.env.FFMPEG_PATH;
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -241,8 +241,8 @@ describe('Capabilities', function() {
 
       process.env.FFMPEG_PATH = ALT_FFMPEG_PATH;
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -256,8 +256,8 @@ describe('Capabilities', function() {
 
       process.env.FFMPEG_PATH = '/nope/not-here/nothing-to-see-here';
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -275,8 +275,8 @@ describe('Capabilities', function() {
 
       delete process.env.FFMPEG_PATH;
 
-      ff._forgetPaths();
-      ff._getFfmpegPath(function(err, ffmpeg) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -286,7 +286,7 @@ describe('Capabilities', function() {
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
-        ff._getFfmpegPath(function(err, ffmpeg) {
+        Ffmpeg.getFfmpegPath(function(err, ffmpeg) {
           testhelper.logError(err);
           assert.ok(!err);
 
@@ -330,8 +330,8 @@ describe('Capabilities', function() {
 
       delete process.env.FFPROBE_PATH;
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -349,8 +349,8 @@ describe('Capabilities', function() {
 
       process.env.FFPROBE_PATH = ALT_FFPROBE_PATH;
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -364,8 +364,8 @@ describe('Capabilities', function() {
 
       process.env.FFPROBE_PATH = '/nope/not-here/nothing-to-see-here';
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -383,8 +383,8 @@ describe('Capabilities', function() {
 
       delete process.env.FFPROBE_PATH;
 
-      ff._forgetPaths();
-      ff._getFfprobePath(function(err, ffprobe) {
+      Ffmpeg.forgetPaths();
+      Ffmpeg.getFfprobePath(function(err, ffprobe) {
         testhelper.logError(err);
         assert.ok(!err);
 
@@ -394,7 +394,7 @@ describe('Capabilities', function() {
         // Just check that the callback is actually called synchronously
         // (which indicates no which call was made)
         var after = 0;
-        ff._getFfprobePath(function(err, ffprobe) {
+        Ffmpeg.getFfprobePath(function(err, ffprobe) {
           testhelper.logError(err);
           assert.ok(!err);
 
