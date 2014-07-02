@@ -491,6 +491,19 @@ describe('Command', function() {
     });
   });
 
+  describe('withInputNativeFrameRate', function() {
+    it('should apply -re flag as first argument', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger, inputNativeFramerate: true })
+        .getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-re').should.equal(0);
+          done();
+        });
+    });
+  });
+  
   describe('toFormat', function() {
     it('should apply the target format', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })

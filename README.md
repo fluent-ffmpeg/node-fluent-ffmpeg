@@ -117,7 +117,12 @@ var command = new FFmpeg({
         logger: new winston.Logger(...),
 
         // Disable logging, even if logger is specified
-        nolog: false
+        nolog: false,
+
+        // Read input source at native framerate. 
+        // Used to emulate an input device when using a file as source
+        // Defaults to false, means read input as fast as possible
+        inputNativeFramerate: false
     });
 ```
 
