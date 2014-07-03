@@ -247,6 +247,20 @@ describe('Command', function() {
     });
   });
 
+  describe('native', function() {
+    it('should apply the native framerate argument', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .native()
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+
+          args.indexOf('-re').should.above(-1).and.below(args.indexOf('-i'));
+          done();
+        });
+    });
+  });
+
   describe('addingAdditionalInput', function() {
     it('should allow for additional inputs', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })

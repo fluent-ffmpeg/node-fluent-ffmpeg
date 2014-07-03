@@ -142,6 +142,14 @@ This is only valid for raw inputs, as ffmpeg can determine the input framerate a
 ffmpeg('/dev/video0').inputFPS(29.7);
 ```
 
+#### native(): read input at native framerate
+
+**Aliases**: `nativeFramerate()`, `withNativeFramerate()`.
+
+```js
+ffmpeg('/path/to/file.avi').native();
+```
+
 #### seekInput(time): set input start time
 
 **Alias**: `setStartTime()`.

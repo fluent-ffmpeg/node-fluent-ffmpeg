@@ -21,6 +21,7 @@ var aliases = {
     addInput: ['input','mergeAdd'],
     fromFormat: ['withInputFormat','inputFormat'],
     withInputFps: ['withInputFPS','withFpsInput','withFPSInput','inputFPS','inputFps','fpsInput','FPSInput'],
+    native: ['withNativeFramerate','nativeFramerate'],
     setStartTime: ['seekInput']
   },
 
