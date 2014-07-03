@@ -214,7 +214,7 @@ describe('Processor', function() {
       var testFile = path.join(__dirname, 'assets', 'testProcessKillTimeout.flv');
       this.files.push(testFile);
 
-      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.02 });
+      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.02});
 
       command
           .usingPreset('flashvideo')
