@@ -39,10 +39,11 @@ Most features should work when using avconv and avprobe instead of ffmpeg and ff
 
 ##### Setting binary paths manually
 
-Alternatively, you may set the ffmpeg and ffprobe binary paths manually by using the following API commands:
+Alternatively, you may set the ffmpeg, ffprobe and flvtool binary paths manually by using the following API commands:
 
 * **Ffmpeg.setFfmpegPath(path)** Argument `path` is a string with the full path to the ffmpeg binary.
 * **Ffmpeg.setFfprobePath(path)** Argument `path` is a string with the full path to the ffprobe binary.
+* **Ffmpeg.setFlvtoolPath(path)** Argument `path` is a string with the full path to the flvtool binary.
 
 #### flvtool2 or flvmeta
 
