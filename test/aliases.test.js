@@ -1,3 +1,7 @@
+/*jshint node:true*/
+/*global describe,it*/
+'use strict';
+
 var Ffmpeg = require('../index');
 
 var aliases = {

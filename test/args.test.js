@@ -1,8 +1,11 @@
+/*jshint node:true*/
+/*global describe,it,before*/
+'use strict';
+
 var Ffmpeg = require('../index'),
   utils = require('../lib/utils'),
   path = require('path'),
   fs = require('fs'),
-  os = require('os'),
   assert = require('assert'),
   exec = require('child_process').exec,
   testhelper = require('./helpers');
@@ -32,7 +35,7 @@ describe('Command', function() {
     this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
 
     var self = this;
-    exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
+    exec(testhelper.getFfmpegCheck(), function(err) {
       if (!err) {
         // check if file exists
         fs.exists(self.testfile, function(exists) {
@@ -75,7 +78,7 @@ describe('Command', function() {
           args.length.should.equal(44);
 
         done();
-      })
+      });
     });
 
     it('should allow using functions as presets', function(done) {
@@ -103,9 +106,11 @@ describe('Command', function() {
         });
     });
 
-    it('should throw an exception when a preset it not found', function() {
+    it('should throw an exception when a preset is not found', function() {
+      var self = this;
+
       (function() {
-        new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        new Ffmpeg({ source: self.testfile, logger: testhelper.logger })
           .usingPreset('NOTFOUND');
       }).should.throw(/NOTFOUND could not be loaded/);
     });
@@ -114,7 +119,7 @@ describe('Command', function() {
       (function() {
         new Ffmpeg({ presets: '../../lib' }).usingPreset('utils');
       }).should.throw(/has no load\(\) function/);
-    })
+    });
   });
 
   describe('withNoVideo', function() {
@@ -195,7 +200,7 @@ describe('Command', function() {
           assert.ok(!err);
 
           args.indexOf('-b:v').should.above(-1);
-          args.indexOf('-maxrate').should.above(-1);;
+          args.indexOf('-maxrate').should.above(-1);
           args.indexOf('-minrate').should.above(-1);
           args.indexOf('-bufsize').should.above(-1);
           done();
@@ -415,7 +420,7 @@ describe('Command', function() {
             done();
           }
           else{
-            done(new Error("args should contain loop or loop_output"))
+            done(new Error('args should contain loop or loop_output'));
           }
         });
     });
@@ -432,7 +437,7 @@ describe('Command', function() {
             done();
           }
           else{
-            done(new Error("args should contain loop or loop_output"))
+            done(new Error('args should contain loop or loop_output'));
           }
 
         });
@@ -450,7 +455,7 @@ describe('Command', function() {
             done();
           }
           else{
-            done(new Error("args should contain loop or loop_output"))
+            done(new Error('args should contain loop or loop_output'));
           }
         });
     });
@@ -543,7 +548,7 @@ describe('Command', function() {
           done();
         });
     });
-  })
+  });
 
   describe('withAudioChannels', function() {
     it('should apply the audio channels argument', function(done) {
@@ -705,7 +710,7 @@ describe('Command', function() {
   describe('Size calculations', function() {
     it('Should throw an error when an invalid aspect ratio is passed', function() {
       (function() {
-        new Ffmpeg().aspect("blah");
+        new Ffmpeg().aspect('blah');
       }).should.throw(/Invalid aspect ratio/);
     });
 
@@ -922,7 +927,7 @@ describe('Command', function() {
     });
 
     it('Should apply autopadding when no boolean argument was passed to applyAutopadding', function() {
-      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+      var filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x?')
         .withAspect(0.5)
         .applyAutopadding('white')
@@ -932,7 +937,7 @@ describe('Command', function() {
     });
 
     it('Should default to black padding', function() {
-      filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+      var filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x?')
         .withAspect(0.5)
         .applyAutopadding()
@@ -1077,8 +1082,8 @@ describe('Command', function() {
 
       var clone = command.clone();
 
-      command._test_getArgs(function(originalArgs, err) {
-        clone._test_getArgs(function(cloneArgs, err) {
+      command._test_getArgs(function(originalArgs) {
+        clone._test_getArgs(function(cloneArgs) {
           cloneArgs.length.should.equal(originalArgs.length);
           originalArgs.forEach(function(arg, index) {
             cloneArgs[index].should.equal(arg);
@@ -1094,8 +1099,8 @@ describe('Command', function() {
 
       var clone = command.clone().audioFrequency(22050);
 
-      command._test_getArgs(function(originalArgs, err) {
-        clone._test_getArgs(function(cloneArgs, err) {
+      command._test_getArgs(function(originalArgs) {
+        clone._test_getArgs(function(cloneArgs) {
           cloneArgs.length.should.equal(originalArgs.length + 2);
           done();
         });

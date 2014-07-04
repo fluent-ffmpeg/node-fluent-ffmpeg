@@ -1,3 +1,8 @@
+/*jshint node:true*/
+'use strict';
+
+var TestHelpers;
+
 exports = module.exports = TestHelpers = {
   getFfmpegCheck: function() {
     var platform = require('os').platform();
@@ -12,10 +17,10 @@ exports = module.exports = TestHelpers = {
   },
 
   logger: {
-    debug: function(arg) { if (process.env.FLUENTFFMPEG_COV !== "1") console.log('          [DEBUG] ' + arg); },
-    info: function(arg) { if (process.env.FLUENTFFMPEG_COV !== "1") console.log('          [INFO] ' + arg); },
-    warn: function(arg) { if (process.env.FLUENTFFMPEG_COV !== "1") console.log('          [WARN] ' + arg); },
-    error: function(arg) { if (process.env.FLUENTFFMPEG_COV !== "1") console.log('          [ERROR] ' + arg); }
+    debug: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [DEBUG] ' + arg); },
+    info: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [INFO] ' + arg); },
+    warn: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [WARN] ' + arg); },
+    error: function(arg) { if (process.env.FLUENTFFMPEG_COV !== '1') console.log('          [ERROR] ' + arg); }
   },
 
   logArgError: function(err) {
@@ -61,4 +66,4 @@ exports = module.exports = TestHelpers = {
       }
     }
   }
-}
+};

@@ -1,3 +1,7 @@
+/*jshint node:true*/
+/*global describe,it*/
+'use strict';
+
 var utils = require('../lib/utils');
 
 describe('Utilities', function() {
@@ -23,7 +27,7 @@ describe('Utilities', function() {
       args(['-four', 'four-param', '-five', '-five-param']);
 
       var arr = args.get();
-      Array.isArray(arr).should.true;
+      Array.isArray(arr).should.equal(true);
       arr.length.should.equal(10);
       arr.indexOf('-three').should.equal(3);
       arr.indexOf('four-param').should.equal(7);
@@ -50,16 +54,16 @@ describe('Utilities', function() {
       args(['-four', 'four-param', '-five', '-five-param']);
 
       var one = args.find('-one');
-      Array.isArray(one).should.true;
+      Array.isArray(one).should.equal(true);
       one.length.should.equal(0);
 
       var two = args.find('-two', 1);
-      Array.isArray(two).should.true;
+      Array.isArray(two).should.equal(true);
       two.length.should.equal(1);
       two[0].should.equal('two-param');
 
       var three = args.find('-three', 2);
-      Array.isArray(three).should.true;
+      Array.isArray(three).should.equal(true);
       three.length.should.equal(2);
       three[0].should.equal('three-param1');
       three[1].should.equal('three-param2');

@@ -1,9 +1,12 @@
+/*jshint node:true*/
+/*global describe,it,beforeEach,afterEach,after*/
+'use strict';
+
 var Ffmpeg = require('../index'),
   path = require('path'),
   assert = require('assert'),
   testhelper = require('./helpers'),
-  async = require('async'),
-  should = require('should');
+  async = require('async');
 
 // delimiter fallback for node 0.8
 var PATH_DELIMITER = path.delimiter || (require('os').platform().match(/win(32|64)/) ? ';' : ':');
@@ -258,7 +261,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.String;
+        ffmpeg.should.instanceOf(String);
         ffmpeg.length.should.above(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
@@ -292,7 +295,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.String;
+        ffmpeg.should.instanceOf(String);
         ffmpeg.length.should.above(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
@@ -311,7 +314,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffmpeg.should.String;
+        ffmpeg.should.instanceOf(String);
         ffmpeg.length.should.above(0);
 
         // Just check that the callback is actually called synchronously
@@ -321,7 +324,7 @@ describe('Capabilities', function() {
           testhelper.logError(err);
           assert.ok(!err);
 
-          ffmpeg.should.String;
+          ffmpeg.should.instanceOf(String);
           ffmpeg.length.should.above(0);
           after.should.equal(0);
 
@@ -396,7 +399,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.String;
+        ffprobe.should.instanceOf(String);
         ffprobe.length.should.above(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
@@ -430,7 +433,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.String;
+        ffprobe.should.instanceOf(String);
         ffprobe.length.should.above(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
@@ -449,7 +452,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        ffprobe.should.String;
+        ffprobe.should.instanceOf(String);
         ffprobe.length.should.above(0);
 
         // Just check that the callback is actually called synchronously
@@ -459,7 +462,7 @@ describe('Capabilities', function() {
           testhelper.logError(err);
           assert.ok(!err);
 
-          ffprobe.should.String;
+          ffprobe.should.instanceOf(String);
           ffprobe.length.should.above(0);
           after.should.equal(0);
 
@@ -534,7 +537,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        fflvtool.should.String;
+        fflvtool.should.instanceOf(String);
         fflvtool.length.should.above(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
@@ -568,7 +571,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        fflvtool.should.String;
+        fflvtool.should.instanceOf(String);
         fflvtool.length.should.above(0);
 
         var paths = process.env.PATH.split(PATH_DELIMITER);
@@ -587,7 +590,7 @@ describe('Capabilities', function() {
         testhelper.logError(err);
         assert.ok(!err);
 
-        fflvtool.should.String;
+        fflvtool.should.instanceOf(String);
         fflvtool.length.should.above(0);
 
         // Just check that the callback is actually called synchronously
@@ -597,7 +600,7 @@ describe('Capabilities', function() {
           testhelper.logError(err);
           assert.ok(!err);
 
-          fflvtool.should.String;
+          fflvtool.should.instanceOf(String);
           fflvtool.length.should.above(0);
           after.should.equal(0);
 

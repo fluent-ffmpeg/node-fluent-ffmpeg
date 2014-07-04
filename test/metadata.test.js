@@ -1,3 +1,7 @@
+/*jshint node:true*/
+/*global describe,it,before*/
+'use strict';
+
 var Ffmpeg = require('../index'),
   path = require('path'),
   fs = require('fs'),
@@ -12,7 +16,7 @@ describe('Metadata', function() {
     this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
 
     var self = this;
-    exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
+    exec(testhelper.getFfmpegCheck(), function(err) {
       if (!err) {
         // check if file exists
         fs.exists(self.testfile, function(exists) {
@@ -74,7 +78,7 @@ describe('Metadata', function() {
   });
 
   it('should return ffprobe errors', function(done) {
-    Ffmpeg.ffprobe('/path/to/missing/file', function(err, data) {
+    Ffmpeg.ffprobe('/path/to/missing/file', function(err) {
       assert.ok(!!err);
       done();
     });
@@ -97,7 +101,7 @@ describe('Metadata', function() {
   });
 
   it('should fail calling ffprobe on a command without input', function(done) {
-    new Ffmpeg().ffprobe(function(err, data) {
+    new Ffmpeg().ffprobe(function(err) {
       assert.ok(!!err);
       err.message.should.match(/No input specified/);
       done();
@@ -109,7 +113,7 @@ describe('Metadata', function() {
 
     new Ffmpeg()
       .addInput(stream)
-      .ffprobe(function(err, data) {
+      .ffprobe(function(err) {
         assert.ok(!!err);
         err.message.should.match(/Cannot run ffprobe on non-file input/);
         done();

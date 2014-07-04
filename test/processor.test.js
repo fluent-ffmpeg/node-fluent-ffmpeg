@@ -1,3 +1,7 @@
+/*jshint node:true*/
+/*global describe,it,before,beforeEach,afterEach*/
+'use strict';
+
 var FfmpegCommand = require('../index'),
   path = require('path'),
   fs = require('fs'),
@@ -60,7 +64,7 @@ describe('Processor', function() {
 
     var self = this;
 
-    exec(testhelper.getFfmpegCheck(), function(err, stdout, stderr) {
+    exec(testhelper.getFfmpegCheck(), function(err) {
       if (!err) {
         // check if all test files exist
         async.each([
@@ -91,7 +95,7 @@ describe('Processor', function() {
     // Tests should call this so that created processes are watched
     // for exit and checked during test cleanup
     this.getCommand = function(args) {
-      cmd = new FfmpegCommand(args);
+      var cmd = new FfmpegCommand(args);
       cmd.on('start', function() {
         processes.push(cmd.ffmpegProc);
 
@@ -173,7 +177,7 @@ describe('Processor', function() {
       this.files.push(testFile);
 
       var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 2 })
-          .usingPreset('flashvideo')
+          .usingPreset('flashvideo');
 
       var startCalled = false;
       var reniced = false;
@@ -185,22 +189,22 @@ describe('Processor', function() {
               ffmpegJob.renice(5);
 
               setTimeout(function() {
-                exec('ps -p ' + ffmpegJob.ffmpegProc.pid + ' -o ni=', function(err, stdout, stderr) {
+                exec('ps -p ' + ffmpegJob.ffmpegProc.pid + ' -o ni=', function(err, stdout) {
                   assert.ok(!err);
-                  parseInt(stdout).should.equal(5);
+                  parseInt(stdout, 10).should.equal(5);
                   reniced = true;
                 });
               }, 500);
             }, 500);
 
             ffmpegJob.ffmpegProc.on('exit', function() {
-              reniced.should.be.true;
+              reniced.should.equal(true);
               done();
             });
           })
-          .on('error', function(err) {
-            reniced.should.be.true;
-            startCalled.should.be.true;
+          .on('error', function() {
+            reniced.should.equal(true);
+            startCalled.should.equal(true);
           })
           .on('end', function() {
             console.log('end was called, expected a timeout');
@@ -249,13 +253,13 @@ describe('Processor', function() {
             startCalled = true;
             setTimeout(function() { ffmpegJob.kill(); }, 500);
             ffmpegJob.ffmpegProc.on('exit', function() {
-              errorCalled.should.be.true;
+              errorCalled.should.equal(true);
               done();
             });
           })
           .on('error', function(err) {
             err.message.indexOf('ffmpeg was killed with signal SIGKILL').should.not.equal(-1);
-            startCalled.should.be.true;
+            startCalled.should.equal(true);
             errorCalled = true;
           })
           .on('end', function() {
@@ -284,12 +288,12 @@ describe('Processor', function() {
             setTimeout(function() { ffmpegJob.kill('SIGSTOP'); }, 500);
 
             ffmpegJob.ffmpegProc.on('exit', function() {
-              errorCalled.should.be.true;
+              errorCalled.should.equal(true);
               done();
             });
           })
           .on('error', function(err) {
-            startCalled.should.be.true;
+            startCalled.should.equal(true);
             err.message.indexOf('timeout').should.not.equal(-1);
 
             errorCalled = true;
@@ -329,15 +333,15 @@ describe('Processor', function() {
     });
 
     it('should report progress through \'progress\' event', function(done) {
-      this.timeout(60000)
+      this.timeout(60000);
 
-      var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv')
-        , gotProgress = false;
+      var testFile = path.join(__dirname, 'assets', 'testOnProgress.flv');
+      var gotProgress = false;
 
       this.files.push(testFile);
 
       this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
-          .on('progress', function(data) {
+          .on('progress', function() {
             gotProgress = true;
           })
           .usingPreset('flashvideo')
@@ -346,17 +350,17 @@ describe('Processor', function() {
             assert.ok(!err);
           })
           .on('end', function() {
-            gotProgress.should.be.true;
+            gotProgress.should.equal(true);
             done();
           })
           .saveToFile(testFile);
     });
 
     it('should report start of ffmpeg process through \'start\' event', function(done) {
-      this.timeout(60000)
+      this.timeout(60000);
 
-      var testFile = path.join(__dirname, 'assets', 'testStart.flv')
-        , startCalled = false;
+      var testFile = path.join(__dirname, 'assets', 'testStart.flv');
+      var startCalled = false;
 
       this.files.push(testFile);
 
@@ -375,7 +379,7 @@ describe('Processor', function() {
             assert.ok(!err);
           })
           .on('end', function() {
-            startCalled.should.be.true;
+            startCalled.should.equal(true);
             done();
           })
           .saveToFile(testFile);
@@ -390,7 +394,7 @@ describe('Processor', function() {
       this.files.push(path.join(testFolder, 'tn_2.png'));
       this.dirs.push(testFolder);
 
-      var args = this.getCommand({ source: this.testfile, logger: testhelper.logger })
+      this.getCommand({ source: this.testfile, logger: testhelper.logger })
         .on('error', function(err, stdout, stderr) {
           testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
@@ -421,7 +425,7 @@ describe('Processor', function() {
       this.files.push(path.join(testFolder, 'shot_002.png'));
       this.dirs.push(testFolder);
 
-      var args = this.getCommand({ source: this.testfile, logger: testhelper.logger })
+      this.getCommand({ source: this.testfile, logger: testhelper.logger })
         .on('error', function(err, stdout, stderr) {
           testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
@@ -463,13 +467,13 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
 
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -506,12 +510,12 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -533,12 +537,12 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -554,10 +558,6 @@ describe('Processor', function() {
       var testFile = path.join(__dirname, 'assets', 'testMergeAddOption.wav');
       this.files.push(testFile);
 
-      var srcFile = path.join(__dirname, 'assets', 'testaudio-one.wav');
-      var src1File = path.join(__dirname, 'assets', 'testaudio-two.wav');
-      var src2File = path.join(__dirname, 'assets', 'testaudio-three.wav');
-
       this.getCommand({source: this.testfileaudio1, logger: testhelper.logger})
         .on('error', function(err, stdout, stderr) {
           testhelper.logError(err, stdout, stderr);
@@ -565,12 +565,12 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -600,13 +600,13 @@ describe('Processor', function() {
               console.log(stderr);
             }
 
-            exist.should.true;
+            exist.should.equal(true);
 
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -634,12 +634,12 @@ describe('Processor', function() {
               console.log(stderr);
             }
 
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -667,18 +667,18 @@ describe('Processor', function() {
               console.log(stderr);
             }
 
-            exist.should.true;
+            exist.should.equal(true);
 
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
           });
-        })
+        });
 
       var passthrough = command.writeToStream({end: true});
 
@@ -724,13 +724,13 @@ describe('Processor', function() {
             [testFile1, testFile2, testFile3],
             function(file, cb) {
               fs.exists(file, function(exist) {
-                exist.should.true;
+                exist.should.equal(true);
 
                 // check filesize to make sure conversion actually worked
                 fs.stat(file, function(err, stats) {
                   assert.ok(!err && stats);
                   stats.size.should.above(0);
-                  stats.isFile().should.true;
+                  stats.isFile().should.equal(true);
 
                   cb(err);
                 });
@@ -761,12 +761,12 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -791,12 +791,12 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -821,12 +821,12 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
@@ -851,12 +851,12 @@ describe('Processor', function() {
         })
         .on('end', function() {
           fs.exists(testFile, function(exist) {
-            exist.should.true;
+            exist.should.equal(true);
             // check filesize to make sure conversion actually worked
             fs.stat(testFile, function(err, stats) {
               assert.ok(!err && stats);
               stats.size.should.above(0);
-              stats.isFile().should.true;
+              stats.isFile().should.equal(true);
 
               done();
             });
