@@ -693,6 +693,60 @@ describe('Processor', function() {
     });
   });
 
+  describe('Outputs', function() {
+    it('should create multiple outputs', function(done) {
+      this.timeout(30000);
+
+      var testFile1 = path.join(__dirname, 'assets', 'testMultipleOutput1.avi');
+      this.files.push(testFile1);
+      var testFile2 = path.join(__dirname, 'assets', 'testMultipleOutput2.avi');
+      this.files.push(testFile2);
+      var testFile3 = path.join(__dirname, 'assets', 'testMultipleOutput3.mp4');
+      this.files.push(testFile3);
+
+      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+        .output(testFile1)
+        .withAudioCodec('libvorbis')
+        .withVideoCodec('copy')
+        .output(testFile2)
+        .withAudioCodec('libmp3lame')
+        .withVideoCodec('copy')
+        .output(testFile3)
+        .withSize('160x120')
+        .withAudioCodec('aac')
+        .withVideoCodec('libx264')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          async.map(
+            [testFile1, testFile2, testFile3],
+            function(file, cb) {
+              fs.exists(file, function(exist) {
+                exist.should.true;
+
+                // check filesize to make sure conversion actually worked
+                fs.stat(file, function(err, stats) {
+                  assert.ok(!err && stats);
+                  stats.size.should.above(0);
+                  stats.isFile().should.true;
+
+                  cb(err);
+                });
+              });
+            },
+            function(err) {
+              testhelper.logError(err);
+              assert.ok(!err);
+              done();
+            }
+          );
+        })
+        .run();
+    });
+  });
+
   describe('Inputs', function() {
     it('should take input from a file with special characters', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testSpecialInput.flv');
