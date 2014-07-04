@@ -6,7 +6,6 @@ exports.load = function(ffmpeg) {
     .withSize('320x176')
     .withAudioBitrate('128k')
     .withAudioCodec('aac')
-    .withStrictExperimental()
     .withAudioChannels(1)
     .addOptions(['-flags', '+loop', '-cmp', '+chroma', '-partitions','+parti4x4+partp8x8+partb8x8', '-flags2',
       '+mixed_refs', '-me_method umh', '-subq 5', '-bufsize 2M', '-rc_eq \'blurCplx^(1-qComp)\'',

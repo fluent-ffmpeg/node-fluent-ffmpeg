@@ -510,7 +510,7 @@ Adds an output to the command.  The `target` argument may be an output filename 
 
 When `target` is a stream, an additional `options` object may be passed.  If it is present, it will be passed ffmpeg output stream `pipe()` method.
 
-Adding an output switches the "current output" of the command, so that any fluent-ffmpeg method that applies to an output is indeed applied to the last output added.  For backwards compatibility reasons, you may as well call those methods _before_ adding the first output (in which case they will apply to the first output when it is added).  Methods that apply to an output are all non-input-related methods, except for `strict()` and `complexFilter()`, which are global.
+Adding an output switches the "current output" of the command, so that any fluent-ffmpeg method that applies to an output is indeed applied to the last output added.  For backwards compatibility reasons, you may as well call those methods _before_ adding the first output (in which case they will apply to the first output when it is added).  Methods that apply to an output are all non-input-related methods, except for `complexFilter()`, which is global.
 
 Also note that when calling `output()`, you should not use the `save()` or `stream()` (formerly `saveToFile()` and `writeToStream()`) methods, as they already add an output.  Use the `run()` method to start processing.
 
@@ -657,16 +657,6 @@ function myPreset(command) {
 }
 
 ffmpeg('/path/to/file.avi').preset(myPreset);
-```
-
-#### strict(): enable experimental codecs
-
-**Aliases**: `withStrictExperimental()`.
-
-This enables using experimental codecs and features of ffmpeg.  This is a global option and it applies to all outputs.
-
-```js
-ffmpeg('/path/to/file.avi').strict().videoCodec('aac');
 ```
 
 #### complexFilter(filters[, map]): set complex filtergraph

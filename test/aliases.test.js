@@ -30,16 +30,15 @@ var aliases = {
   },
 
   misc: {
-    usingPreset: ['preset'],
-    withStrictExperimental: ['strict'],
-    updateFlvMetadata: ['flvmeta']
+    usingPreset: ['preset']
   },
 
   output: {
     addOutput: ['output'],
     withDuration: ['duration','setDuration'],
     toFormat: ['withOutputFormat','outputFormat','format'],
-    seek: ['seekOutput']
+    seek: ['seekOutput'],
+    updateFlvMetadata: ['flvmeta']
   },
 
   video: {
