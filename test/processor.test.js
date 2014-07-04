@@ -694,7 +694,7 @@ describe('Processor', function() {
     });
   });
 
-  describe('Outputs', function() {
+  describe.only('Outputs', function() {
     it('should create multiple outputs', function(done) {
       this.timeout(30000);
 
@@ -707,7 +707,7 @@ describe('Processor', function() {
 
       this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
         .output(testFile1)
-        .withAudioCodec('libvorbis')
+        .withAudioCodec('vorbis')
         .withVideoCodec('copy')
         .output(testFile2)
         .withAudioCodec('libmp3lame')
