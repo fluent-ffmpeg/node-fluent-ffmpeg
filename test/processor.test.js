@@ -694,7 +694,7 @@ describe('Processor', function() {
     });
   });
 
-  describe.only('Outputs', function() {
+  describe('Outputs', function() {
     it('should create multiple outputs', function(done) {
       this.timeout(30000);
 

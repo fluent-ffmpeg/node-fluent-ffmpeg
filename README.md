@@ -1182,30 +1182,35 @@ It will contain information about the container (as a `format` key) and an array
 
 ### Querying ffmpeg capabilities
 
-fluent-ffmpeg enables you to query your installed ffmpeg version for supported formats, codecs and filters.
+fluent-ffmpeg enables you to query your installed ffmpeg version for supported formats, codecs, encoders and filters.
 
 ```js
 
 var Ffmpeg = require('fluent-ffmpeg');
 
 Ffmpeg.getAvailableFormats(function(err, formats) {
-    console.log("Available formats:");
-    console.dir(formats);
+  console.log('Available formats:');
+  console.dir(formats);
 });
 
 Ffmpeg.getAvailableCodecs(function(err, codecs) {
-    console.log("Available codecs:");
-    console.dir(codecs);
+  console.log('Available codecs:');
+  console.dir(codecs);
+});
+
+Ffmpeg.getAvailableEncoders(function(err, encoders) {
+  console.log('Available encoders:');
+  console.dir(encoders);
 });
 
 Ffmpeg.getAvailableFilters(function(err, filters) {
-    console.log("Available filters:");
-    console.dir(filters);
+  console.log("Available filters:");
+  console.dir(filters);
 });
 
 // Those methods can also be called on commands
-new Ffmpeg({ source: "/path/to/file.avi "})
-    .getAvailableCodecs(...);
+new Ffmpeg({ source: '/path/to/file.avi' })
+  .getAvailableCodecs(...);
 ```
 
 These methods pass an object to their callback with keys for each available format, codec or filter.
@@ -1214,13 +1219,13 @@ The returned object for formats looks like:
 
 ```js
 {
-    ...
-    mp4: {
-        description: 'MP4 (MPEG-4 Part 14)',
-        canDemux: false,
-        canMux: true
-    },
-    ...
+  ...
+  mp4: {
+    description: 'MP4 (MPEG-4 Part 14)',
+    canDemux: false,
+    canMux: true
+  },
+  ...
 }
 ```
 
@@ -1231,17 +1236,17 @@ The returned object for codecs looks like:
 
 ```js
 {
-    ...
-    mp3: {
-        type: 'audio',
-        description: 'MP3 (MPEG audio layer 3)',
-        canDecode: true,
-        canEncode: true,
-        intraFrameOnly: false,
-        isLossy: true,
-        isLossless: false
-    },
-    ...
+  ...
+  mp3: {
+    type: 'audio',
+    description: 'MP3 (MPEG audio layer 3)',
+    canDecode: true,
+    canEncode: true,
+    intraFrameOnly: false,
+    isLossy: true,
+    isLossless: false
+  },
+  ...
 }
 ```
 
@@ -1258,19 +1263,40 @@ Depending on your ffmpeg version (or if you use avconv instead) other keys may b
 
 With some ffmpeg/avcodec versions, the description includes encoder/decoder mentions in the form "Foo codec (decoders: libdecodefoo) (encoders: libencodefoo)".  In this case you will want to use those encoders/decoders instead (the codecs object returned by `getAvailableCodecs` will also include them).
 
+The returned object for encoders looks like:
+
+```js
+{
+  ...
+  libmp3lame: {
+    type: 'audio',
+    description: 'MP3 (MPEG audio layer 3) (codec mp3)',
+    frameMT: false,
+    sliceMT: false,
+    experimental: false,
+    drawHorizBand: false,
+    directRendering: false
+  },
+  ...
+}
+```
+
+* `type` indicates the encoder type, either "audio", "video" or "subtitle"
+* `experimental` indicates whether the encoder is experimental.  When using such a codec, fluent-ffmpeg automatically adds the '-strict experimental' flag.
+
 The returned object for filters looks like:
 
 ```js
 {
-    ...
-    scale: {
-        description: 'Scale the input video to width:height size and/or convert the image format.',
-        input: 'video',
-        multipleInputs: false,
-        output: 'video',
-        multipleOutputs: false
-    },
-    ...
+  ...
+  scale: {
+    description: 'Scale the input video to width:height size and/or convert the image format.',
+    input: 'video',
+    multipleInputs: false,
+    output: 'video',
+    multipleOutputs: false
+  },
+  ...
 }
 ```
 

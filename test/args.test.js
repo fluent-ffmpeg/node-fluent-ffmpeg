@@ -65,8 +65,7 @@ describe('Command', function() {
           testhelper.logArgError(err);
           assert.ok(!err);
 
-          args.length.should.equal(44); // on a side note: it's 42 args by coincidence ;)
-                                        // on a side note: not anymore, sorry :(
+          args.length.should.equal(42);
           done();
         });
     });
@@ -75,7 +74,7 @@ describe('Command', function() {
       new Ffmpeg({ source: this.testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
         .usingPreset('custompreset')
         ._test_getArgs(function(args) {
-          args.length.should.equal(44);
+          args.length.should.equal(42);
 
         done();
       });
