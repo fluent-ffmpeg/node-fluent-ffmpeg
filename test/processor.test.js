@@ -779,12 +779,15 @@ describe('Processor', function() {
     describe('Remote inputs', function() {
       var ffserver;
 
-      before(function() {
+      before(function(done) {
         ffserver = spawn(
           'ffserver',
           ['-f', path.join(__dirname, 'assets', 'ffserver.conf')],
           { cwd: path.join(__dirname, 'assets') }
         );
+
+        // Wait a bit for ffserver to be ready
+        setTimeout(done, 1000);
       });
 
       after(function() {
