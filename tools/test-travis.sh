@@ -9,12 +9,12 @@ echo travis_fold:start:Dependencies
 if [ "$(uname)" = "Linux" ]; then
 	# Linux
 	sudo apt-get update
-	sudo apt-get -y install wget tar bzip2 flvtool2
-	wget http://johnvansickle.com/ffmpeg/releases/ffmpeg-2.2.4-64bit-static.tar.bz2
-	tar jxf ffmpeg-2.2.4-64bit-static.tar.bz2
-	sudo cp ffmpeg-2.2.4-64bit-static/ffmpeg ffmpeg-2.2.4-64bit-static/ffprobe ffmpeg-2.2.4-64bit-static/ffserver /usr/bin
-	export ALT_FFMPEG_PATH=$(pwd)/ffmpeg-2.2.4-64bit-static/ffmpeg
-	export ALT_FFPROBE_PATH=$(pwd)/ffmpeg-2.2.4-64bit-static/ffprobe
+	sudo apt-get -y install wget tar bzip2 flvtool2 ffmpeg
+	wget http://ffmpeg.gusari.org/static/64bit/ffmpeg.static.64bit.latest.tar.gz
+	tar zxf ffmpeg.static.64bit.latest.tar.gz
+	sudo cp ffmpeg ffprobe /usr/bin
+	export ALT_FFMPEG_PATH=$(pwd)/ffmpeg
+	export ALT_FFPROBE_PATH=$(pwd)/ffprobe
 else
 	# OSX
 	brew update
