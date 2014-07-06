@@ -14,9 +14,8 @@ var FfmpegCommand = require('../index'),
   testhelper = require('./helpers');
 
 
-var testHTTP = 'http://localhost:8090/test.mpg';
-var testRTSP = 'rtsp://localhost:5540/test-rtp.mpg';
-var testRTMP = 'rtmp://cp67126.edgefcs.net/ondemand/mp4:mediapm/ovp/content/test/video/spacealonehd_sounas_640_300.mp4';
+var testHTTP = 'http://127.0.0.1:8090/test.mpg';
+var testRTSP = 'rtsp://127.0.0.1:5540/test-rtp.mpg';
 
 
 /*****************************************************************
@@ -777,21 +776,45 @@ describe('Processor', function() {
     });
 
     describe('Remote inputs', function() {
+      this.timeout(60000);
+
       var ffserver;
 
       before(function(done) {
+        testhelper.logger.debug('spawning ffserver');
         ffserver = spawn(
           'ffserver',
-          ['-f', path.join(__dirname, 'assets', 'ffserver.conf')],
+          ['-d','-f', path.join(__dirname, 'assets', 'ffserver.conf')],
           { cwd: path.join(__dirname, 'assets') }
         );
 
-        // Wait a bit for ffserver to be ready
-        setTimeout(done, 1000);
+        // Wait for ffserver to be ready
+        var isready = false;
+        function ready() {
+          if (!isready) {
+            testhelper.logger.debug('ffserver is ready');
+            isready = true;
+            setTimeout(done, 5000);
+          }
+        }
+
+        ffserver.stdout.on('data', function(d) {
+          if (d.toString().match(/server started/i)) {
+            ready();
+          }
+        });
+
+        ffserver.stderr.on('data', function(d) {
+          if (d.toString().match(/server started/i)) {
+            ready();
+          }
+        });
+
       });
 
-      after(function() {
+      after(function(done) {
         ffserver.kill();
+        setTimeout(done, 1000);
       });
 
       it('should take input from a RTSP stream', function(done) {
@@ -801,36 +824,6 @@ describe('Processor', function() {
         this.files.push(testFile);
 
         this.getCommand({ source: encodeURI(testRTSP), logger: testhelper.logger, timeout: 0 })
-          .takeFrames(10)
-          .usingPreset('flashvideo')
-          .withSize('320x240')
-          .on('error', function(err, stdout, stderr) {
-            testhelper.logError(err, stdout, stderr);
-            assert.ok(!err);
-          })
-          .on('end', function() {
-            fs.exists(testFile, function(exist) {
-              exist.should.equal(true);
-              // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
-                assert.ok(!err && stats);
-                stats.size.should.above(0);
-                stats.isFile().should.equal(true);
-
-                done();
-              });
-            });
-          })
-          .saveToFile(testFile);
-      });
-
-      it('should take input from a RTMP stream', function(done) {
-        this.timeout(300000);
-
-        var testFile = path.join(__dirname, 'assets', 'testRTMPInput.flv');
-        this.files.push(testFile);
-
-        this.getCommand({ source: encodeURI(testRTMP), logger: testhelper.logger, timeout: 0 })
           .takeFrames(10)
           .usingPreset('flashvideo')
           .withSize('320x240')
