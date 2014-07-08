@@ -15,6 +15,8 @@ This library abstracts the complex command-line usage of ffmpeg into a fluent, e
     "fluent-ffmpeg": "~1.7"
   }
 }
+>
+> You can still access the code and documentation for fluent-ffmpeg 1.7 [here](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/tree/1.x).
 ```
 
 ## Installation
