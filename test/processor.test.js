@@ -16,6 +16,7 @@ var FfmpegCommand = require('../index'),
 
 var testHTTP = 'http://127.0.0.1:8090/test.mpg';
 var testRTSP = 'rtsp://127.0.0.1:5540/test-rtp.mpg';
+var testRTPOut = 'rtp://127.0.0.1:5540/input.mpg';
 
 
 /*****************************************************************
@@ -774,108 +775,122 @@ describe('Processor', function() {
         })
         .saveToFile(testFile);
     });
+  });
 
-    describe('Remote inputs', function() {
-      this.timeout(60000);
+  describe('Remote I/O', function() {
+    this.timeout(60000);
 
-      var ffserver;
+    var ffserver;
 
-      before(function(done) {
-        testhelper.logger.debug('spawning ffserver');
-        ffserver = spawn(
-          'ffserver',
-          ['-d','-f', path.join(__dirname, 'assets', 'ffserver.conf')],
-          { cwd: path.join(__dirname, 'assets') }
-        );
+    before(function(done) {
+      testhelper.logger.debug('spawning ffserver');
+      ffserver = spawn(
+        'ffserver',
+        ['-d','-f', path.join(__dirname, 'assets', 'ffserver.conf')],
+        { cwd: path.join(__dirname, 'assets') }
+      );
 
-        // Wait for ffserver to be ready
-        var isready = false;
-        function ready() {
-          if (!isready) {
-            testhelper.logger.debug('ffserver is ready');
-            isready = true;
-            setTimeout(done, 5000);
-          }
+      // Wait for ffserver to be ready
+      var isready = false;
+      function ready() {
+        if (!isready) {
+          testhelper.logger.debug('ffserver is ready');
+          isready = true;
+          done();
         }
+      }
 
-        ffserver.stdout.on('data', function(d) {
-          if (d.toString().match(/server started/i)) {
-            ready();
-          }
-        });
-
-        ffserver.stderr.on('data', function(d) {
-          if (d.toString().match(/server started/i)) {
-            ready();
-          }
-        });
-
+      ffserver.stdout.on('data', function(d) {
+        if (d.toString().match(/server started/i)) {
+          ready();
+        }
       });
 
-      after(function(done) {
-        ffserver.kill();
-        setTimeout(done, 1000);
+      ffserver.stderr.on('data', function(d) {
+        if (d.toString().match(/server started/i)) {
+          ready();
+        }
       });
 
-      it('should take input from a RTSP stream', function(done) {
-        this.timeout(300000);
+    });
 
-        var testFile = path.join(__dirname, 'assets', 'testRTSPInput.flv');
-        this.files.push(testFile);
+    beforeEach(function(done) {
+      setTimeout(done, 5000);
+    });
 
-        this.getCommand({ source: encodeURI(testRTSP), logger: testhelper.logger, timeout: 0 })
-          .takeFrames(10)
-          .usingPreset('flashvideo')
-          .withSize('320x240')
-          .on('error', function(err, stdout, stderr) {
-            testhelper.logError(err, stdout, stderr);
-            assert.ok(!err);
-          })
-          .on('end', function() {
-            fs.exists(testFile, function(exist) {
-              exist.should.equal(true);
-              // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
-                assert.ok(!err && stats);
-                stats.size.should.above(0);
-                stats.isFile().should.equal(true);
+    after(function(done) {
+      ffserver.kill();
+      setTimeout(done, 1000);
+    });
 
-                done();
-              });
+    it('should take input from a RTSP stream', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testRTSPInput.flv');
+      this.files.push(testFile);
+
+      this.getCommand({ source: encodeURI(testRTSP), logger: testhelper.logger, timeout: 0 })
+        .takeFrames(10)
+        .usingPreset('flashvideo')
+        .withSize('320x240')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            exist.should.equal(true);
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.equal(true);
+
+              done();
             });
-          })
-          .saveToFile(testFile);
-      });
+          });
+        })
+        .saveToFile(testFile);
+    });
 
-      it('should take input from an URL', function(done) {
-        this.timeout(300000);
+    it('should take input from an URL', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testURLInput.flv');
+      this.files.push(testFile);
 
-        var testFile = path.join(__dirname, 'assets', 'testURLInput.flv');
-        this.files.push(testFile);
+      this.getCommand({ source: testHTTP, logger: testhelper.logger, timeout: 0 })
+        .takeFrames(5)
+        .usingPreset('flashvideo')
+        .withSize('320x240')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          fs.exists(testFile, function(exist) {
+            exist.should.equal(true);
+            // check filesize to make sure conversion actually worked
+            fs.stat(testFile, function(err, stats) {
+              assert.ok(!err && stats);
+              stats.size.should.above(0);
+              stats.isFile().should.equal(true);
 
-        this.getCommand({ source: testHTTP, logger: testhelper.logger, timeout: 0 })
-          .takeFrames(5)
-          .usingPreset('flashvideo')
-          .withSize('320x240')
-          .on('error', function(err, stdout, stderr) {
-            testhelper.logError(err, stdout, stderr);
-            assert.ok(!err);
-          })
-          .on('end', function() {
-            fs.exists(testFile, function(exist) {
-              exist.should.equal(true);
-              // check filesize to make sure conversion actually worked
-              fs.stat(testFile, function(err, stats) {
-                assert.ok(!err && stats);
-                stats.size.should.above(0);
-                stats.isFile().should.equal(true);
-
-                done();
-              });
+              done();
             });
-          })
-          .saveToFile(testFile);
-      });
+          });
+        })
+        .saveToFile(testFile);
+    });
+
+    it('should output to a RTP stream', function(done) {
+      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+        .videoCodec('libx264')
+        .audioCodec('copy')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          done();
+        })
+        .save(testRTPOut);
     });
   });
 
