@@ -69,12 +69,13 @@ section
 nav
 {
     display: block;
-    float: left;
-    margin-left: -230px;
-    margin-top: 28px;
     width: 220px;
     border-left: 1px solid #ccc;
     padding-left: 9px;
+
+    position: fixed;
+    top: 28px;
+    right: 0;
 }
 
 nav ul {
@@ -86,8 +87,13 @@ nav ul {
     list-style-type:none;
 }
 
+nav ul ul {
+    margin-left: 10px;
+    font-size: 90%;
+}
+
 nav h2 a, nav h2 a:visited {
-    color: #A35A00;
+    color: #526492;
     text-decoration: none;
 }
 
@@ -96,7 +102,7 @@ nav h3 {
 }
 
 nav li {
-    margin-top: 6px;
+    margin-top: 2px;
 }
 
 nav a {
@@ -132,7 +138,11 @@ h2
     font-size: 170%;
     font-weight: bold;
     letter-spacing: -0.01em;
-    margin: 6px 0 3px 0;
+    margin: 50px 0 3px 0;
+}
+
+nav > h2 {
+    margin-top: 6px;
 }
 
 h3
@@ -141,7 +151,7 @@ h3
     font-weight: bold;
     letter-spacing: -0.01em;
     margin-top: 16px;
-    margin: 6px 0 3px 0;
+    margin: 50px 0 3px 0;
 }
 
 h4
@@ -151,7 +161,7 @@ h4
     letter-spacing: -0.01em;
     margin-top: 16px;
     margin: 18px 0 3px 0;
-    color: #A35A00;
+    color: #526492;
 }
 
 h5, .container-overview .subsection-title
@@ -170,7 +180,7 @@ h6
     font-style: italic;
 }
 
-article > dl {
+article > dl, article > pre {
     margin-left: 2em;
 }
 
@@ -291,7 +301,7 @@ article > dl {
 }
 
 .params .name, .props .name, .name code {
-    color: #A35A00;
+    color: #526492;
     font-family: Consolas, 'Lucida Console', Monaco, monospace;
     font-size: 100%;
 }

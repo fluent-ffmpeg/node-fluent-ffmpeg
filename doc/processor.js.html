@@ -29,7 +29,6 @@
 'use strict';
 
 var spawn = require('child_process').spawn;
-var PassThrough = require('stream').PassThrough;
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
@@ -39,179 +38,6 @@ var utils = require('./utils');
 /*
  *! Processor methods
  */
-
-
-/**
- * @param {FfmpegCommand} command
- * @param {String|Writable} target
- * @param {Object} [pipeOptions]
- * @private
- */
-function _process(command, target, pipeOptions) {
-  var isStream;
-
-  if (typeof target === 'string') {
-    isStream = false;
-  } else {
-    isStream = true;
-    pipeOptions = pipeOptions || {};
-  }
-
-  // Ensure we send 'end' or 'error' only once
-  var ended = false;
-  function emitEnd(err, stdout, stderr) {
-    if (!ended) {
-      ended = true;
-
-      if (err) {
-        command.emit('error', err, stdout, stderr);
-      } else {
-        command.emit('end', stdout, stderr);
-      }
-    }
-  }
-
-  command._prepare(function(err, args) {
-    if (err) {
-      return emitEnd(err);
-    }
-
-    if (isStream) {
-      args.push('pipe:1');
-
-      if (command.options.flvmeta) {
-        command.logger.warn('Updating flv metadata is not supported for streams');
-        command.options.flvmeta = false;
-      }
-    } else {
-      args.push('-y', target);
-    }
-
-    // Get input stream if any
-    var inputStream = command._inputs.filter(function(input) {
-      return typeof input.source !== 'string';
-    })[0];
-
-    // Run ffmpeg
-    var stdout = null;
-    var stderr = '';
-    command._spawnFfmpeg(
-      args,
-
-      { niceness: command.options.niceness },
-
-      function processCB(ffmpegProc) {
-        command.ffmpegProc = ffmpegProc;
-        command.emit('start', 'ffmpeg ' + args.join(' '));
-
-        // Pipe input stream if any
-        if (inputStream) {
-          inputStream.source.on('error', function(err) {
-            emitEnd(new Error('Input stream error: ' + err.message));
-            ffmpegProc.kill();
-          });
-
-          inputStream.source.resume();
-          inputStream.source.pipe(ffmpegProc.stdin);
-        }
-
-        // Setup timeout if requested
-        var processTimer;
-        if (command.options.timeout) {
-          processTimer = setTimeout(function() {
-            var msg = 'process ran into a timeout (' + command.options.timeout + 's)';
-
-            emitEnd(new Error(msg), stdout, stderr);
-            ffmpegProc.kill();
-          }, command.options.timeout * 1000);
-        }
-
-        if (isStream) {
-          // Pipe ffmpeg stdout to output stream
-          ffmpegProc.stdout.pipe(target, pipeOptions);
-
-          // Handle output stream events
-          target.on('close', function() {
-            command.logger.debug('Output stream closed, scheduling kill for ffmpgeg process');
-
-            // Don't kill process yet, to give a chance to ffmpeg to
-            // terminate successfully first  This is necessary because
-            // under load, the process 'exit' event sometimes happens
-            // after the output stream 'close' event.
-            setTimeout(function() {
-              emitEnd(new Error('Output stream closed'));
-              ffmpegProc.kill();
-            }, 20);
-          });
-
-          target.on('error', function(err) {
-            command.logger.debug('Output stream error, killing ffmpgeg process');
-            emitEnd(new Error('Output stream error: ' + err.message));
-            ffmpegProc.kill();
-          });
-        } else {
-          // Gather ffmpeg stdout
-          stdout = '';
-          ffmpegProc.stdout.on('data', function (data) {
-            stdout += data;
-          });
-        }
-
-        // Process ffmpeg stderr data
-        command._codecDataSent = false;
-        ffmpegProc.stderr.on('data', function (data) {
-          stderr += data;
-
-          if (!command._codecDataSent &amp;&amp; command.listeners('codecData').length) {
-            utils.extractCodecData(command, stderr);
-          }
-
-          if (command.listeners('progress').length) {
-            var duration = 0;
-
-            if (command._ffprobeData &amp;&amp; command._ffprobeData.format &amp;&amp; command._ffprobeData.format.duration) {
-              duration = Number(command._ffprobeData.format.duration);
-            }
-
-            utils.extractProgress(command, stderr, duration);
-          }
-        });
-      },
-
-      function endCB(err) {
-        delete command.ffmpegProc;
-
-        if (err) {
-          emitEnd(err, stdout, stderr);
-        } else {
-          if (command.options.flvmeta) {
-            command._getFlvtoolPath(function(err, flvtool) {
-              // No error possible here, _getFlvtoolPath was called by _prepare
-
-              spawn(flvtool, ['-U', target])
-                .on('error', function(err) {
-                  emitEnd(new Error('Error running ' + flvtool + ': ' + err.message));
-                })
-                .on('exit', function(code, signal) {
-                  if (code !== 0 || signal) {
-                    emitEnd(
-                      new Error(flvtool + ' ' +
-                        (signal ? 'received signal ' + signal
-                                : 'exited with code ' + code))
-                    );
-                  } else {
-                    emitEnd(null, stdout, stderr);
-                  }
-                });
-            });
-          } else {
-            emitEnd(null, stdout, stderr);
-          }
-        }
-      }
-    );
-  });
-}
 
 
 /**
@@ -240,6 +66,12 @@ module.exports = function(proto) {
    *
    * @event FfmpegCommand#progress
    * @param {Object} progress progress object
+   * @param {Number} progress.frames number of frames transcoded
+   * @param {Number} progress.currentFps current processing speed in frames per second
+   * @param {Number} progress.currentKbps current output generation speed in kilobytes per second
+   * @param {Number} progress.targetSize current output file size
+   * @param {String} progress.timemark current video timemark
+   * @param {Number} [progress.percent] processing progress (may not be available depending on input)
    */
 
   /**
@@ -247,13 +79,18 @@ module.exports = function(proto) {
    *
    * @event FfmpegCommand#codecData
    * @param {Object} codecData codec data object
+   * @param {String} codecData.format input format name
+   * @param {String} codecData.audio input audio codec name
+   * @param {String} codecData.audio_details input audio codec parameters
+   * @param {String} codecData.video input video codec name
+   * @param {String} codecData.video_details input video codec parameters
    */
 
   /**
    * Emitted when an error happens when preparing or running a command
    *
    * @event FfmpegCommand#error
-   * @param {Error} error error
+   * @param {Error} error error object
    * @param {String|null} stdout ffmpeg stdout, unless outputting to a stream
    * @param {String|null} stderr ffmpeg stderr
    */
@@ -310,7 +147,7 @@ module.exports = function(proto) {
       }
 
       // Apply niceness
-      if (options.niceness &amp;&amp; !utils.isWindows) {
+      if (options.niceness &amp;&amp; options.niceness !== 0 &amp;&amp; !utils.isWindows) {
         args.unshift('-n', options.niceness, command);
         command = 'nice';
       }
@@ -351,10 +188,10 @@ module.exports = function(proto) {
       ffmpegProc.on('exit', function(code, signal) {
         processExited = true;
 
-        if (code) {
-          handleExit(new Error('ffmpeg exited with code ' + code));
-        } else if (signal) {
+        if (signal) {
           handleExit(new Error('ffmpeg was killed with signal ' + signal));
+        } else if (code) {
+          handleExit(new Error('ffmpeg exited with code ' + code));
         } else {
           handleExit();
         }
@@ -402,24 +239,57 @@ module.exports = function(proto) {
    * @private
    */
   proto._getArguments = function() {
-    var audioFilters = this._audioFilters.get();
-    var videoFilters = this._videoFilters.get().concat(this._sizeFilters.get());
+    var complexFilters = this._complexFilters.get();
 
-    return this._inputs.reduce(function(args, input) {
-        var source = (typeof input.source === 'string') ? input.source : '-';
+    var fileOutput = this._outputs.some(function(output) {
+      return output.isFile;
+    });
 
-        return args.concat(
-          input.before.get(),
-          ['-i', source],
-          input.after.get()
-        );
-      }, [])
-      .concat(
-        this._audio.get(),
-        audioFilters.length ? ['-filter:a', audioFilters.join(',')] : [],
-        this._video.get(),
-        videoFilters.length ? ['-filter:v', videoFilters.join(',')] : [],
-        this._output.get()
+    return [].concat(
+        // Inputs and input options
+        this._inputs.reduce(function(args, input) {
+          var source = (typeof input.source === 'string') ? input.source : 'pipe:0';
+
+          // For each input, add input options, then '-i &lt;source>'
+          return args.concat(
+            input.options.get(),
+            ['-i', source]
+          );
+        }, []),
+
+        // Global options
+        this._global.get(),
+
+        // Overwrite if we have file outputs
+        fileOutput ? ['-y'] : [],
+
+        // Complex filters
+        complexFilters,
+
+        // Outputs, filters and output options
+        this._outputs.reduce(function(args, output) {
+          var sizeFilters = utils.makeFilterStrings(output.sizeFilters.get());
+          var audioFilters = output.audioFilters.get();
+          var videoFilters = output.videoFilters.get().concat(sizeFilters);
+          var outputArg;
+
+          if (!output.target) {
+            outputArg = [];
+          } else if (typeof output.target === 'string') {
+            outputArg = [output.target];
+          } else {
+            outputArg = ['pipe:1'];
+          }
+
+          return args.concat(
+            output.audio.get(),
+            audioFilters.length ? ['-filter:a', audioFilters.join(',')] : [],
+            output.video.get(),
+            videoFilters.length ? ['-filter:v', videoFilters.join(',')] : [],
+            output.options.get(),
+            outputArg
+          );
+        }, [])
       );
   };
 
@@ -461,7 +331,17 @@ module.exports = function(proto) {
 
       // Check for flvtool2/flvmeta if necessary
       function(cb) {
-        if (self.options.flvmeta) {
+        var flvmeta = self._outputs.some(function(output) {
+          // Remove flvmeta flag on non-file output
+          if (output.flags.flvmeta &amp;&amp; !output.isFile) {
+            self.logger.warn('Updating flv metadata is only supported for files');
+            output.flags.flvmeta = false;
+          }
+
+          return output.flags.flvmeta;
+        });
+
+        if (flvmeta) {
           self._getFlvtoolPath(function(err) {
             cb(err);
           });
@@ -480,6 +360,24 @@ module.exports = function(proto) {
         }
 
         cb(null, args);
+      },
+
+      // Add "-strict experimental" option where needed
+      function(args, cb) {
+        self.availableEncoders(function(err, encoders) {
+          for (var i = 0; i &lt; args.length; i++) {
+            if (args[i] === '-acodec' || args[i] === '-vcodec') {
+              i++;
+
+              if ((args[i] in encoders) &amp;&amp; encoders[args[i]].experimental) {
+                args.splice(i + 1, 0, '-strict', 'experimental');
+                i += 2;
+              }
+            }
+          }
+
+          cb(null, args);
+        });
       }
     ], callback);
 
@@ -502,423 +400,199 @@ module.exports = function(proto) {
 
 
   /**
-   * Execute ffmpeg command and save output to a file
+   * Run ffmpeg command
    *
-   * @method FfmpegCommand#save
+   * @method FfmpegCommand#run
    * @category Processing
-   * @aliases saveToFile
-   *
-   * @param {String} output file path
-   * @return FfmpegCommand
+   * @aliases exec,execute
    */
-  proto.saveToFile =
-  proto.save = function(output) {
-    _process(this, output);
-  };
-
-
-  /**
-   * Execute ffmpeg command and save output to a stream
-   *
-   * If 'stream' is not specified, a PassThrough stream is created and returned.
-   * 'options' will be used when piping ffmpeg output to the output stream
-   * (@see http://nodejs.org/api/stream.html#stream_readable_pipe_destination_options)
-   *
-   * @method FfmpegCommand#pipe
-   * @category Processing
-   * @aliases stream,writeToStream
-   *
-   * @param {stream.Writable} [stream] output stream
-   * @param {Object} [options={}] pipe options
-   * @return Output stream
-   */
-  proto.writeToStream =
-  proto.pipe =
-  proto.stream = function(stream, options) {
-    if (stream &amp;&amp; !('writable' in stream)) {
-      options = stream;
-      stream = undefined;
-    }
-
-    if (!stream) {
-      if (process.version.match(/v0\.8\./)) {
-        throw new Error('PassThrough stream is not supported on node v0.8');
-      }
-
-      stream = new PassThrough();
-    }
-
-    _process(this, stream, options);
-    return stream;
-  };
-
-
-  /**
-   * Merge (concatenate) inputs to a single file
-   *
-   * Warning: soon to be deprecated
-   *
-   * @method FfmpegCommand#mergeToFile
-   * @category Processing
-   *
-   * @param {String} targetfile output file path
-   */
-  proto.mergeToFile = function(targetfile) {
-    var outputfile = path.normalize(targetfile);
-    if(fs.existsSync(outputfile)){
-      return this.emit('error', new Error('Output file already exists, merge aborted'));
-    }
-
+  proto.exec =
+  proto.execute =
+  proto.run = function() {
     var self = this;
 
-    // creates intermediate copies of each video.
-    function makeIntermediateFile(_mergeSource,_callback) {
-        var fname =  _mergeSource + '.temp.mpg';
-        var args = self._output.get().concat(['-i', _mergeSource, '-qscale:v', 1, fname]);
+    // Check if at least one output is present
+    var outputPresent = this._outputs.some(function(output) {
+      return 'target' in output;
+    });
 
-        self._spawnFfmpeg(args, function(err) {
-          _callback(err, fname);
-        });
+    if (!outputPresent) {
+      throw new Error('No output specified');
     }
 
-    // concat all created intermediate copies
-    function concatIntermediates(target, intermediatesList, _callback) {
-        var fname =  path.normalize(target) + '.temp.merged.mpg';
+    // Get output stream if any
+    var outputStream = this._outputs.filter(function(output) {
+      return typeof output.target !== 'string';
+    })[0];
 
-        var args = [
-          // avoid too many log messages from ffmpeg
-          '-loglevel', 'panic',
-          '-i', 'concat:' + intermediatesList.join('|'),
-          '-c', 'copy',
-          fname
-        ];
+    // Get input stream if any
+    var inputStream = this._inputs.filter(function(input) {
+      return typeof input.source !== 'string';
+    })[0];
 
-        self._spawnFfmpeg(args, {captureStdout:true,captureStderr:true}, function(err) {
-          _callback(err, fname);
-        });
-    }
+    // Ensure we send 'end' or 'error' only once
+    var ended = false;
+    function emitEnd(err, stdout, stderr) {
+      if (!ended) {
+        ended = true;
 
-    function quantizeConcat(concatResult, numFiles, _callback) {
-        var args = [
-          '-i', concatResult,
-          '-qscale:v',numFiles,
-          targetfile
-        ];
-
-        self._spawnFfmpeg(args, function(err) {
-          _callback(err);
-        });
-    }
-
-    function deleteIntermediateFiles(intermediates, callback) {
-      async.each(intermediates, function(item,cb){
-        fs.exists(item,function(exists){
-          if(exists){
-            fs.unlink(item ,cb);
-          }
-          else{
-            cb();
-          }
-
-        });
-      }, callback);
-    }
-
-    function makeProgress() {
-      progress.createdFiles = progress.createdFiles + 1;
-      progress.percent = progress.createdFiles / progress.totalFiles * 100;
-      self.emit('progress', progress);
-    }
-
-    if (this._inputs.length &lt; 2) {
-      return this.emit('error', new Error('No file added to be merged'));
-    }
-
-    var mergeList = this._inputs.map(function(input) { return input.source; });
-
-    var progress = {frames : 0,
-                    currentFps: 0,
-                    currentKbps: 0,
-                    targetSize: 0,
-                    timemark: 0,
-                    percent: 0,
-                    totalFiles: mergeList.length + 2,
-                    createdFiles: 0};
-
-    var toDelete = mergeList.map(function(name) { return name + '.temp.mpg'; });
-    toDelete.push(outputfile + '.temp.merged.mpg');
-    deleteIntermediateFiles(toDelete);
-
-    var intermediateFiles = [];
-
-    async.whilst(
-      function(){
-        return (mergeList.length !== 0);
-      },
-      function (callback){
-        makeIntermediateFile(mergeList.shift(), function(err, createdIntermediateFile) {
-          if(err) {
-            return callback(err);
-          }
-
-          if(!createdIntermediateFile) {
-            return callback(new Error('Invalid intermediate file'));
-          }
-
-          intermediateFiles.push(createdIntermediateFile);
-          makeProgress();
-          callback();
-        });
-      },
-      function(err) {
         if (err) {
-          return self.emit('error', err);
+          self.emit('error', err, stdout, stderr);
+        } else {
+          self.emit('end', stdout, stderr);
         }
+      }
+    }
 
-        concatIntermediates(targetfile, intermediateFiles, function(err, concatResult) {
-          if(err) {
-            return self.emit('error', err);
-          }
+    self._prepare(function(err, args) {
+      if (err) {
+        return emitEnd(err);
+      }
 
-          if(!concatResult) {
-            return self.emit('error', new Error('Invalid concat result file'));
-          }
+      // Run ffmpeg
+      var stdout = null;
+      var stderr = '';
+      self._spawnFfmpeg(
+        args,
 
-          makeProgress();
-          quantizeConcat(concatResult, intermediateFiles.length, function() {
-            makeProgress();
-            // add concatResult to intermediates list so it can be deleted too.
-            intermediateFiles.push(concatResult);
-            deleteIntermediateFiles(intermediateFiles, function(err) {
-              if (err) {
-                self.emit('error', err);
-              } else {
-                self.emit('end');
-              }
+        { niceness: self.options.niceness },
+
+        function processCB(ffmpegProc) {
+          self.ffmpegProc = ffmpegProc;
+          self.emit('start', 'ffmpeg ' + args.join(' '));
+
+          // Pipe input stream if any
+          if (inputStream) {
+            inputStream.source.on('error', function(err) {
+              emitEnd(new Error('Input stream error: ' + err.message));
+              ffmpegProc.kill();
             });
-          });
-        });
-      }
-    );
-  };
 
+            inputStream.source.resume();
+            inputStream.source.pipe(ffmpegProc.stdin);
 
-  /**
-   * Take screenshots
-   *
-   * The 'config' parameter may either be the number of screenshots to take or an object
-   * with the following keys:
-   * - 'count': screenshot count
-   * - 'timemarks': array of screenshot timestamps in seconds (defaults to taking screenshots at regular intervals)
-   * - 'filename': screenshot filename pattern (defaults to 'tn_%ss' or 'tn_%ss_%i' for multiple screenshots)
-   *
-   * The 'filename' option may contain tokens that will be replaced for each screenshot taken:
-   * - '%s': offset in seconds
-   * - '%w': screenshot width
-   * - '%h': screenshot height
-   * - '%r': screenshot resolution (eg. '320x240')
-   * - '%f': input filename
-   * - '%b': input basename (filename w/o extension)
-   * - '%i': index of screenshot in timemark array (can be zero-padded by using it like `%000i`)
-   *
-   * @method FfmpegCommand#takeScreenshots
-   * @category Processing
-   *
-   * @param {Number|Object} config screenshot count or configuration object (see above)
-   * @param {String} [folder='.'] output directory
-   */
-  proto.takeScreenshots = function(config, folder) {
-    var width, height;
-    var self = this;
-
-    function _computeSize(size) {
-      // Select video stream with biggest resolution
-      var vstream = self._ffprobeData.streams.reduce(function(max, stream) {
-        if (stream.codec_type !== 'video') return max;
-        return max.width * max.height &lt; stream.width * stream.height ? stream : max;
-      }, { width: 0, height: 0 });
-
-      var w = vstream.width;
-      var h = vstream.height;
-      var a = w / h;
-
-      var fixedSize = size.match(/([0-9]+)x([0-9]+)/);
-      var fixedWidth = size.match(/([0-9]+)x\?/);
-      var fixedHeight = size.match(/\?x([0-9]+)/);
-      var percentRatio = size.match(/\b([0-9]{1,3})%/);
-
-      if (fixedSize) {
-        width = Number(fixedSize[1]);
-        height = Number(fixedSize[2]);
-      } else if (fixedWidth) {
-        width = Number(fixedWidth[1]);
-        height = width / a;
-      } else if (fixedHeight) {
-        height = Number(fixedHeight[1]);
-        width = height * a;
-      } else {
-        var pc = Number(percentRatio[0]) / 100;
-        width = w * pc;
-        height = h * pc;
-      }
-    }
-
-    function _zeroPad(number, len) {
-      len = len-String(number).length+2;
-      return new Array(len&lt;0?0:len).join('0')+number;
-    }
-
-    function _renderOutputName(j, offset) {
-      var result = filename;
-      if(/%0*i/.test(result)) {
-        var numlen = String(result.match(/%(0*)i/)[1]).length;
-        result = result.replace(/%0*i/, _zeroPad(j, numlen));
-      }
-      result = result.replace('%s', offset);
-      result = result.replace('%w', width);
-      result = result.replace('%h', height);
-      result = result.replace('%r', width+'x'+height);
-      result = result.replace('%f', path.basename(inputfile));
-      result = result.replace('%b', path.basename(inputfile, path.extname(inputfile)));
-      return result;
-    }
-
-    function _screenShotInternal() {
-      self._prepare(function(err, args) {
-        if(err) {
-          return self.emit('error', err);
-        }
-
-        _computeSize(self._sizeData.size);
-
-        var duration = 0;
-        if (self._ffprobeData &amp;&amp; self._ffprobeData.format &amp;&amp; self._ffprobeData.format.duration) {
-          duration = Number(self._ffprobeData.format.duration);
-        }
-
-        if (!duration) {
-          var errString = 'meta data contains no duration, aborting screenshot creation';
-          return self.emit('error', new Error(errString));
-        }
-
-        // check if all timemarks are inside duration
-        if (Array.isArray(timemarks)) {
-          for (var i = 0; i &lt; timemarks.length; i++) {
-            /* convert percentage to seconds */
-            if( timemarks[i].indexOf('%') > 0 ) {
-              timemarks[i] = (parseInt(timemarks[i], 10) / 100) * duration;
-            }
-            if (parseInt(timemarks[i], 10) > duration) {
-              // remove timemark from array
-              timemarks.splice(i, 1);
-              --i;
-            }
+            // Set stdin error handler on ffmpeg (prevents nodejs catching the error, but
+            // ffmpeg will fail anyway, so no need to actually handle anything)
+            ffmpegProc.stdin.on('error', function() {});
           }
-          // if there are no more timemarks around, add one at end of the file
-          if (timemarks.length === 0) {
-            timemarks[0] = (duration * 0.9);
+
+          // Setup timeout if requested
+          var processTimer;
+          if (self.options.timeout) {
+            processTimer = setTimeout(function() {
+              var msg = 'process ran into a timeout (' + self.options.timeout + 's)';
+
+              emitEnd(new Error(msg), stdout, stderr);
+              ffmpegProc.kill();
+            }, self.options.timeout * 1000);
           }
-        }
-        // get positions for screenshots (using duration of file minus 10% to remove fade-in/fade-out)
-        var secondOffset = (duration * 0.9) / screenshotcount;
 
-        // reset iterator
-        var j = 1;
+          if (outputStream) {
+            // Pipe ffmpeg stdout to output stream
+            ffmpegProc.stdout.pipe(outputStream.target, outputStream.pipeopts);
 
-        var filenames = [];
+            // Handle output stream events
+            outputStream.target.on('close', function() {
+              self.logger.debug('Output stream closed, scheduling kill for ffmpgeg process');
 
-        // use async helper function to generate all screenshots and
-        // fire callback just once after work is done
-        async.until(
-          function() {
-            return j > screenshotcount;
-          },
-          function(taskcallback) {
-            var offset;
-            if (Array.isArray(timemarks)) {
-              // get timemark for current iteration
-              offset = timemarks[(j - 1)];
-            } else {
-              offset = secondOffset * j;
-            }
+              // Don't kill process yet, to give a chance to ffmpeg to
+              // terminate successfully first  This is necessary because
+              // under load, the process 'exit' event sometimes happens
+              // after the output stream 'close' event.
+              setTimeout(function() {
+                emitEnd(new Error('Output stream closed'));
+                ffmpegProc.kill();
+              }, 20);
+            });
 
-            var fname = _renderOutputName(j, offset) + (fileextension ? fileextension : '.jpg');
-            var target = path.join(folder, fname);
-
-            // build screenshot command
-            var allArgs = [
-                '-ss', Math.floor(offset * 100) / 100
-              ]
-              .concat(args)
-              .concat([
-                '-vframes', '1',
-                '-an',
-                '-vcodec', 'mjpeg',
-                '-f', 'rawvideo',
-                '-y', target
-              ]);
-
-            j++;
-
-            self._spawnFfmpeg(allArgs, taskcallback);
-            filenames.push(fname);
-          },
-          function(err) {
-            if (err) {
-              self.emit('error', err);
-            } else {
-              self.emit('end', filenames);
-            }
-          }
-        );
-      }, true);
-    }
-
-    var timemarks, screenshotcount, filename, fileextension;
-    if (typeof config === 'object') {
-      // use json object as config
-      if (config.count) {
-        screenshotcount = config.count;
-      }
-      if (config.timemarks) {
-        timemarks = config.timemarks;
-      }
-      if (config.fileextension){
-        fileextension = config.fileextension;
-      }
-    } else {
-      // assume screenshot count as parameter
-      screenshotcount = config;
-      timemarks = null;
-    }
-
-    if (!this._sizeData || !this._sizeData.size) {
-      throw new Error('Size must be specified');
-    }
-
-    var inputfile = this._currentInput.source;
-
-    filename = config.filename || 'tn_%ss';
-    if(!/%0*i/.test(filename) &amp;&amp; Array.isArray(timemarks) &amp;&amp; timemarks.length > 1 ) {
-      // if there are multiple timemarks but no %i in filename add one
-      // so we won't overwrite the same thumbnail with each timemark
-      filename += '_%i';
-    }
-    folder = folder || '.';
-
-    // check target folder
-    fs.exists(folder, function(exists) {
-      if (!exists) {
-        fs.mkdir(folder, '0755', function(err) {
-          if (err !== null) {
-            self.emit('error', err);
+            outputStream.target.on('error', function(err) {
+              self.logger.debug('Output stream error, killing ffmpgeg process');
+              emitEnd(new Error('Output stream error: ' + err.message));
+              ffmpegProc.kill();
+            });
           } else {
-            _screenShotInternal();
+            // Gather ffmpeg stdout
+            stdout = '';
+            ffmpegProc.stdout.on('data', function (data) {
+              stdout += data;
+            });
           }
-        });
-      } else {
-        _screenShotInternal();
-      }
+
+          // Process ffmpeg stderr data
+          self._codecDataSent = false;
+          ffmpegProc.stderr.on('data', function (data) {
+            stderr += data;
+
+            if (!self._codecDataSent &amp;&amp; self.listeners('codecData').length) {
+              utils.extractCodecData(self, stderr);
+            }
+
+            if (self.listeners('progress').length) {
+              var duration = 0;
+
+              if (self._ffprobeData &amp;&amp; self._ffprobeData.format &amp;&amp; self._ffprobeData.format.duration) {
+                duration = Number(self._ffprobeData.format.duration);
+              }
+
+              utils.extractProgress(self, stderr, duration);
+            }
+          });
+        },
+
+        function endCB(err) {
+          delete self.ffmpegProc;
+
+          if (err) {
+            if (err.message.match(/ffmpeg exited with code/)) {
+              // Add ffmpeg error message
+              err.message += ': ' + utils.extractError(stderr);
+            }
+
+            emitEnd(err, stdout, stderr);
+          } else {
+            // Find out which outputs need flv metadata
+            var flvmeta = self._outputs.filter(function(output) {
+              return output.flags.flvmeta;
+            });
+
+            if (flvmeta.length) {
+              self._getFlvtoolPath(function(err, flvtool) {
+                // No possible error here, getFlvtoolPath was already called by _prepare
+                async.each(
+                  flvmeta,
+                  function(output, cb) {
+                    spawn(flvtool, ['-U', output.target])
+                      .on('error', function(err) {
+                        cb(new Error('Error running ' + flvtool + ' on ' + output.target + ': ' + err.message));
+                      })
+                      .on('exit', function(code, signal) {
+                        if (code !== 0 || signal) {
+                          cb(
+                            new Error(flvtool + ' ' +
+                              (signal ? 'received signal ' + signal
+                                      : 'exited with code ' + code)) +
+                              ' when running on ' + output.target
+                          );
+                        } else {
+                          cb();
+                        }
+                      });
+                  },
+                  function(err) {
+                    if (err) {
+                      emitEnd(err);
+                    } else {
+                      emitEnd(null, stdout, stderr);
+                    }
+                  }
+                );
+              });
+            } else {
+              emitEnd(null, stdout, stderr);
+            }
+          }
+        }
+      );
     });
   };
 
@@ -948,17 +622,17 @@ module.exports = function(proto) {
       if (this.ffmpegProc) {
         var logger = this.logger;
         var pid = this.ffmpegProc.pid;
-        var renice = spawn('renice', ['-n', niceness > 0 ? '+' + niceness : niceness, '-p', pid]);
+        var renice = spawn('renice', [niceness, '-p', pid]);
 
         renice.on('error', function(err) {
-          logger.warn('could not renice process ' + process.pid + ': ' + err.message);
+          logger.warn('could not renice process ' + pid + ': ' + err.message);
         });
 
         renice.on('exit', function(code, signal) {
-          if (code) {
-            logger.warn('could not renice process ' + pid + ': renice exited with ' + code);
-          } else if (signal) {
+          if (signal) {
             logger.warn('could not renice process ' + pid + ': renice was killed by signal ' + signal);
+          } else if (code) {
+            logger.warn('could not renice process ' + pid + ': renice exited with ' + code);
           } else {
             logger.info('successfully reniced process ' + pid + ' to ' + niceness + ' niceness');
           }
@@ -999,13 +673,13 @@ module.exports = function(proto) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><ul><li><a href="index.html#installation">Installation</a></li><ul></ul><li><a href="index.html#usage">Usage</a></li><ul><li><a href="index.html#prerequisites">Prerequisites</a></li><li><a href="index.html#creating-an-ffmpeg-command">Creating an FFmpeg command</a></li><li><a href="index.html#specifying-inputs">Specifying inputs</a></li><li><a href="index.html#input-options">Input options</a></li><li><a href="index.html#audio-options">Audio options</a></li><li><a href="index.html#video-options">Video options</a></li><li><a href="index.html#video-frame-size-options">Video frame size options</a></li><li><a href="index.html#specifying-multiple-outputs">Specifying multiple outputs</a></li><li><a href="index.html#output-options">Output options</a></li><li><a href="index.html#miscellaneous-options">Miscellaneous options</a></li><li><a href="index.html#setting-event-handlers">Setting event handlers</a></li><li><a href="index.html#starting-ffmpeg-processing">Starting FFmpeg processing</a></li><li><a href="index.html#controlling-the-ffmpeg-process">Controlling the FFmpeg process</a></li><li><a href="index.html#reading-video-metadata">Reading video metadata</a></li><li><a href="index.html#querying-ffmpeg-capabilities">Querying ffmpeg capabilities</a></li><li><a href="index.html#cloning-an-ffmpegcommand">Cloning an FfmpegCommand</a></li></ul><li><a href="index.html#contributing">Contributing</a></li><ul><li><a href="index.html#code-contributions">Code contributions</a></li><li><a href="index.html#documentation-contributions">Documentation contributions</a></li><li><a href="index.html#updating-the-documentation">Updating the documentation</a></li><li><a href="index.html#running-tests">Running tests</a></li></ul><li><a href="index.html#main-contributors">Main contributors</a></li><ul></ul><li><a href="index.html#license">License</a></li><ul></ul></ul><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li><ul><li> <a href="FfmpegCommand.html#audio-methods">Audio methods</a></li><li> <a href="FfmpegCommand.html#capabilities-methods">Capabilities methods</a></li><li> <a href="FfmpegCommand.html#custom-options-methods">Custom options methods</a></li><li> <a href="FfmpegCommand.html#input-methods">Input methods</a></li><li> <a href="FfmpegCommand.html#metadata-methods">Metadata methods</a></li><li> <a href="FfmpegCommand.html#miscellaneous-methods">Miscellaneous methods</a></li><li> <a href="FfmpegCommand.html#other-methods">Other methods</a></li><li> <a href="FfmpegCommand.html#output-methods">Output methods</a></li><li> <a href="FfmpegCommand.html#processing-methods">Processing methods</a></li><li> <a href="FfmpegCommand.html#video-methods">Video methods</a></li><li> <a href="FfmpegCommand.html#video-size-methods">Video size methods</a></li></ul></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Thu May 08 2014 10:38:29 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Jul 08 2014 21:22:19 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

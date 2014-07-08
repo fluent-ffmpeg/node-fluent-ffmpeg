@@ -1339,7 +1339,7 @@ Contributions in any form are highly encouraged and welcome! Be it new or improv
 
 ### Code contributions
 
-If you want to add new features or change the API, please submit an issue first to make sure no one else is already working on the same thing and discuss the implementation and API details with maintainers and users.  When everything is settled down, you can submit a pull request.
+If you want to add new features or change the API, please submit an issue first to make sure no one else is already working on the same thing and discuss the implementation and API details with maintainers and users by creating an issue.  When everything is settled down, you can submit a pull request.
 
 When fixing bugs, you can directly submit a pull request.
 
@@ -1377,6 +1377,8 @@ You can regenerate the JSDoc documentation by running the following command:
 ```sh
 $ make doc
 ```
+
+To avoid polluting the commit history, make sure to only commit the regenerated JSDoc once and in a specific commit.
 
 ### Running tests
 

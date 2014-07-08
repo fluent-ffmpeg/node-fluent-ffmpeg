@@ -182,8 +182,40 @@ function attachModuleSymbols(doclets, modules) {
     });
 }
 
+function buildReadmeNav(readme) {
+    var nav = '';
+
+    var prevLevel = '0';
+    nav += '<ul>';
+
+    readme = readme.replace(/<h([23])>([^<]*)<\/h[23]>/g, function(match, level, title) {
+        if (title.trim().length > 0) {
+            var titlelink = title.toLowerCase().replace(/[^a-z]/g, '-');
+
+            if (level === '2') {
+                if (prevLevel === '2' || prevLevel === '3') {
+                    nav += '</ul>';
+                }
+
+                nav += '<li><a href="index.html#' + titlelink + '">' + title + '</a></li><ul>';
+            } else {
+                nav += '<li><a href="index.html#' + titlelink + '">' + title + '</a></li>';
+            }
+
+            prevLevel = level;
+            match = '<a name="' + titlelink + '"></a>' + match;
+        }
+
+        return match;
+    });
+
+    nav += '</ul></ul>';
+    return { nav: nav, readme: readme };
+}
+
 /**
  * Create the navigation sidebar.
+ * @param {String} readmeNav The readme TOC
  * @param {object} members The members that will be used to create the sidebar.
  * @param {array<object>} members.classes
  * @param {array<object>} members.externals
@@ -195,12 +227,14 @@ function attachModuleSymbols(doclets, modules) {
  * @param {array<object>} members.events
  * @return {string} The HTML for the navigation sidebar.
  */
-function buildNav(members) {
-    var nav = '<h2><a href="index.html">Index</a></h2>',
+function buildNav(readmeNav, members) {
+    var nav = '<h2><a href="index.html">Index</a></h2>' + readmeNav,
         seen = {},
         hasClassList = false,
         classNav = '',
         globalNav = '';
+
+
 
     if (members.modules.length) {
         nav += '<h3>Modules</h3><ul>';
@@ -503,8 +537,12 @@ exports.publish = function(taffyData, opts, tutorials) {
     view.htmlsafe = htmlsafe;
     view.outputSourceFiles = outputSourceFiles;
 
+    // Build readme nav
+    var readmeNav = buildReadmeNav(opts.readme);
+    opts.readme = readmeNav.readme;
+
     // once for all
-    view.nav = buildNav(members);
+    view.nav = buildNav(readmeNav.nav, members);
     attachModuleSymbols( find({ kind: ['class', 'function'], longname: {left: 'module:'} }),
         members.modules );
 

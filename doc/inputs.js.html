@@ -53,8 +53,10 @@ module.exports = function(proto) {
   proto.mergeAdd =
   proto.addInput =
   proto.input = function(source) {
+    var isFile = false;
+
     if (typeof source !== 'string') {
-      if (!('readable' in source)) {
+      if (!('readable' in source) || !(source.readable)) {
         throw new Error('Invalid input');
       }
 
@@ -67,12 +69,15 @@ module.exports = function(proto) {
       }
 
       source.pause();
+    } else {
+      var protocol = source.match(/^([a-z]{2,}):/i);
+      isFile = !protocol || protocol[0] === 'file';
     }
 
     this._inputs.push(this._currentInput = {
       source: source,
-      before: utils.args(),
-      after: utils.args(),
+      isFile: isFile,
+      options: utils.args()
     });
 
     return this;
@@ -96,7 +101,7 @@ module.exports = function(proto) {
       throw new Error('No input specified');
     }
 
-    this._currentInput.before('-f', format);
+    this._currentInput.options('-f', format);
     return this;
   };
 
@@ -124,7 +129,28 @@ module.exports = function(proto) {
       throw new Error('No input specified');
     }
 
-    this._currentInput.before('-r', fps);
+    this._currentInput.options('-r', fps);
+    return this;
+  };
+
+
+  /**
+   * Use native framerate for the last specified input
+   *
+   * @method FfmpegCommand#native
+   * @category Input
+   * @aliases nativeFramerate,withNativeFramerate
+   *
+   * @return FfmmegCommand
+   */
+  proto.nativeFramerate =
+  proto.withNativeFramerate =
+  proto.native = function() {
+    if (!this._currentInput) {
+      throw new Error('No input specified');
+    }
+
+    this._currentInput.options('-re');
     return this;
   };
 
@@ -132,44 +158,22 @@ module.exports = function(proto) {
   /**
    * Specify input seek time for the last specified input
    *
-   * @method FfmpegCommand#seek
+   * @method FfmpegCommand#seekInput
    * @category Input
    * @aliases setStartTime,seekTo
    *
    * @param {String|Number} seek seek time in seconds or as a '[hh:[mm:]]ss[.xxx]' string
-   * @param {Boolean} [fast=false] use fast (but inexact) seek
    * @return FfmpegCommand
    */
   proto.setStartTime =
-  proto.seekTo =
-  proto.seek = function(seek, fast) {
+  proto.seekInput = function(seek) {
     if (!this._currentInput) {
       throw new Error('No input specified');
     }
 
-    if (fast) {
-      this._currentInput.before('-ss', seek);
-    } else {
-      this._currentInput.after('-ss', seek);
-    }
+    this._currentInput.options('-ss', seek);
 
     return this;
-  };
-
-
-  /**
-   * Specify input fast-seek time for the last specified input
-   *
-   * @method FfmpegCommand#fastSeek
-   * @category Input
-   * @aliases fastSeekTo
-   *
-   * @param {String|Number} seek fast-seek time in seconds or as a '[[hh:]mm:]ss[.xxx]' string
-   * @return FfmpegCommand
-   */
-  proto.fastSeek =
-  proto.fastSeekTo = function(seek) {
-    return this.seek(seek, true);
   };
 
 
@@ -187,7 +191,7 @@ module.exports = function(proto) {
       throw new Error('No input specified');
     }
 
-    this._currentInput.before('-loop', '1');
+    this._currentInput.options('-loop', '1');
 
     if (typeof duration !== 'undefined') {
       this.duration(duration);
@@ -206,13 +210,13 @@ module.exports = function(proto) {
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><ul><li><a href="index.html#installation">Installation</a></li><ul></ul><li><a href="index.html#usage">Usage</a></li><ul><li><a href="index.html#prerequisites">Prerequisites</a></li><li><a href="index.html#creating-an-ffmpeg-command">Creating an FFmpeg command</a></li><li><a href="index.html#specifying-inputs">Specifying inputs</a></li><li><a href="index.html#input-options">Input options</a></li><li><a href="index.html#audio-options">Audio options</a></li><li><a href="index.html#video-options">Video options</a></li><li><a href="index.html#video-frame-size-options">Video frame size options</a></li><li><a href="index.html#specifying-multiple-outputs">Specifying multiple outputs</a></li><li><a href="index.html#output-options">Output options</a></li><li><a href="index.html#miscellaneous-options">Miscellaneous options</a></li><li><a href="index.html#setting-event-handlers">Setting event handlers</a></li><li><a href="index.html#starting-ffmpeg-processing">Starting FFmpeg processing</a></li><li><a href="index.html#controlling-the-ffmpeg-process">Controlling the FFmpeg process</a></li><li><a href="index.html#reading-video-metadata">Reading video metadata</a></li><li><a href="index.html#querying-ffmpeg-capabilities">Querying ffmpeg capabilities</a></li><li><a href="index.html#cloning-an-ffmpegcommand">Cloning an FfmpegCommand</a></li></ul><li><a href="index.html#contributing">Contributing</a></li><ul><li><a href="index.html#code-contributions">Code contributions</a></li><li><a href="index.html#documentation-contributions">Documentation contributions</a></li><li><a href="index.html#updating-the-documentation">Updating the documentation</a></li><li><a href="index.html#running-tests">Running tests</a></li></ul><li><a href="index.html#main-contributors">Main contributors</a></li><ul></ul><li><a href="index.html#license">License</a></li><ul></ul></ul><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li><ul><li> <a href="FfmpegCommand.html#audio-methods">Audio methods</a></li><li> <a href="FfmpegCommand.html#capabilities-methods">Capabilities methods</a></li><li> <a href="FfmpegCommand.html#custom-options-methods">Custom options methods</a></li><li> <a href="FfmpegCommand.html#input-methods">Input methods</a></li><li> <a href="FfmpegCommand.html#metadata-methods">Metadata methods</a></li><li> <a href="FfmpegCommand.html#miscellaneous-methods">Miscellaneous methods</a></li><li> <a href="FfmpegCommand.html#other-methods">Other methods</a></li><li> <a href="FfmpegCommand.html#output-methods">Output methods</a></li><li> <a href="FfmpegCommand.html#processing-methods">Processing methods</a></li><li> <a href="FfmpegCommand.html#video-methods">Video methods</a></li><li> <a href="FfmpegCommand.html#video-size-methods">Video size methods</a></li></ul></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Thu May 08 2014 10:38:29 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Jul 08 2014 21:22:19 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
