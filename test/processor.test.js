@@ -458,6 +458,47 @@ describe('Processor', function() {
           size: '150x?'
         }, testFolder);
     });
+
+    it('should automatically compute timestamps', function(done) {
+      var testFolder = path.join(__dirname, 'assets', 'screenshots_end');
+      var filenamesCalled = false;
+
+      this.files.push(path.join(testFolder, 'shot_0.5.png'));
+      this.files.push(path.join(testFolder, 'shot_1.png'));
+      this.files.push(path.join(testFolder, 'shot_1.5.png'));
+      this.dirs.push(testFolder);
+
+      this.getCommand({ source: this.testfile, logger: testhelper.logger })
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('filenames', function(names) {
+          filenamesCalled = true;
+          names.length.should.equal(3);
+          names[0].should.equal('shot_0.5.png');
+          names[1].should.equal('shot_1.png');
+          names[2].should.equal('shot_1.5.png');
+        })
+        .on('end', function() {
+          filenamesCalled.should.equal(true);
+          fs.readdir(testFolder, function(err, files) {
+            var tnCount = 0;
+            files.forEach(function(file) {
+              if (file.indexOf('.png') > -1) {
+                tnCount++;
+              }
+            });
+            tnCount.should.equal(3);
+            done();
+          });
+        })
+        .takeScreenshots({
+          count: 3,
+          filename: 'shot_%s',
+          size: '150x?'
+        }, testFolder);
+    });
   });
 
   describe('saveToFile', function() {
