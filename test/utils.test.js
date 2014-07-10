@@ -106,8 +106,11 @@ describe('Utilities', function() {
     it('should correctly convert a complex timestamp', function() {
       utils.timemarkToSeconds('00:08:09.10').should.be.equal(489.1);
     });
-    it('should correclty convert a simple float timestamp', function() {
+    it('should correclty convert a simple float string timestamp', function() {
       utils.timemarkToSeconds('132.44').should.be.equal(132.44);
+    });
+    it('should correclty convert a simple float timestamp', function() {
+      utils.timemarkToSeconds(132.44).should.be.equal(132.44);
     });
   });
 });

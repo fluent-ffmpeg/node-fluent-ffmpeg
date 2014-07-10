@@ -388,117 +388,146 @@ describe('Processor', function() {
   });
 
   describe('takeScreenshots', function() {
-    it('should properly take a certain amount of screenshots at defined timemarks', function(done) {
-      var testFolder = path.join(__dirname, 'assets', 'screenshots');
+    function testScreenshots(title, name, config, files) {
+      it(title, function(done) {
+        var filenamesCalled = false;
+        var testFolder = path.join(__dirname, 'assets', 'screenshots_' + name);
 
-      this.files.push(path.join(testFolder, 'tn_1.png'));
-      this.files.push(path.join(testFolder, 'tn_2.png'));
-      this.dirs.push(testFolder);
+        var context = this;
+        files.forEach(function(file) {
+          context.files.push(path.join(testFolder, file));
+        });
+        this.dirs.push(testFolder);
 
-      this.getCommand({ source: this.testfile, logger: testhelper.logger })
-        .on('error', function(err, stdout, stderr) {
-          testhelper.logError(err, stdout, stderr);
-          assert.ok(!err);
-        })
-        .on('end', function() {
-          fs.readdir(testFolder, function(err, files) {
-            var tnCount = 0;
-            files.forEach(function(file) {
-              if (file.indexOf('.png') > -1) {
-                tnCount++;
-              }
+        this.getCommand({ source: this.testfile, logger: testhelper.logger })
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr);
+            assert.ok(!err);
+          })
+          .on('filenames', function(filenames) {
+            filenamesCalled = true;
+            filenames.length.should.equal(files.length);
+            filenames.forEach(function(file, index) {
+              file.should.equal(files[index]);
             });
-            tnCount.should.equal(2);
-            done();
-          });
-        })
-        .takeScreenshots({
-          count: 2,
-          timemarks: [ '0.5', '1' ],
-          size: '150x?'
-        }, testFolder);
-    });
-
-    it('should report all generated filenames as an argument to the \'filenames\' event', function(done) {
-      var testFolder = path.join(__dirname, 'assets', 'screenshots_end');
-      var filenamesCalled = false;
-
-      this.files.push(path.join(testFolder, 'shot_001.png'));
-      this.files.push(path.join(testFolder, 'shot_002.png'));
-      this.dirs.push(testFolder);
-
-      this.getCommand({ source: this.testfile, logger: testhelper.logger })
-        .on('error', function(err, stdout, stderr) {
-          testhelper.logError(err, stdout, stderr);
-          assert.ok(!err);
-        })
-        .on('filenames', function(names) {
-          filenamesCalled = true;
-          names.length.should.equal(2);
-          names[0].should.equal('shot_001.png');
-          names[1].should.equal('shot_002.png');
-        })
-        .on('end', function() {
-          filenamesCalled.should.equal(true);
-          fs.readdir(testFolder, function(err, files) {
-            var tnCount = 0;
-            files.forEach(function(file) {
-              if (file.indexOf('.png') > -1) {
-                tnCount++;
-              }
+          })
+          .on('end', function() {
+            filenamesCalled.should.equal(true);
+            fs.readdir(testFolder, function(err, content) {
+              var tnCount = 0;
+              content.forEach(function(file) {
+                if (file.indexOf('.png') > -1) {
+                  tnCount++;
+                }
+              });
+              tnCount.should.equal(files.length);
+              files.forEach(function(file) {
+                content.indexOf(file).should.not.equal(-1);
+              });
+              done();
             });
-            tnCount.should.equal(2);
-            done();
-          });
-        })
-        .takeScreenshots({
-          count: 2,
-          timemarks: [ '0.5', '1' ],
-          filename: 'shot_%00i',
-          size: '150x?'
-        }, testFolder);
-    });
+          })
+          .takeScreenshots(config, testFolder);
+      });
+    }
 
-    it('should automatically compute timestamps', function(done) {
-      var testFolder = path.join(__dirname, 'assets', 'screenshots_end');
-      var filenamesCalled = false;
+    testScreenshots(
+      'should take screenshots from a list of number timemarks',
+      'timemarks_num',
+      { timemarks: [ 0.5, 1 ] },
+      ['tn_1.png', 'tn_2.png']
+    );
 
-      this.files.push(path.join(testFolder, 'shot_0.5.png'));
-      this.files.push(path.join(testFolder, 'shot_1.png'));
-      this.files.push(path.join(testFolder, 'shot_1.5.png'));
-      this.dirs.push(testFolder);
+    testScreenshots(
+      'should take screenshots from a list of string timemarks',
+      'timemarks_string',
+      { timemarks: [ '0.5', '1' ] },
+      ['tn_1.png', 'tn_2.png']
+    );
 
-      this.getCommand({ source: this.testfile, logger: testhelper.logger })
-        .on('error', function(err, stdout, stderr) {
-          testhelper.logError(err, stdout, stderr);
-          assert.ok(!err);
-        })
-        .on('filenames', function(names) {
-          filenamesCalled = true;
-          names.length.should.equal(3);
-          names[0].should.equal('shot_0.5.png');
-          names[1].should.equal('shot_1.png');
-          names[2].should.equal('shot_1.5.png');
-        })
-        .on('end', function() {
-          filenamesCalled.should.equal(true);
-          fs.readdir(testFolder, function(err, files) {
-            var tnCount = 0;
-            files.forEach(function(file) {
-              if (file.indexOf('.png') > -1) {
-                tnCount++;
-              }
-            });
-            tnCount.should.equal(3);
-            done();
-          });
-        })
-        .takeScreenshots({
-          count: 3,
-          filename: 'shot_%s',
-          size: '150x?'
-        }, testFolder);
-    });
+    testScreenshots(
+      'should take screenshots from a list of string timemarks',
+      'timemarks_hms',
+      { timemarks: [ '00:00:00.500', '00:01' ] },
+      ['tn_1.png', 'tn_2.png']
+    );
+
+    testScreenshots(
+      'should support "timestamps" instead of "timemarks"',
+      'timestamps',
+      { timestamps: [ 0.5, 1 ] },
+      ['tn_1.png', 'tn_2.png']
+    );
+
+    testScreenshots(
+      'should replace %i with the screenshot index',
+      'filename_i',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%i.png' },
+      ['shot_1.png', 'shot_2.png']
+    );
+
+    testScreenshots(
+      'should replace %000i with the padded screenshot index',
+      'filename_0i',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%000i.png' },
+      ['shot_0001.png', 'shot_0002.png']
+    );
+
+    testScreenshots(
+      'should replace %s with the screenshot timestamp',
+      'filename_s',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%s.png' },
+      ['shot_0.5.png', 'shot_1.png']
+    );
+
+    testScreenshots(
+      'should replace %f with the input filename',
+      'filename_f',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%f_%i.png' },
+      ['shot_testvideo-43.avi_1.png', 'shot_testvideo-43.avi_2.png']
+    );
+
+    testScreenshots(
+      'should replace %b with the input basename',
+      'filename_b',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%b_%i.png' },
+      ['shot_testvideo-43_1.png', 'shot_testvideo-43_2.png']
+    );
+
+    testScreenshots(
+      'should replace %r with the output resolution',
+      'filename_r',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%r_%i.png' },
+      ['shot_1024x768_1.png', 'shot_1024x768_2.png']
+    );
+
+    testScreenshots(
+      'should replace %w and %h with the output resolution',
+      'filename_wh',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%wx%h_%i.png' },
+      ['shot_1024x768_1.png', 'shot_1024x768_2.png']
+    );
+
+    testScreenshots(
+      'should automatically add %i when no variable replacement is present',
+      'filename_add_i',
+      { timemarks: [ 0.5, 1 ], filename: 'shot_%b.png' },
+      ['shot_testvideo-43_1.png', 'shot_testvideo-43_2.png']
+    );
+
+    testScreenshots(
+      'should automatically compute timestamps from the "count" option',
+      'count',
+      { count: 3, filename: 'shot_%s.png' },
+      ['shot_0.5.png', 'shot_1.png', 'shot_1.5.png']
+    );
+
+    testScreenshots(
+      'should enable setting screenshot size',
+      'size',
+      { count: 3, filename: 'shot_%r.png', size: '150x?' },
+      ['shot_150x112_1.png', 'shot_150x112_2.png', 'shot_150x112_3.png']
+    );
   });
 
   describe('saveToFile', function() {
