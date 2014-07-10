@@ -419,8 +419,9 @@ describe('Processor', function() {
         }, testFolder);
     });
 
-    it.skip('should report all generated filenames as an argument to the \'end\' event', function(done) {
+    it('should report all generated filenames as an argument to the \'filenames\' event', function(done) {
       var testFolder = path.join(__dirname, 'assets', 'screenshots_end');
+      var filenamesCalled = false;
 
       this.files.push(path.join(testFolder, 'shot_001.png'));
       this.files.push(path.join(testFolder, 'shot_002.png'));
@@ -431,10 +432,14 @@ describe('Processor', function() {
           testhelper.logError(err, stdout, stderr);
           assert.ok(!err);
         })
-        .on('end', function(names) {
+        .on('filenames', function(names) {
+          filenamesCalled = true;
           names.length.should.equal(2);
           names[0].should.equal('shot_001.png');
           names[1].should.equal('shot_002.png');
+        })
+        .on('end', function() {
+          filenamesCalled.should.equal(true);
           fs.readdir(testFolder, function(err, files) {
             var tnCount = 0;
             files.forEach(function(file) {
