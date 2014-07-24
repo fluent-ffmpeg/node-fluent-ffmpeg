@@ -476,8 +476,8 @@ describe('Processor', function() {
     testScreenshots(
       'should replace %s with the screenshot timestamp',
       'filename_s',
-      { timemarks: [ 0.5, 1 ], filename: 'shot_%s.png' },
-      ['shot_0.5.png', 'shot_1.png']
+      { timemarks: [ 0.5, '40%', 1 ], filename: 'shot_%s.png' },
+      ['shot_0.5.png', 'shot_0.8.png', 'shot_1.png']
     );
 
     testScreenshots(
