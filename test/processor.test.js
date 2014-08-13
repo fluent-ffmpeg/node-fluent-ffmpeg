@@ -58,7 +58,7 @@ describe('Processor', function() {
     this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
     this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
     this.testfilebig = path.join(__dirname, 'assets', 'testvideo-5m.mpg');
-    this.testfilespecial = path.join(__dirname, 'assets', 'te[s]t\\ video \' " .flv');
+    this.testfilespecial = path.join(__dirname, 'assets', 'te[s]t_ video \' _ .flv');
     this.testfileaudio1 = path.join(__dirname, 'assets', 'testaudio-one.wav');
     this.testfileaudio2 = path.join(__dirname, 'assets', 'testaudio-two.wav');
     this.testfileaudio3 = path.join(__dirname, 'assets', 'testaudio-three.wav');
