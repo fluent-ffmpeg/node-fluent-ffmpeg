@@ -1,11 +1,16 @@
-before_script:
-  - sudo apt-get update
-  - sudo apt-get -y install wget tar bzip2
-  - wget http://bensbit.co.uk/ffmpeg-2.1.3-64bit-static.tar.bz2
-  - tar jxf ffmpeg-2.1.3-64bit-static.tar.bz2
-  - sudo cp ffmpeg-2.1.3-64bit-static/ffmpeg /usr/bin
-  - ffmpeg -version
-language: node_js
-node_js:
-  - "0.8"
-  - "0.10"
+matrix:
+  include:
+    - os: osx
+      env: NODE_VERSION=0.8
+    - os: osx
+      env: NODE_VERSION=0.10
+    - os: osx
+      env: NODE_VERSION=0.11
+    - os: linux
+      env: NODE_VERSION=0.8
+    - os: linux
+      env: NODE_VERSION=0.10
+    - os: linux
+      env: NODE_VERSION=0.11
+script:
+  - tools/test-travis.sh

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: recipes.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: recipes.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/*jshint node:true*/
+'use strict';
+
+var fs = require('fs');
+var path = require('path');
+var PassThrough = require('stream').PassThrough;
+var async = require('async');
+var utils = require('./utils');
+
+
+/*
+ * Useful recipes for commands
+ */
+
+module.exports = function recipes(proto) {
+  /**
+   * Execute ffmpeg command and save output to a file
+   *
+   * @method FfmpegCommand#save
+   * @category Processing
+   * @aliases saveToFile
+   *
+   * @param {String} output file path
+   * @return FfmpegCommand
+   */
+  proto.saveToFile =
+  proto.save = function(output) {
+    this.output(output).run();
+    return this;
+  };
+
+
+  /**
+   * Execute ffmpeg command and save output to a stream
+   *
+   * If 'stream' is not specified, a PassThrough stream is created and returned.
+   * 'options' will be used when piping ffmpeg output to the output stream
+   * (@see http://nodejs.org/api/stream.html#stream_readable_pipe_destination_options)
+   *
+   * @method FfmpegCommand#pipe
+   * @category Processing
+   * @aliases stream,writeToStream
+   *
+   * @param {stream.Writable} [stream] output stream
+   * @param {Object} [options={}] pipe options
+   * @return Output stream
+   */
+  proto.writeToStream =
+  proto.pipe =
+  proto.stream = function(stream, options) {
+    if (stream &amp;&amp; !('writable' in stream)) {
+      options = stream;
+      stream = undefined;
+    }
+
+    if (!stream) {
+      if (process.version.match(/v0\.8\./)) {
+        throw new Error('PassThrough stream is not supported on node v0.8');
+      }
+
+      stream = new PassThrough();
+    }
+
+    this.output(stream, options).run();
+    return stream;
+  };
+
+
+  /**
+   * @method FfmpegCommand#screenshots
+   * @category Processing
+   * @aliases takeScreenshots,thumbnail,thumbnails,screenshot
+   *
+   * @param {Number|Object} [config=1] screenshot count or configuration object with
+   *   the following keys:
+   * @param {Number} [config.count] number of screenshots to take; using this option
+   *   takes screenshots at regular intervals (eg. count=4 would take screens at 20%, 40%,
+   *   60% and 80% of the video length).
+   * @param {String} [config.folder='.'] output folder
+   * @param {String} [config.filename='tn.png'] output filename pattern, may contain the following
+   *   tokens:
+   *   - '%s': offset in seconds
+   *   - '%w': screenshot width
+   *   - '%h': screenshot height
+   *   - '%r': screenshot resolution (same as '%wx%h')
+   *   - '%f': input filename
+   *   - '%b': input basename (filename w/o extension)
+   *   - '%i': index of screenshot in timemark array (can be zero-padded by using it like `%000i`)
+   * @param {Number[]|String[]} [config.timemarks] array of timemarks to take screenshots
+   *   at; each timemark may be a number of seconds, a '[[hh:]mm:]ss[.xxx]' string or a
+   *   'XX%' string.  Overrides 'count' if present.
+   * @param {Number[]|String[]} [config.timestamps] alias for 'timemarks'
+   * @param {String} [config.size] screenshot size, with the same syntax as {@link FfmpegCommand#size}
+   * @param {String} [folder] output folder (legacy alias for 'config.folder')
+   * @return FfmpegCommand
+   */
+  proto.takeScreenshots =
+  proto.thumbnail =
+  proto.thumbnails =
+  proto.screenshot =
+  proto.screenshots = function(config, folder) {
+    var self = this;
+    var source = this._currentInput.source;
+    config = config || { count: 1 };
+
+    // Accept a number of screenshots instead of a config object
+    if (typeof config === 'number') {
+      config = {
+        count: config
+      };
+    }
+
+    // Accept a second 'folder' parameter instead of config.folder
+    if (!('folder' in config)) {
+      config.folder = folder || '.';
+    }
+
+    // Accept 'timestamps' instead of 'timemarks'
+    config.timemarks = config.timemarks || config.timestamps;
+
+    // Compute timemarks from count if not present
+    if (!('timemarks' in config)) {
+      if (!config.count) {
+        throw new Error('Cannot take screenshots: neither a count nor a timemark list are specified');
+      }
+
+      var interval = 100 / (1 + config.count);
+      config.timemarks = [];
+      for (var i = 0; i &lt;= config.count; i++) {
+        config.timemarks.push((interval * (i + 1)) + '%');
+      }
+    }
+
+    // Parse size option
+    if ('size' in config) {
+      var fixedSize = config.size.match(/^(\d+)x(\d+)$/);
+      var fixedWidth = config.size.match(/^(\d+)x\?$/);
+      var fixedHeight = config.size.match(/^\?x(\d+)$/);
+      var percentSize = config.size.match(/^(\d+)%$/);
+
+      if (!fixedSize &amp;&amp; !fixedWidth &amp;&amp; !fixedHeight &amp;&amp; !percentSize) {
+        throw new Error('Invalid size parameter: ' + config.size);
+      }
+    }
+
+    // Metadata helper
+    var metadata;
+    function getMetadata(cb) {
+      if (metadata) {
+        cb(null, metadata);
+      } else {
+        self.ffprobe(function(err, meta) {
+          metadata = meta;
+          cb(err, meta);
+        });
+      }
+    }
+
+    async.waterfall([
+      // Compute percent timemarks if any
+      function computeTimemarks(next) {
+        if (config.timemarks.some(function(t) { return ('' + t).match(/^[\d.]+%$/); })) {
+          if (typeof source !== 'string') {
+            return next(new Error('Cannot compute screenshot timemarks with an input stream, please specify fixed timemarks'));
+          }
+
+          getMetadata(function(err, meta) {
+            if (err) {
+              next(err);
+            } else {
+              var duration = Number(meta.format.duration);
+
+              if (isNaN(duration)) {
+                return next(new Error('Could not get input duration, please specify fixed timemarks'));
+              }
+
+              config.timemarks = config.timemarks.map(function(mark) {
+                if (('' + mark).match(/^([\d.]+)%$/)) {
+                  return duration * parseFloat(mark) / 100;
+                } else {
+                  return mark;
+                }
+              });
+
+              next();
+            }
+          });
+        } else {
+          next();
+        }
+      },
+
+      // Add '_%i' to pattern when requesting multiple screenshots and no variable token is present
+      function fixPattern(next) {
+        var pattern = config.filename || 'tn.png';
+
+        if (pattern.indexOf('.') === -1) {
+          pattern += '.png';
+        }
+
+        if (config.timemarks.length > 0 &amp;&amp; !pattern.match(/%(s|0*i)/)) {
+          var ext = path.extname(pattern);
+          pattern = path.join(path.dirname(pattern), path.basename(pattern, ext) + '_%i' + ext);
+        }
+
+        next(null, pattern);
+      },
+
+      // Replace filename tokens (%f, %b) in pattern
+      function replaceFilenameTokens(pattern, next) {
+        if (pattern.match(/%[bf]/)) {
+          if (typeof source !== 'string') {
+            return next(new Error('Cannot replace %f or %b when using an input stream'));
+          }
+
+          pattern = pattern
+            .replace(/%f/g, path.basename(source))
+            .replace(/%b/g, path.basename(source, path.extname(source)));
+        }
+
+        next(null, pattern);
+      },
+
+      // Compute size if needed
+      function getSize(pattern, next) {
+        if (pattern.match(/%[whr]/)) {
+          if (fixedSize) {
+            return next(null, pattern, fixedSize[1], fixedSize[2]);
+          }
+
+          getMetadata(function(err, meta) {
+            if (err) {
+              return next(new Error('Could not determine video resolution to replace %w, %h or %r'));
+            }
+
+            var vstream = meta.streams.reduce(function(biggest, stream) {
+              if (stream.codec_type === 'video' &amp;&amp; stream.width * stream.height > biggest.width * biggest.height) {
+                return stream;
+              } else {
+                return biggest;
+              }
+            }, { width: 0, height: 0 });
+
+            if (vstream.width === 0) {
+              return next(new Error('No video stream in input, cannot replace %w, %h or %r'));
+            }
+
+            var width = vstream.width;
+            var height = vstream.height;
+
+            if (fixedWidth) {
+              height = height * Number(fixedWidth[1]) / width;
+              width = Number(fixedWidth[1]);
+            } else if (fixedHeight) {
+              width = width * Number(fixedHeight[1]) / height;
+              height = Number(fixedHeight[1]);
+            } else if (percentSize) {
+              width = width * Number(percentSize[1]) / 100;
+              height = height * Number(percentSize[1]) / 100;
+            }
+
+            next(null, pattern, width, height);
+          });
+        } else {
+          next(null, pattern, -1, -1);
+        }
+      },
+
+      // Replace size tokens (%w, %h, %r) in pattern
+      function replaceSizeTokens(pattern, width, height, next) {
+        pattern = pattern
+          .replace(/%r/g, '%wx%h')
+          .replace(/%w/g, width)
+          .replace(/%h/g, height);
+
+        next(null, pattern);
+      },
+
+      // Replace variable tokens in pattern (%s, %i) and generate filename list
+      function replaceVariableTokens(pattern, next) {
+        var filenames = config.timemarks.map(function(t, i) {
+          return pattern
+            .replace(/%s/g, utils.timemarkToSeconds(t))
+            .replace(/%(0*)i/g, function(match, padding) {
+              var idx = '' + (i + 1);
+              return padding.substr(0, Math.max(0, padding.length + 1 - idx.length)) + idx;
+            });
+        });
+
+        next(null, filenames);
+      },
+
+      // Create output directory
+      function createDirectory(filenames, next) {
+        fs.exists(config.folder, function(exists) {
+          if (!exists) {
+            fs.mkdir(config.folder, function(err) {
+              if (err) {
+                next(err);
+              } else {
+                next(null, filenames);
+              }
+            });
+          } else {
+            next(null, filenames);
+          }
+        });
+      }
+    ], function runCommand(err, filenames) {
+      if (err) {
+        return self.emit('error', err);
+      }
+
+      var count = config.timemarks.length;
+      var split;
+      var filters = [split = {
+        filter: 'split',
+        options: count,
+        outputs: []
+      }];
+
+      if ('size' in config) {
+        // Set size to generate size filters
+        self.size(config.size);
+
+        // Get size filters and chain them with 'sizeN' stream names
+        var sizeFilters =  self._currentOutput.sizeFilters.get().map(function(f, i) {
+          if (i > 0) {
+            f.inputs = 'size' + (i - 1);
+          }
+
+          f.outputs = 'size' + i;
+
+          return f;
+        });
+
+        // Input last size filter output into split filter
+        split.inputs = 'size' + (sizeFilters.length - 1);
+
+        // Add size filters in front of split filter
+        filters = sizeFilters.concat(filters);
+
+        // Remove size filters
+        self._currentOutput.sizeFilters.clear();
+
+        // Add stream labels
+      }
+
+      for (var i = 0; i &lt; count; i++) {
+        var stream = 'screen' + i;
+        split.outputs.push(stream);
+
+        self.output(path.join(config.folder, filenames[i]))
+          .seek(config.timemarks[i])
+          .frames(1)
+          .map(stream);
+      }
+
+      self.complexFilter(filters);
+      self.run();
+    });
+
+    return this;
+  };
+
+
+  /**
+   * Merge (concatenate) inputs to a single file
+   *
+   * @method FfmpegCommand#concat
+   * @category Processing
+   * @aliases concatenate,mergeToFile
+   *
+   * @param {String|Writable} target output file or writable stream
+   * @param {Object} [options] pipe options (only used when outputting to a writable stream)
+   * @return FfmpegCommand
+   */
+  proto.mergeToFile =
+  proto.concatenate =
+  proto.concat = function(target, options) {
+    // Find out which streams are present in the first file input
+    var fileInput = this._inputs.filter(function(input) {
+      return input.isFile;
+    })[0];
+
+    var self = this;
+    this.ffprobe(this._inputs.indexOf(fileInput), function(err, data) {
+      if (err) {
+        return self.emit('error', err);
+      }
+
+      var hasAudioStreams = data.streams.some(function(stream) {
+        return stream.codec_type === 'audio';
+      });
+
+      var hasVideoStreams = data.streams.some(function(stream) {
+        return stream.codec_type === 'video';
+      });
+
+      // Setup concat filter and start processing
+      self.output(target, options)
+        .complexFilter({
+          filter: 'concat',
+          options: {
+            n: self._inputs.length,
+            v: hasVideoStreams ? 1 : 0,
+            a: hasAudioStreams ? 1 : 0
+          }
+        })
+        .run();
+    });
+
+    return this;
+  };
+};</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><ul><li><a href="index.html#installation">Installation</a></li><ul></ul><li><a href="index.html#usage">Usage</a></li><ul><li><a href="index.html#prerequisites">Prerequisites</a></li><li><a href="index.html#creating-an-ffmpeg-command">Creating an FFmpeg command</a></li><li><a href="index.html#specifying-inputs">Specifying inputs</a></li><li><a href="index.html#input-options">Input options</a></li><li><a href="index.html#audio-options">Audio options</a></li><li><a href="index.html#video-options">Video options</a></li><li><a href="index.html#video-frame-size-options">Video frame size options</a></li><li><a href="index.html#specifying-multiple-outputs">Specifying multiple outputs</a></li><li><a href="index.html#output-options">Output options</a></li><li><a href="index.html#miscellaneous-options">Miscellaneous options</a></li><li><a href="index.html#setting-event-handlers">Setting event handlers</a></li><li><a href="index.html#starting-ffmpeg-processing">Starting FFmpeg processing</a></li><li><a href="index.html#controlling-the-ffmpeg-process">Controlling the FFmpeg process</a></li><li><a href="index.html#reading-video-metadata">Reading video metadata</a></li><li><a href="index.html#querying-ffmpeg-capabilities">Querying ffmpeg capabilities</a></li><li><a href="index.html#cloning-an-ffmpegcommand">Cloning an FfmpegCommand</a></li></ul><li><a href="index.html#contributing">Contributing</a></li><ul><li><a href="index.html#code-contributions">Code contributions</a></li><li><a href="index.html#documentation-contributions">Documentation contributions</a></li><li><a href="index.html#updating-the-documentation">Updating the documentation</a></li><li><a href="index.html#running-tests">Running tests</a></li></ul><li><a href="index.html#main-contributors">Main contributors</a></li><ul></ul><li><a href="index.html#license">License</a></li><ul></ul></ul><h3>Classes</h3><ul><li><a href="FfmpegCommand.html">FfmpegCommand</a></li><ul><li> <a href="FfmpegCommand.html#audio-methods">Audio methods</a></li><li> <a href="FfmpegCommand.html#capabilities-methods">Capabilities methods</a></li><li> <a href="FfmpegCommand.html#custom-options-methods">Custom options methods</a></li><li> <a href="FfmpegCommand.html#input-methods">Input methods</a></li><li> <a href="FfmpegCommand.html#metadata-methods">Metadata methods</a></li><li> <a href="FfmpegCommand.html#miscellaneous-methods">Miscellaneous methods</a></li><li> <a href="FfmpegCommand.html#other-methods">Other methods</a></li><li> <a href="FfmpegCommand.html#output-methods">Output methods</a></li><li> <a href="FfmpegCommand.html#processing-methods">Processing methods</a></li><li> <a href="FfmpegCommand.html#video-methods">Video methods</a></li><li> <a href="FfmpegCommand.html#video-size-methods">Video size methods</a></li></ul></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Jul 08 2014 21:22:19 GMT+0200 (CEST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

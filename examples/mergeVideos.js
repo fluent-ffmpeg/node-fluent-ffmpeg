@@ -17,11 +17,15 @@ var secondFile = "source.mp4";
 var thirdFile = "third.mov";
 var outPath = "out.mp4";
 
-var proc = new ffmpeg({source:firstFile,nolog:true})
-    .mergeAdd(secondFile)
-    .mergeAdd(thirdFile)
-    //.mergeAdd(fourthFile)
-    //.mergeAdd(...)
-    .mergeToFile(outPath,function(){
-        console.log('files have been merged successfully');
-    });
+var proc = ffmpeg(firstFile)
+    .input(secondFile)
+    .input(thirdFile)
+    //.input(fourthFile)
+    //.input(...)
+    .on('end', function() {
+      console.log('files have been merged succesfully');
+    })
+    .on('error', function(err) {
+      console.log('an error happened: ' + err.message);
+    })
+    .mergeToFile(outPath);

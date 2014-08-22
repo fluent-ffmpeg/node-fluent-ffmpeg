@@ -1,6 +1,6 @@
 {
   "name": "fluent-ffmpeg",
-  "version": "1.5.2",
+  "version": "2.0.0-rc1",
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
     "ffmpeg"
@@ -14,19 +14,19 @@
   ],
   "bugs": {
     "mail": "schaermu@gmail.com",
-    "url": "http://github.com/schaermu/node-fluent-ffmpeg/issues"
+    "url": "http://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues"
   },
-  "repository": "git://github.com/schaermu/node-fluent-ffmpeg.git",
+  "repository": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
   "devDependencies": {
     "mocha": "latest",
     "should": "latest",
     "grunt-contrib-watch": "~0.4.4",
     "grunt-shell": "~0.3.0",
-    "grunt": "~0.4.1"
+    "grunt": "~0.4.1",
+    "jsdoc": "latest"
   },
   "dependencies": {
-    "async": ">=0.2.9",
-    "exec-queue": ">=0.0.2"
+    "async": ">=0.2.9"
   },
   "engines": {
     "node": ">=0.8.0"

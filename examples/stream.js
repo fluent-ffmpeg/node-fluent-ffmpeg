@@ -5,10 +5,15 @@ var ffmpeg = require('../index'),
 var stream = fs.createWriteStream('/path/to/yout_target.flv')
 
 // make sure you set the correct path to your video file
-var proc = new ffmpeg({ source: '/path/to/your_movie.avi', nolog: true })
+var proc = ffmpeg('/path/to/your_movie.avi')
   // use the 'flashvideo' preset (located in /lib/presets/flashvideo.js)
-  .usingPreset('flashvideo')
-  // save to stream
-  .writeToStream(stream, {end:true}, function(retcode, error){ //end = true, close output stream after writing
+  .preset('flashvideo')
+  // setup event handlers
+  .on('end', function() {
     console.log('file has been converted succesfully');
-  });
+  })
+  .on('error', function(err) {
+    console.log('an error happened: ' + err.message);
+  })
+  // save to stream
+  .pipe(stream, {end:true}); //end = true, close output stream after writing

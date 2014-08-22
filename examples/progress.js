@@ -8,12 +8,16 @@ infs.on('error', function(err) {
   console.log(err);
 });
 
-var proc = new ffmpeg({ source: infs, nolog: true })
-  .usingPreset('flashvideo')
-  // set the callback for our progress notification
-  .onProgress(function(info) {
+var proc = ffmpeg(infs)
+  .preset('flashvideo')
+  // setup event handlers
+  .on('progress', function(info) {
     console.log('progress ' + info.percent + '%');
   })
-  .saveToFile('/path/to/your_target.flv', function(stdout, stderr, err) {
+  .on('end', function() {
     console.log('done processing input stream');
-  });
+  })
+  .on('error', function(err) {
+    console.log('an error happened: ' + err.message);
+  })
+  .save('/path/to/your_target.flv');
