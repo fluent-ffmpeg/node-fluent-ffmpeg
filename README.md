@@ -895,6 +895,8 @@ Note: the `stream()` method is actually syntactic sugar for calling both `output
 
 This method is mainly useful when producing multiple outputs (otherwise the `save()` or `stream()` methods are more straightforward).  It starts processing with the specified outputs.
 
+**Warning**: do not use `run()` when calling other processing methods (eg. `save()`, `pipe()` or `screenshots()`).
+
 ```js
 ffmpeg('/path/to/file.avi')
   .output('screenshot.png')
