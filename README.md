@@ -935,67 +935,53 @@ ffmpeg('/path/to/part1.avi')
   .mergeToFile('/path/to/merged.avi', '/path/to/tempDir');
 ```
 
-#### takeScreenshots(options, dirname): generate thumbnails
+#### screenshots(options[, dirname]): generate thumbnails
 
-One pretty neat feature of fluent-ffmpeg is the ability to generate any amount of thumbnails from your movies. The screenshots are taken at automatically determined timemarks using the following formula: `(duration_in_sec * 0.9) / number_of_thumbnails`.
+**Aliases**: `thumbnail()`, `thumbnails()`, `screenshot()`, `takeScreenshots()`.
 
-When generating thumbnails, the `end` event is dispatched with an array of generated filenames as an argument.
+Use the `screenshots` method to extract one or several thumbnails and save them as PNG files.  The `options` argument is an object with the following keys:
 
-```js
-ffmpeg('/path/to/video.avi')
-  .size('320x240')
-  .on('error', function(err) {
-    console.log('An error occurred: ' + err.message);
-  })
-  .on('end', function(filenames) {
-    console.log('Successfully generated ' + filenames.join(', '));
-  })
-  .takeScreenshots(5, '/path/to/directory');
-```
+* `folder`: output folder for generated image files.  Defaults to the current folder.
+* `filename`: output filename pattern (see below).  Defaults to "tn.png".
+* `count`: specifies how many thumbnails to generate.  When using this option, thumbnails are generated at regular intervals in the video (for example, when requesting 3 thumbnails, at 25%, 50% and 75% of the video length).  `count` is ignored when `timemarks` or `timestamps` is specified.
+* `timemarks` or `timestamps`: specifies an array of timestamps in the video where thumbnails should be taken.  Each timestamp may be a number (in seconds), a percentage string (eg. "50%") or a timestamp string with format "hh:mm:ss.xxx" (where hours, minutes and milliseconds are both optional).
+* `size`: specifies a target size for thumbnails (with the same format as the `.size()` method). **Note:** you should not use the `.size()` method when generating thumbnails.
 
-You can also call `takeScreenshots` with specific timemarks.
+The `filename` option specifies a filename pattern for generated files.  It may contain the following format tokens:
 
-```js
-ffmpeg('/path/to/video.avi')
-  .size('320x240')
-  .on('error', function(err) {
-    console.log('An error occurred: ' + err.message);
-  })
-  .on('end', function(filenames) {
-    console.log('Successfully generated ' + filenames.join(', '));
-  })
-  .takeScreenshots({
-    count: 2,
-    timemarks: [ '0.5', '1' ]
-  }, '/path/to/directory');
-```
+* '%s': offset in seconds
+* '%w': screenshot width
+* '%h': screenshot height
+* '%r': screenshot resolution (same as '%wx%h')
+* '%f': input filename
+* '%b': input basename (filename w/o extension)
+* '%i': index of screenshot in timemark array (can be zero-padded by using it like `%000i`)
 
-You can set a filename pattern using following format characters:
+If multiple timemarks are passed and no variable format token ('%s' or '%i') is specified in the filename pattern, `_%i` will be added automatically.
 
-* `%s` - offset in seconds
-* `%w` - screenshot width
-* `%h` - screenshot height
-* `%r` - screenshot resolution (eg. '320x240')
-* `%f` - input filename
-* `%b` - input basename (filename w/o extension) 
-* `%i` - number of screenshot in timemark array (can be zero-padded by using it like `%000i`)
-
-If multiple timemarks are given and no `%i` format character is found in filename, `_%i` will be added to the end of the given pattern.
+When generating thumbnails, an additional `filenames` event is dispatched with an array of generated filenames as an argument.
 
 ```js
 ffmpeg('/path/to/video.avi')
-  .size('320x240')
-  .on('error', function(err) {
-    console.log('An error occurred: ' + err.message);
+  .on('filenames', function(filenames) {
+    console.log('Will generate ' + filenames.join(', '))
   })
-  .on('end', function(filenames) {
-    console.log('Successfully generated ' + filenames.join(', '));
+  .on('end', function() {
+    console.log('Screenshots taken');
   })
-  .takeScreenshots({
-    count: 2,
-    timemarks: [ '0.5', '1' ],
-    filename: '%b-thumbnail-%i-%r'
-  }, '/path/to/directory');
+  .screenshots({
+    // Will take screens at 20%, 40%, 60% and 80% of the video
+    count: 4,
+    folder: '/path/to/output'
+  });
+
+ffmpeg('/path/to/video.avi')
+  .screenshots({
+    timestamps: [30.5, '50%', '01:10.123'],
+    filename: 'thumbnail-at-%s-seconds.png',
+    folder: '/path/to/output',
+    size: '320x240'
+  });
 ```
 
 ### Controlling the FFmpeg process
