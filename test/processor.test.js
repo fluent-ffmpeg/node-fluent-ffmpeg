@@ -528,6 +528,13 @@ describe('Processor', function() {
       { count: 3, filename: 'shot_%r.png', size: '150x?' },
       ['shot_150x112_1.png', 'shot_150x112_2.png', 'shot_150x112_3.png']
     );
+
+    testScreenshots(
+      'a single screenshot should not have a _1 file name suffix',
+      'no_suffix',
+      { timemarks: [ 0.5 ] },
+      ['tn.png']
+    );
   });
 
   describe('saveToFile', function() {
