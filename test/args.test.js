@@ -720,7 +720,7 @@ describe('Command', function() {
         .keepPixelAspect(true)
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(sar,1),iw*sar,iw):h=if(lt(sar,1),ih/sar,ih)');
+      filters[0].should.equal('scale=w=\'if(gt(sar,1),iw*sar,iw)\':h=\'if(lt(sar,1),ih/sar,ih)\'');
       filters[1].should.equal('setsar=1');
     });
 
@@ -841,8 +841,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)');
-      filters[1].should.equal('pad=w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white');
+      filters[0].should.equal('scale=w=\'if(gt(a,0.5),100,trunc(200*a/2)*2)\':h=\'if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
+      filters[1].should.equal('pad=w=100:h=200:x=\'if(gt(a,0.5),0,(100-iw)/2)\':y=\'if(lt(a,0.5),0,(200-ih)/2)\':color=white');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('?x100')
@@ -850,8 +850,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)');
-      filters[1].should.equal('pad=w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white');
+      filters[0].should.equal('scale=w=\'if(gt(a,2),200,trunc(100*a/2)*2)\':h=\'if(lt(a,2),100,trunc(200/a/2)*2)\'');
+      filters[1].should.equal('pad=w=200:h=100:x=\'if(gt(a,2),0,(200-iw)/2)\':y=\'if(lt(a,2),0,(100-ih)/2)\':color=white');
     });
 
     it('Should add scale and pad filters when withSize was called with a fixed size and auto padding is specified', function() {
@@ -862,8 +862,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)');
-      filters[1].should.equal('pad=w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white');
+      filters[0].should.equal('scale=w=\'if(gt(a,0.5),100,trunc(200*a/2)*2)\':h=\'if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
+      filters[1].should.equal('pad=w=100:h=200:x=\'if(gt(a,0.5),0,(100-iw)/2)\':y=\'if(lt(a,0.5),0,(200-ih)/2)\':color=white');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x200')
@@ -871,16 +871,16 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(a,0.5),100,trunc(200*a/2)*2):h=if(lt(a,0.5),200,trunc(100/a/2)*2)');
-      filters[1].should.equal('pad=w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white');
+      filters[0].should.equal('scale=w=\'if(gt(a,0.5),100,trunc(200*a/2)*2)\':h=\'if(lt(a,0.5),200,trunc(100/a/2)*2)\'');
+      filters[1].should.equal('pad=w=100:h=200:x=\'if(gt(a,0.5),0,(100-iw)/2)\':y=\'if(lt(a,0.5),0,(200-ih)/2)\':color=white');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('200x100')
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)');
-      filters[1].should.equal('pad=w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white');
+      filters[0].should.equal('scale=w=\'if(gt(a,2),200,trunc(100*a/2)*2)\':h=\'if(lt(a,2),100,trunc(200/a/2)*2)\'');
+      filters[1].should.equal('pad=w=200:h=100:x=\'if(gt(a,2),0,(200-iw)/2)\':y=\'if(lt(a,2),0,(100-ih)/2)\':color=white');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('200x100')
@@ -888,8 +888,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(a,2),200,trunc(100*a/2)*2):h=if(lt(a,2),100,trunc(200/a/2)*2)');
-      filters[1].should.equal('pad=w=200:h=100:x=if(gt(a,2),0,(200-iw)/2):y=if(lt(a,2),0,(100-ih)/2):color=white');
+      filters[0].should.equal('scale=w=\'if(gt(a,2),200,trunc(100*a/2)*2)\':h=\'if(lt(a,2),100,trunc(200/a/2)*2)\'');
+      filters[1].should.equal('pad=w=200:h=100:x=\'if(gt(a,2),0,(200-iw)/2)\':y=\'if(lt(a,2),0,(100-ih)/2)\':color=white');
     });
 
     it('Should round sizes to multiples of 2', function() {
@@ -907,8 +907,8 @@ describe('Command', function() {
         .applyAutopadding(true, 'white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[0].should.equal('scale=w=if(gt(a,' + aspect + '),102,trunc(202*a/2)*2):h=if(lt(a,' + aspect + '),202,trunc(102/a/2)*2)');
-      filters[1].should.equal('pad=w=102:h=202:x=if(gt(a,' + aspect + '),0,(102-iw)/2):y=if(lt(a,' + aspect + '),0,(202-ih)/2):color=white');
+      filters[0].should.equal('scale=w=\'if(gt(a,' + aspect + '),102,trunc(202*a/2)*2)\':h=\'if(lt(a,' + aspect + '),202,trunc(102/a/2)*2)\'');
+      filters[1].should.equal('pad=w=102:h=202:x=\'if(gt(a,' + aspect + '),0,(102-iw)/2)\':y=\'if(lt(a,' + aspect + '),0,(202-ih)/2)\':color=white');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('101x?')
@@ -932,7 +932,7 @@ describe('Command', function() {
         .applyAutopadding('white')
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[1].should.equal('pad=w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=white');
+      filters[1].should.equal('pad=w=100:h=200:x=\'if(gt(a,0.5),0,(100-iw)/2)\':y=\'if(lt(a,0.5),0,(200-ih)/2)\':color=white');
     });
 
     it('Should default to black padding', function() {
@@ -942,7 +942,7 @@ describe('Command', function() {
         .applyAutopadding()
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[1].should.equal('pad=w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=black');
+      filters[1].should.equal('pad=w=100:h=200:x=\'if(gt(a,0.5),0,(100-iw)/2)\':y=\'if(lt(a,0.5),0,(200-ih)/2)\':color=black');
 
       filters = new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
         .withSize('100x?')
@@ -950,7 +950,7 @@ describe('Command', function() {
         .applyAutopadding(true)
         ._test_getSizeFilters();
       filters.length.should.equal(2);
-      filters[1].should.equal('pad=w=100:h=200:x=if(gt(a,0.5),0,(100-iw)/2):y=if(lt(a,0.5),0,(200-ih)/2):color=black');
+      filters[1].should.equal('pad=w=100:h=200:x=\'if(gt(a,0.5),0,(100-iw)/2)\':y=\'if(lt(a,0.5),0,(200-ih)/2)\':color=black');
     });
   });
 
@@ -997,6 +997,19 @@ describe('Command', function() {
 
       filters.length.should.equal(2);
       filters[1].should.equal('filter1=optionstring;filter2=opt1:opt2:opt3;filter3=opt1=value1:opt2=value2');
+    });
+
+    it('should escape filter options with ambiguous characters', function() {
+      var filters = new Ffmpeg()
+        .complexFilter([
+          { filter: 'filter1', options: 'optionstring' },
+          { filter: 'filter2', options: ['op,t1', 'op,t2', 'op,t3'] },
+          { filter: 'filter3', options: { opt1: 'val,ue1', opt2: 'val,ue2' } }
+        ])
+        ._getArguments();
+
+      filters.length.should.equal(2);
+      filters[1].should.equal('filter1=optionstring;filter2=\'op,t1\':\'op,t2\':\'op,t3\';filter3=opt1=\'val,ue1\':opt2=\'val,ue2\'');
     });
 
     it('should support filter input streams', function() {
