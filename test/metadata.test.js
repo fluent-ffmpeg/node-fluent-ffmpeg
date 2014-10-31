@@ -115,7 +115,7 @@ describe('Metadata', function() {
       .addInput(stream)
       .ffprobe(function(err) {
         assert.ok(!!err);
-        err.message.should.match(/Cannot run ffprobe on non-file input/);
+        err.message.should.match(/Cannot run ffprobe on stream input/);
         done();
       });
   });
