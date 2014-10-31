@@ -647,7 +647,7 @@ Preset modules must export a `load()` function that takes an FfmpegCommand as an
 
 * `divx`
 * `flashvideo`
-* `podcast` 
+* `podcast`
 
 Here is the code from the included `divx` preset as an example:
 
@@ -785,7 +785,11 @@ The `progress` event is emitted every time ffmpeg reports progress information. 
 * `currentKbps`: throughput at which FFmpeg is currently processing
 * `targetSize`: current size of the target file in kilobytes
 * `timemark`: the timestamp of the current frame in seconds
-* `percent`: an estimation of the progress (only available when the total output duration is known; most notably not available when using an input stream).
+* `percent`: an estimation of the progress percentage
+
+Note that `percent` can be (very) inaccurate, as the only progress information fluent-ffmpeg gets from ffmpeg is the total number of frames written (and the corresponding duration).  To estimate percentage, fluent-ffmpeg has to guess what the total output duration will be, and uses the first input added to the command to do so.  In particular:
+* percentage is not available when using an input stream
+* percentage may be wrong when using multiple inputs with different durations and the first one is not the longest
 
 ```js
 ffmpeg('/path/to/file.avi')
