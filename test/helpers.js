@@ -65,5 +65,16 @@ exports = module.exports = TestHelpers = {
         console.log(stderr);
       }
     }
+  },
+
+  logOutput: function(stdout, stderr) {
+    if (stdout) {
+      console.log('---stdout---');
+      console.log(stdout);
+    }
+    if (stderr) {
+      console.log('---stderr---');
+      console.log(stderr);
+    }
   }
 };

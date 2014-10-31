@@ -92,6 +92,7 @@ describe('Processor', function() {
   // cleanup helpers before and after all tests
   beforeEach(function setup(done) {
     var processes = this.processes = [];
+    var outputs = this.outputs = [];
 
     // Tests should call this so that created processes are watched
     // for exit and checked during test cleanup
@@ -109,6 +110,11 @@ describe('Processor', function() {
       return cmd;
     };
 
+    // Tests should call this to display stdout/stderr in case of error
+    this.saveOutput = function(stdout, stderr) {
+      outputs.unshift([stdout, stderr]);
+    };
+
     this.files = [];
     this.dirs = [];
 
@@ -122,6 +128,10 @@ describe('Processor', function() {
         // Ensure every process has finished
         function(cb) {
           if (self.processes.length) {
+            if (self.outputs.length) {
+              testhelper.logOutput(self.outputs[0][0], self.outputs[0][1]);
+            }
+
             cb(new Error(self.processes.length + ' processes still running after "' + self.currentTest.title + '"'));
           } else {
             cb();
@@ -135,6 +145,10 @@ describe('Processor', function() {
               if (exists) {
                 fs.unlink(file, cb);
               } else {
+                if (self.outputs.length) {
+                  testhelper.logOutput(self.outputs[0][0], self.outputs[0][1]);
+                }
+
                 cb(new Error('Expected created file ' + file + ' by  "' + self.currentTest.title + '"'));
               }
             });
@@ -148,6 +162,10 @@ describe('Processor', function() {
               if (exists) {
                 fs.rmdir(dir, cb);
               } else {
+                if (self.outputs.length) {
+                  testhelper.logOutput(self.outputs[0][0], self.outputs[0][1]);
+                }
+
                 cb(new Error('Expected created directory ' + dir + ' by  "' + self.currentTest.title + '"'));
               }
             });
@@ -220,6 +238,7 @@ describe('Processor', function() {
       this.files.push(testFile);
 
       var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.02});
+      var self = this;
 
       command
           .usingPreset('flashvideo')
@@ -228,7 +247,8 @@ describe('Processor', function() {
               done();
             });
           })
-          .on('error', function(err) {
+          .on('error', function(err, stdout, stderr) {
+            self.saveOutput(stdout, stderr);
             err.message.indexOf('timeout').should.not.equal(-1);
           })
           .on('end', function() {
