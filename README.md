@@ -189,12 +189,36 @@ ffmpeg('/path/to/file.avi').loop('2:14.500');
 
 **Aliases**: `inputOption()`, `addInputOption()`, `addInputOptions()`, `withInputOption()`, `withInputOptions()`.
 
-You can pass one option, many options or an option array to this method.
+This method allows passing any input-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionnaly with a space-separated parameter:
 
 ```js
-ffmpeg('/dev/video0').inputOptions('-r', '24');
+/* Single option */
+ffmpeg('/path/to/file.avi').inputOptions('-someOption');
+
+/* Single option with parameter */
 ffmpeg('/dev/video0').inputOptions('-r 24');
-ffmpeg('/dev/video0').inputOptions(['-r 24', '-loop 1']);
+```
+
+You may also pass multiple options at once by passing an array to the method:
+
+```js
+ffmpeg('/path/to/file.avi').inputOptions([
+  '-option1',
+  '-option2 param2',
+  '-option3',
+  '-option4 param4'
+]);
+```
+
+Finally, you may also directly pass command line tokens as separate arguments to the method:
+
+```js
+ffmpeg('/path/to/file.avi').inputOptions(
+  '-option1',
+  '-option2', 'param2',
+  '-option3',
+  '-option4', 'param4'
+);
 ```
 
 
@@ -618,12 +642,36 @@ ffmpeg('/path/to/file.avi').flvmeta().format('flv');
 
 **Aliases**: `outputOption()`, `addOutputOption()`, `addOutputOptions()`, `withOutputOption()`, `withOutputOptions()`, `addOption()`, `addOptions()`.
 
-You can pass one option, many options or an option array to this method.
+This method allows passing any output-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionnaly with a space-separated parameter:
 
 ```js
-ffmpeg('/dev/video0').outputOptions('-r', '24');
+/* Single option */
+ffmpeg('/path/to/file.avi').outputOptions('-someOption');
+
+/* Single option with parameter */
 ffmpeg('/dev/video0').outputOptions('-r 24');
-ffmpeg('/dev/video0').outputOptions(['-r 24', '-loop 1']);
+```
+
+You may also pass multiple options at once by passing an array to the method:
+
+```js
+ffmpeg('/path/to/file.avi').outputOptions([
+  '-option1',
+  '-option2 param2',
+  '-option3',
+  '-option4 param4'
+]);
+```
+
+Finally, you may also directly pass command line tokens as separate arguments to the method:
+
+```js
+ffmpeg('/path/to/file.avi').outputOptions(
+  '-option1',
+  '-option2', 'param2',
+  '-option3',
+  '-option4', 'param4'
+);
 ```
 
 
