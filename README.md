@@ -8,7 +8,7 @@ This library abstracts the complex command-line usage of ffmpeg into a fluent, e
 >
 > It has been designed to be mostly compatible with current fluent-ffmpeg version, but there are some incompatibilities, mainly because deprecated APIs in 1.x have been removed.  See [the 2.x migration wiki page](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/wiki/Migrating-from-fluent-ffmpeg-1.x) for information on how to migrate.
 >
-> A release candidate version (2.0.0-rc2) is currently available on npm, please take care to update your package.json files if you want to keep using version 1.x:
+> A release candidate version (2.0.0-rc3) is currently available on npm, please take care to update your package.json files if you want to keep using version 1.x:
 > ```js
 {
   "dependencies": {
