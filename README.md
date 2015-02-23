@@ -524,7 +524,7 @@ Ffmpeg.ffprobe('/path/to/file.avi', function(err, metadata) {
 The returned object is the same that is returned by running the following command from your shell:
 
 ```sh
-$ ffprobe -of json -show_streams -show_format /path/to/file.avi
+$ ffprobe -print_format json -show_streams -show_format /path/to/file.avi
 ```
 
 It will contain information about the container (as a `format` key) and an array of streams (as a `stream` key).  The format object and each stream object also contains metadata tags, depending on the format:
