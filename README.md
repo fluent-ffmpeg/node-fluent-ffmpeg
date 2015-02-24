@@ -1116,7 +1116,7 @@ ffmpeg('/path/to/file1.avi')
   });
 ```
 
-The returned object is the same that is returned by running the following command from your shell:
+The returned object is the same that is returned by running the following command from your shell (depending on your ffmpeg version you may have to replace `-of` with `-print_format`) :
 
 ```sh
 $ ffprobe -of json -show_streams -show_format /path/to/file.avi
