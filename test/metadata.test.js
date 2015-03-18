@@ -77,15 +77,15 @@ describe('Metadata', function() {
     });
   });
 
-  it('should provide ffprobe extradata_hash in stream information', function(done) {
-    Ffmpeg.ffprobe(this.testfile, ['-show_data_hash', 'sha256'], function(err, data) {
+  it('should provide ffprobe stream information with units', function(done) {
+    Ffmpeg.ffprobe(this.testfile, ['-unit'], function(err, data) {
       testhelper.logError(err);
       assert.ok(!err);
 
       ('streams' in data).should.equal(true);
       Array.isArray(data.streams).should.equal(true);
       data.streams.length.should.equal(1);
-      data.streams[0].extradata_hash.should.equal('SHA256:837443060e4e47c395b2a817161207395cf0e96545f7d4757c316ea6162cd71d');
+      data.streams[0].bit_rate.should.equal('322427 bit/s');
       done();
     });
   });
