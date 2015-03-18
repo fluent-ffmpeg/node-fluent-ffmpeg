@@ -77,6 +77,19 @@ describe('Metadata', function() {
     });
   });
 
+  it('should provide ffprobe extradata_hash in stream information', function(done) {
+    Ffmpeg.ffprobe(this.testfile, ['-show_data_hash', 'sha256'], function(err, data) {
+      testhelper.logError(err);
+      assert.ok(!err);
+
+      ('streams' in data).should.equal(true);
+      Array.isArray(data.streams).should.equal(true);
+      data.streams.length.should.equal(1);
+      data.streams[0].extradata_hash.should.equal('SHA256:837443060e4e47c395b2a817161207395cf0e96545f7d4757c316ea6162cd71d');
+      done();
+    });
+  });
+
   it('should return ffprobe errors', function(done) {
     Ffmpeg.ffprobe('/path/to/missing/file', function(err) {
       assert.ok(!!err);
