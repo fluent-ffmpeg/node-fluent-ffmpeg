@@ -4,11 +4,11 @@ This library abstracts the complex command-line usage of ffmpeg into a fluent, e
 
 > #### This is the documentation for fluent-ffmpeg 2.x
 >
-> A major 2.0 release is coming soon. This release will feature lots of API cleanup and a cleaner syntax for most methods.
+> A major 2.0 version has been released. This release features lots of API cleanup and a cleaner syntax for most methods.
 >
-> It has been designed to be mostly compatible with current fluent-ffmpeg version, but there are some incompatibilities, mainly because deprecated APIs in 1.x have been removed.  See [the 2.x migration wiki page](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/wiki/Migrating-from-fluent-ffmpeg-1.x) for information on how to migrate.
+> It has been designed to be mostly compatible with the previous fluent-ffmpeg version, but there are some incompatibilities, mainly because deprecated APIs in 1.x have been removed.  See [the 2.x migration wiki page](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/wiki/Migrating-from-fluent-ffmpeg-1.x) for information on how to migrate.
 >
-> A release candidate version (2.0.0-rc3) is currently available on npm, please take care to update your package.json files if you want to keep using version 1.x:
+> Please take care to update your package.json files if you want to keep using version 1.x:
 > ```js
 {
   "dependencies": {
