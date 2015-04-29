@@ -993,7 +993,13 @@ ffmpeg('/path/to/part1.avi')
 
 **Aliases**: `thumbnail()`, `thumbnails()`, `screenshot()`, `takeScreenshots()`.
 
-Use the `screenshots` method to extract one or several thumbnails and save them as PNG files.  The `options` argument is an object with the following keys:
+Use the `screenshots` method to extract one or several thumbnails and save them as PNG files.  There are a few caveats with this implementation, though:
+
+* It will not work on input streams.
+* Progress information reported by the `progress` event is not accurate.
+* It doesn't interract well with filters.  In particular, don't use the `size()` method to resize thumbnails, use the `size` option instead.
+
+The `options` argument is an object with the following keys:
 
 * `folder`: output folder for generated image files.  Defaults to the current folder.
 * `filename`: output filename pattern (see below).  Defaults to "tn.png".
