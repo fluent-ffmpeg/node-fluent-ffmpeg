@@ -12,6 +12,7 @@
       "email": "spruce@space-ships.de"
     }
   ],
+  "license": "MIT",
   "bugs": {
     "mail": "schaermu@gmail.com",
     "url": "http://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues"
