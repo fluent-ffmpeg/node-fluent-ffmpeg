@@ -2,7 +2,7 @@
 
 ## Reporting issues
 
-Here are some guidelines on how to effectively report issues.
+Please start by [reading the FAQ][faq] first.  If your question is not answered, here are some guidelines on how to effectively report issues.
 
 ### Required information
 
@@ -45,3 +45,5 @@ ffmpeg('video with spaces.avi')...;
 // Fails, looks for a file with actual double quotes in its name
 ffmpeg('"video with spaces.avi"')...;
 ```
+
+[faq]: https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/wiki/FAQ
