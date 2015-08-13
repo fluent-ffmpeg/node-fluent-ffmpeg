@@ -77,6 +77,19 @@ describe('Metadata', function() {
     });
   });
 
+  it('should provide ffprobe stream information with units', function(done) {
+    Ffmpeg.ffprobe(this.testfile, ['-unit'], function(err, data) {
+      testhelper.logError(err);
+      assert.ok(!err);
+
+      ('streams' in data).should.equal(true);
+      Array.isArray(data.streams).should.equal(true);
+      data.streams.length.should.equal(1);
+      data.streams[0].bit_rate.should.equal('322427 bit/s');
+      done();
+    });
+  });
+
   it('should return ffprobe errors', function(done) {
     Ffmpeg.ffprobe('/path/to/missing/file', function(err) {
       assert.ok(!!err);
