@@ -1,13 +1,5 @@
 matrix:
   include:
-    - os: osx
-      env: NODE_VERSION=0.8
-    - os: osx
-      env: NODE_VERSION=0.10
-    - os: osx
-      env: NODE_VERSION=0.11
-    - os: linux
-      env: NODE_VERSION=0.8
     - os: linux
       env: NODE_VERSION=0.10
     - os: linux

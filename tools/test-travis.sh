@@ -8,12 +8,15 @@ set -e
 echo travis_fold:start:Dependencies
 if [ "$(uname)" = "Linux" ]; then
 	# Linux
-	sudo add-apt-repository -y ppa:jon-severinsson/ffmpeg
 	sudo apt-get update
-	sudo apt-get -y install wget tar bzip2 flvtool2 ffmpeg
-	wget http://ffmpeg.gusari.org/static/64bit/ffmpeg.static.64bit.latest.tar.gz
-	tar zxf ffmpeg.static.64bit.latest.tar.gz
-	sudo cp ffmpeg ffprobe /usr/bin
+	sudo apt-get -y install wget tar bzip2 flvtool2
+
+	wget http://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
+	tar xf ffmpeg-git-64bit-static.tar.xz
+
+	sudo cp ffmpeg-git-*-static/{ffmpeg,ffprobe,ffserver} /usr/bin
+	sudo cp ffmpeg-git-*-static/{ffmpeg,ffprobe} $(pwd)
+
 	export ALT_FFMPEG_PATH=$(pwd)/ffmpeg
 	export ALT_FFPROBE_PATH=$(pwd)/ffprobe
 else
