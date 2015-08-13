@@ -27,7 +27,8 @@
     "jsdoc": "latest"
   },
   "dependencies": {
-    "async": ">=0.2.9"
+    "async": ">=0.2.9",
+    "which": "^1.1.1"
   },
   "engines": {
     "node": ">=0.8.0"
