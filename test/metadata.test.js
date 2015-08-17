@@ -5,6 +5,7 @@
 var Ffmpeg = require('../index'),
   path = require('path'),
   fs = require('fs'),
+  Readable = require('stream').Readable,
   assert = require('assert'),
   exec = require('child_process').exec,
   testhelper = require('./helpers');
@@ -130,6 +131,22 @@ describe('Metadata', function() {
         assert.ok(!err);
         data.streams.length.should.equal(1);
         data.format.filename.should.equal('pipe:0');
+        done();
+      });
+  });
+
+  it('should handle errors on stream input to ffprobe', function(done) {
+    var faultyStream = new Readable({objectMode: true});
+    faultyStream._read = function() {};
+    setTimeout(function() {
+      faultyStream.emit('error', new Error('Dummy stream read error'));
+    }, 50);
+
+    new Ffmpeg()
+      .addInput(faultyStream)
+      .ffprobe(function(err, data) {
+        assert.ok(!!err);
+        err.message.should.equal('Dummy stream read error');
         done();
       });
   });
