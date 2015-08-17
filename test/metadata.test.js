@@ -121,14 +121,15 @@ describe('Metadata', function() {
     });
   });
 
-  it('should fail calling ffprobe on a command with stream input', function(done) {
+  it('should allow calling ffprobe on stream input', function(done) {
     var stream = fs.createReadStream(this.testfile);
 
     new Ffmpeg()
       .addInput(stream)
-      .ffprobe(function(err) {
-        assert.ok(!!err);
-        err.message.should.match(/Cannot run ffprobe on stream input/);
+      .ffprobe(function(err, data) {
+        assert.ok(!err);
+        data.streams.length.should.equal(1);
+        data.format.filename.should.equal('pipe:0');
         done();
       });
   });
