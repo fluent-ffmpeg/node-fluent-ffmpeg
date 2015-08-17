@@ -3,6 +3,6 @@ matrix:
     - os: linux
       env: NODE_VERSION=0.10
     - os: linux
-      env: NODE_VERSION=0.11
+      env: NODE_VERSION=0.12
 script:
   - tools/test-travis.sh
