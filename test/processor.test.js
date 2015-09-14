@@ -55,13 +55,15 @@ describe('Processor', function() {
   // check prerequisites once before all tests
   before(function prerequisites(done) {
     // check for ffmpeg installation
-    this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
-    this.testfilewide = path.join(__dirname, 'assets', 'testvideo-169.avi');
-    this.testfilebig = path.join(__dirname, 'assets', 'testvideo-5m.mpg');
-    this.testfilespecial = path.join(__dirname, 'assets', 'te[s]t_ video \' _ .flv');
-    this.testfileaudio1 = path.join(__dirname, 'assets', 'testaudio-one.wav');
-    this.testfileaudio2 = path.join(__dirname, 'assets', 'testaudio-two.wav');
-    this.testfileaudio3 = path.join(__dirname, 'assets', 'testaudio-three.wav');
+    this.testdir = path.join(__dirname, 'assets');
+    this.testfileName = 'testvideo-43.avi';
+    this.testfile = path.join(this.testdir, this.testfileName);
+    this.testfilewide = path.join(this.testdir, 'testvideo-169.avi');
+    this.testfilebig = path.join(this.testdir, 'testvideo-5m.mpg');
+    this.testfilespecial = path.join(this.testdir, 'te[s]t_ video \' _ .flv');
+    this.testfileaudio1 = path.join(this.testdir, 'testaudio-one.wav');
+    this.testfileaudio2 = path.join(this.testdir, 'testaudio-two.wav');
+    this.testfileaudio3 = path.join(this.testdir, 'testaudio-three.wav');
 
     var self = this;
 
@@ -231,6 +233,22 @@ describe('Processor', function() {
             done();
           })
           .saveToFile(testFile);
+    });
+
+    it('should change the working directory', function(done) {
+      var testFile = path.join(this.testdir, 'testvideo.flv');
+      this.files.push(testFile);
+
+      this.getCommand({ source: this.testfileName, logger: testhelper.logger, cwd: this.testdir })
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          done();
+        })
+        .saveToFile(testFile);
     });
 
     it('should kill the process on timeout', function(done) {
