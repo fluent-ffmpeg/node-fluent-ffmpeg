@@ -498,6 +498,12 @@ describe('Capabilities', function() {
     var FLVTOOL2_PATH;
     var ALT_FLVTOOL_PATH;
     var skipAltTest = false;
+    var skipTest = false;
+
+    // Skip test if we know travis failed to instal flvtool2
+    if (process.env.FLVTOOL2_PRESENT === 'no') {
+      skipTest = true;
+    }
 
     // Only test with FLVTOOL2_PATH when we actually have an alternative path
     if (process.env.ALT_FLVTOOL_PATH) {
@@ -521,7 +527,7 @@ describe('Capabilities', function() {
       (new Ffmpeg())._forgetPaths();
     });
 
-    it('should allow manual definition of fflvtool binary path', function(done) {
+    (skipTest ? it.skip : it)('should allow manual definition of fflvtool binary path', function(done) {
       var ff = new Ffmpeg();
 
       ff.setFlvtoolPath('/doom/di/dom');
@@ -534,7 +540,7 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should allow static manual definition of fflvtool binary path', function(done) {
+    (skipTest ? it.skip : it)('should allow static manual definition of fflvtool binary path', function(done) {
       var ff = new Ffmpeg();
 
       Ffmpeg.setFlvtoolPath('/doom/di/dom2');
@@ -547,7 +553,7 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', function(done) {
+    (skipTest ? it.skip : it)('should look for fflvtool in the PATH if FLVTOOL2_PATH is not defined', function(done) {
       var ff = new Ffmpeg();
 
       delete process.env.FLVTOOL2_PATH;
@@ -566,7 +572,7 @@ describe('Capabilities', function() {
       });
     });
 
-    (skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', function(done) {
+    (skipTest || skipAltTest ? it.skip : it)('should use FLVTOOL2_PATH if defined and valid', function(done) {
       var ff = new Ffmpeg();
 
       process.env.FLVTOOL2_PATH = ALT_FLVTOOL_PATH;
@@ -581,7 +587,7 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', function(done) {
+    (skipTest ? it.skip : it)('should fall back to searching in the PATH if FLVTOOL2_PATH is invalid', function(done) {
       var ff = new Ffmpeg();
 
       process.env.FLVTOOL2_PATH = '/nope/not-here/nothing-to-see-here';
@@ -600,7 +606,7 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should remember fflvtool path', function(done) {
+    (skipTest ? it.skip : it)('should remember fflvtool path', function(done) {
       var ff = new Ffmpeg();
 
       delete process.env.FLVTOOL2_PATH;
