@@ -5,7 +5,6 @@
 var Ffmpeg = require('../index'),
   path = require('path'),
   fs = require('fs'),
-  Readable = require('stream').Readable,
   assert = require('assert'),
   exec = require('child_process').exec,
   testhelper = require('./helpers');
@@ -15,6 +14,8 @@ describe('Metadata', function() {
   before(function(done) {
     // check for ffmpeg installation
     this.testfile = path.join(__dirname, 'assets', 'testvideo-43.avi');
+    // via http://dev.exiv2.org/projects/exiv2/wiki/VideoSamples#Video-Samples-for-Exiv2-Testing
+    this.testfileSideData = path.join(__dirname, 'assets', 'IMG_0034.MOV');
 
     var self = this;
     exec(testhelper.getFfmpegCheck(), function(err) {
@@ -79,6 +80,19 @@ describe('Metadata', function() {
   });
 
   it('should provide ffprobe stream information with units', function(done) {
+    Ffmpeg.ffprobe(this.testfile, {options: ['-unit']}, function(err, data) {
+      testhelper.logError(err);
+      assert.ok(!err);
+
+      ('streams' in data).should.equal(true);
+      Array.isArray(data.streams).should.equal(true);
+      data.streams.length.should.equal(1);
+      data.streams[0].bit_rate.should.equal('322427 bit/s');
+      done();
+    });
+  });
+
+  it('should provide ffprobe stream information with units (using deprecated signature)', function(done) {
     Ffmpeg.ffprobe(this.testfile, ['-unit'], function(err, data) {
       testhelper.logError(err);
       assert.ok(!err);
@@ -133,5 +147,18 @@ describe('Metadata', function() {
         data.format.filename.should.equal('pipe:0');
         done();
       });
+  });
+
+  it('should read quicktime side_data_list without throwing', function(done) {
+    Ffmpeg.ffprobe(this.testfileSideData, {json: true}, function(err, data) {
+      testhelper.logError(err);
+      assert.ok(!err);
+
+      ('streams' in data).should.equal(true);
+      Array.isArray(data.streams).should.equal(true);
+      data.streams.length.should.equal(2);
+      data.streams[1].side_data_list.length.should.equal(1);
+      done();
+    });
   });
 });
