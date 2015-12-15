@@ -97,7 +97,8 @@ The following options are available:
 * `preset` or `presets`: directory to load module presets from (defaults to the `lib/presets` directory in fluent-ffmpeg tree)
 * `niceness` or `priority`: ffmpeg niceness value, between -20 and 20; ignored on Windows platforms (defaults to 0)
 * `logger`: logger object with `debug()`, `info()`, `warn()` and `error()` methods (defaults to no logging)
-
+* `noStdout`: do not buffer and return `stdout` output (cannot be changed from `true` if output stream(s) are specified)
+* `noStderr`: do not buffer and return `stderr` output (you can still use the `stderr` event to get line-by-line `stderr` output in realtime)
 
 ### Specifying inputs
 
