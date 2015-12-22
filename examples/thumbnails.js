@@ -8,7 +8,7 @@ var proc = ffmpeg('/path/to/your_movie.avi')
     console.log('screenshots are ' + filenames.join(', '));
   })
   .on('end', function() {
-    console.log('screenshots were saved);
+    console.log('screenshots were saved');
   })
   .on('error', function(err) {
     console.log('an error happened: ' + err.message);
