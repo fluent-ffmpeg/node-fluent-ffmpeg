@@ -76,6 +76,26 @@ describe('Capabilities', function() {
       });
     });
 
+    it('should enable querying for available devices', function(done) {
+      new Ffmpeg({ source: '' }).getAvailableDevices(function(err, devices) {
+        testhelper.logError(err);
+        assert.ok(!err);
+
+        (typeof devices).should.equal('object');
+        Object.keys(devices).length.should.not.equal(0);
+
+        ('alsa' in devices).should.equal(true);
+        ('description' in devices.caca).should.equal(true);
+        (typeof devices.caca.description).should.equal('string');
+        ('canMux' in devices.caca).should.equal(true);
+        (typeof devices.caca.canMux).should.equal('boolean');
+        ('canDemux' in devices.caca).should.equal(true);
+        (typeof devices.caca.canDemux).should.equal('boolean');
+
+        done();
+      });
+    });
+
     it('should enable querying for available filters', function(done) {
       new Ffmpeg({ source: '' }).getAvailableFilters(function(err, filters) {
         testhelper.logError(err);
