@@ -846,6 +846,17 @@ ffmpeg('/path/to/file.avi')
   });
 ```
 
+#### 'stderr': FFmpeg output
+
+The `stderr` event is emitted every time FFmpeg outputs a line to `stderr`.  It is emitted with a string containing the line of stderr (minus trailing new line characters).
+
+```js
+ffmpeg('/path/to/file.avi')
+  .on('stderr', function(stderrLine) {
+    console.log('Stderr output: ' + stderrLine);
+  });
+```
+
 #### 'error': transcoding error
 
 The `error` event is emitted when an error occurs when running ffmpeg or when preparing its execution.  It is emitted with an error object as an argument.  If the error happened during ffmpeg execution, listeners will also receive two additional arguments containing ffmpegs stdout and stderr.
