@@ -97,6 +97,9 @@ The following options are available:
 * `preset` or `presets`: directory to load module presets from (defaults to the `lib/presets` directory in fluent-ffmpeg tree)
 * `niceness` or `priority`: ffmpeg niceness value, between -20 and 20; ignored on Windows platforms (defaults to 0)
 * `logger`: logger object with `debug()`, `info()`, `warn()` and `error()` methods (defaults to no logging)
+* `outputLineLimit`: limit the lines stored in variable `stderr` to reduce cpu load on regex operations (especially on
+livestreaming, that causes the `stderr` variable to increase without limit); the first `outputLineLimit` lines are kept and the
+last line gets overwritten `on 'data'` if linelimit has been reached
 
 
 ### Specifying inputs
