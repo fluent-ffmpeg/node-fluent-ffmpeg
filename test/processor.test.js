@@ -371,6 +371,31 @@ describe('Processor', function() {
         .saveToFile(testFile);
     });
 
+    it('should report codec data through \'codecData\' event for input streams', function(done) {
+      this.timeout(60000);
+      var testFile = path.join(__dirname, 'assets', 'testConvertFromStreamToFileCodecData.flv');
+      this.files.push(testFile);
+
+      var receivedCodecData = false;
+      var instream = fs.createReadStream(this.testfile);
+      this.getCommand({ source: instream, logger: testhelper.logger })
+        .usingPreset('flashvideo')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('codecData', function(data) {
+          receivedCodecData = true;
+          data.should.have.property('audio');
+          data.should.have.property('video');
+        })
+        .on('end', function() {
+          assert(receivedCodecData);
+          done();
+        })
+        .saveToFile(testFile);
+    });
+
     it('should report progress through \'progress\' event', function(done) {
       this.timeout(60000);
 
