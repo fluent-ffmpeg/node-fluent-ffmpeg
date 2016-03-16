@@ -97,6 +97,7 @@ The following options are available:
 * `preset` or `presets`: directory to load module presets from (defaults to the `lib/presets` directory in fluent-ffmpeg tree)
 * `niceness` or `priority`: ffmpeg niceness value, between -20 and 20; ignored on Windows platforms (defaults to 0)
 * `logger`: logger object with `debug()`, `info()`, `warn()` and `error()` methods (defaults to no logging)
+* `stdoutLines`: maximum number of lines from ffmpeg stdout/stderr to keep in memory (defaults to 100, use 0 for unlimited storage)
 
 
 ### Specifying inputs
@@ -846,6 +847,17 @@ ffmpeg('/path/to/file.avi')
   });
 ```
 
+#### 'stderr': FFmpeg output
+
+The `stderr` event is emitted every time FFmpeg outputs a line to `stderr`.  It is emitted with a string containing the line of stderr (minus trailing new line characters).
+
+```js
+ffmpeg('/path/to/file.avi')
+  .on('stderr', function(stderrLine) {
+    console.log('Stderr output: ' + stderrLine);
+  });
+```
+
 #### 'error': transcoding error
 
 The `error` event is emitted when an error occurs when running ffmpeg or when preparing its execution.  It is emitted with an error object as an argument.  If the error happened during ffmpeg execution, listeners will also receive two additional arguments containing ffmpegs stdout and stderr.
@@ -861,14 +873,16 @@ ffmpeg('/path/to/file.avi')
 
 #### 'end': processing finished
 
-The `end` event is emitted when processing has finished.  Listeners receive no arguments, except when generating thumbnails (see below), in which case they receive an array of the generated filenames.
+The `end` event is emitted when processing has finished.  Listeners receive ffmpeg standard output and standard error as arguments, except when generating thumbnails (see below), in which case they receive an array of the generated filenames.
 
 ```js
 ffmpeg('/path/to/file.avi')
-  .on('end', function() {
+  .on('end', function(stdout, stderr) {
     console.log('Transcoding succeeded !');
   });
 ```
+
+`stdout` is empty when the command outputs to a stream.  Both `stdout` and `stderr` are limited by the `stdoutLines` option (defaults to 100 lines).
 
 
 ### Starting FFmpeg processing

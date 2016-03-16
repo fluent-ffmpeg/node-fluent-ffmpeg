@@ -134,7 +134,8 @@ describe('Processor', function() {
               testhelper.logOutput(self.outputs[0][0], self.outputs[0][1]);
             }
 
-            cb(new Error(self.processes.length + ' processes still running after "' + self.currentTest.title + '"'));
+            self.test.error(new Error(self.processes.length + ' processes still running after "' + self.currentTest.title + '"'));
+            cb();
           } else {
             cb();
           }
@@ -151,7 +152,8 @@ describe('Processor', function() {
                   testhelper.logOutput(self.outputs[0][0], self.outputs[0][1]);
                 }
 
-                cb(new Error('Expected created file ' + file + ' by  "' + self.currentTest.title + '"'));
+                self.test.error(new Error('Expected created file ' + file + ' by  "' + self.currentTest.title + '"'));
+                cb();
               }
             });
           }, cb);
@@ -168,7 +170,8 @@ describe('Processor', function() {
                   testhelper.logOutput(self.outputs[0][0], self.outputs[0][1]);
                 }
 
-                cb(new Error('Expected created directory ' + dir + ' by  "' + self.currentTest.title + '"'));
+                self.test.error(new Error('Expected created directory ' + dir + ' by  "' + self.currentTest.title + '"'));
+                cb();
               }
             });
           }, cb);
@@ -255,7 +258,7 @@ describe('Processor', function() {
       var testFile = path.join(__dirname, 'assets', 'testProcessKillTimeout.avi');
       this.files.push(testFile);
 
-      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 0.02});
+      var command = this.getCommand({ source: this.testfilebig, logger: testhelper.logger, timeout: 1});
       var self = this;
 
       command
@@ -292,8 +295,10 @@ describe('Processor', function() {
             startCalled = true;
             setTimeout(function() { ffmpegJob.kill(); }, 500);
             ffmpegJob.ffmpegProc.on('exit', function() {
-              errorCalled.should.equal(true);
-              done();
+              setTimeout(function() {
+                errorCalled.should.equal(true);
+                done();
+              }, 1000);
             });
           })
           .on('error', function(err) {
@@ -464,6 +469,55 @@ describe('Processor', function() {
           })
           .on('end', function() {
             startCalled.should.equal(true);
+            done();
+          })
+          .saveToFile(testFile);
+    });
+
+    it('should report output lines through \'stderr\' event', function(done) {
+      this.timeout(60000);
+
+      var testFile = path.join(__dirname, 'assets', 'testStderr.avi');
+      var lines = [];
+
+      this.files.push(testFile);
+
+      this.getCommand({ source: this.testfile, logger: testhelper.logger })
+          .on('stderr', function(line) {
+            lines.push(line);
+          })
+          .usingPreset('divx')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr);
+            assert.ok(!err);
+          })
+          .on('end', function() {
+            lines.length.should.above(0);
+            lines[0].should.startWith('ffmpeg version');
+            lines.filter(function(l) { return l.indexOf('Press [q]') === 0. }).length.should.above(0);
+            done();
+          })
+          .saveToFile(testFile);
+    });
+  });
+
+  describe('Output limiting', function() {
+    it('should limit stdout/stderr lines', function(done) {
+      this.timeout(60000);
+
+      var testFile = path.join(__dirname, 'assets', 'testLimit10.avi');
+
+      this.files.push(testFile);
+
+      this.getCommand({ stdoutLines: 10, source: this.testfile, logger: testhelper.logger })
+          .usingPreset('divx')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr);
+            assert.ok(!err);
+          })
+          .on('end', function(stdout, stderr) {
+            stdout.split('\n').length.should.below(11);
+            stderr.split('\n').length.should.below(11);
             done();
           })
           .saveToFile(testFile);
@@ -942,7 +996,7 @@ describe('Processor', function() {
     });
   });
 
-  describe.skip('Remote I/O', function() {
+  describe('Remote I/O', function() {
     this.timeout(60000);
 
     var ffserver;
@@ -1089,8 +1143,8 @@ describe('Processor', function() {
       this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
         .addOption('-invalidoption')
         .on('error', function(err) {
+          setTimeout(done, 1000);
           err.message.should.match(/Unrecognized option 'invalidoption'/);
-          done();
         })
         .saveToFile('/will/not/be/created/anyway');
     });

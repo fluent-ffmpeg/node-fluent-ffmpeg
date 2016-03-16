@@ -113,4 +113,94 @@ describe('Utilities', function() {
       utils.timemarkToSeconds(132.44).should.be.equal(132.44);
     });
   });
+
+  describe('Lines ring buffer', function() {
+    it('should append lines', function() {
+      var ring = utils.linesRing(100);
+      ring.append('foo\nbar\nbaz\n');
+      ring.append('foo\nbar\nbaz\n');
+      ring.get().should.equal('foo\nbar\nbaz\nfoo\nbar\nbaz\n');
+    });
+
+    it('should append partial lines', function() {
+      var ring = utils.linesRing(100);
+      ring.append('foo');
+      ring.append('bar\nbaz');
+      ring.append('moo');
+      ring.get().should.equal('foobar\nbazmoo');
+    });
+
+    it('should call line callbacks', function() {
+      var lines = [];
+      function cb(l) {
+        lines.push(l);
+      }
+
+      var lines2 = [];
+      function cb2(l) {
+        lines2.push(l);
+      }
+
+      var ring = utils.linesRing(100);
+      ring.callback(cb);
+      ring.callback(cb2);
+
+      ring.append('foo\nbar\nbaz');
+      lines.length.should.equal(2);
+      lines[0].should.equal('foo');
+      lines[1].should.equal('bar');
+
+      lines2.length.should.equal(2);
+      lines2[0].should.equal('foo');
+      lines2[1].should.equal('bar');
+
+      ring.append('moo\nmeow\n');
+      lines.length.should.equal(4);
+      lines[2].should.equal('bazmoo');
+      lines[3].should.equal('meow');
+
+      lines2.length.should.equal(4);
+      lines2[2].should.equal('bazmoo');
+      lines2[3].should.equal('meow');
+    });
+
+    it('should close correctly', function() {
+      var lines = [];
+      function cb(l) {
+        lines.push(l);
+      }
+
+      var ring = utils.linesRing(100);
+      ring.callback(cb);
+
+      ring.append('foo\nbar\nbaz');
+      lines.length.should.equal(2);
+      lines[0].should.equal('foo');
+      lines[1].should.equal('bar');
+
+      ring.close();
+      lines.length.should.equal(3);
+      lines[2].should.equal('baz');
+
+      ring.append('moo\nmeow\n');
+      lines.length.should.equal(3);
+      ring.get().should.equal('foo\nbar\nbaz');
+    });
+
+    it('should limit lines', function() {
+      var ring = utils.linesRing(2);
+      ring.append('foo\nbar\nbaz');
+      ring.get().should.equal('bar\nbaz');
+      ring.append('foo\nbar');
+      ring.get().should.equal('bazfoo\nbar');
+    });
+
+    it('should allow unlimited lines', function() {
+      var ring = utils.linesRing(0);
+      ring.append('foo\nbar\nbaz');
+      ring.get().should.equal('foo\nbar\nbaz');
+      ring.append('foo\nbar');
+      ring.get().should.equal('foo\nbar\nbazfoo\nbar');
+    });
+  });
 });
