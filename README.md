@@ -1136,6 +1136,8 @@ ffmpeg('/path/to/file1.avi')
   });
 ```
 
+**Warning:** ffprobe may be called with an input stream, but in this case *it will consume data from the stream*, and this data will no longer be available for ffmpeg.  Using both ffprobe and a transcoding command on the same input stream will most likely fail unless the stream is a live stream.  Only do this if you know what you're doing.
+
 The returned object is the same that is returned by running the following command from your shell (depending on your ffmpeg version you may have to replace `-of` with `-print_format`) :
 
 ```sh
