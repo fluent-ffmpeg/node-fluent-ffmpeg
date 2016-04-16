@@ -402,11 +402,9 @@ describe('Processor', function() {
       this.getCommand({ logger: testhelper.logger })
         .input(this.testfileaudio1)
         .input(this.testfileaudio2)
-        .on('codecData', function(codecs) {
-          codecs.length.should.equal(2);
-          codecs.forEach(function(data) {
-            data.should.have.property('audio');
-          });
+        .on('codecData', function(data1, data2) {
+          data1.should.have.property('audio');
+          data2.should.have.property('audio');
         })
         .on('error', function(err, stdout, stderr) {
           testhelper.logError(err, stdout, stderr);
