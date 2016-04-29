@@ -371,6 +371,51 @@ describe('Processor', function() {
         .saveToFile(testFile);
     });
 
+    it('should report codec data through \'codecData\' event on piped inputs', function(done) {
+      this.timeout(60000);
+
+      var testFile = path.join(__dirname, 'assets', 'testOnCodecData.avi')
+      this.files.push(testFile);
+
+      this.getCommand({ source: fs.createReadStream(this.testfilebig), logger: testhelper.logger })
+        .on('codecData', function(data) {
+          data.should.have.property('audio');
+          data.should.have.property('video');
+        })
+        .usingPreset('divx')
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          done();
+        })
+        .saveToFile(testFile);
+    });
+
+    it('should report codec data through \'codecData\' for multiple inputs', function(done) {
+      this.timeout(60000);
+
+      var testFile = path.join(__dirname, 'assets', 'testOnCodecData.wav')
+      this.files.push(testFile);
+
+      this.getCommand({ logger: testhelper.logger })
+        .input(this.testfileaudio1)
+        .input(this.testfileaudio2)
+        .on('codecData', function(data1, data2) {
+          data1.should.have.property('audio');
+          data2.should.have.property('audio');
+        })
+        .on('error', function(err, stdout, stderr) {
+          testhelper.logError(err, stdout, stderr);
+          assert.ok(!err);
+        })
+        .on('end', function() {
+          done();
+        })
+        .mergeToFile(testFile);
+    });
+
     it('should report progress through \'progress\' event', function(done) {
       this.timeout(60000);
 
