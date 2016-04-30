@@ -2,21 +2,7 @@
 
 This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have [ffmpeg](http://www.ffmpeg.org) installed on your system (including all necessary encoding libraries like libmp3lame or libx264).
 
-> #### This is the documentation for fluent-ffmpeg 2.x
->
-> A major 2.0 version has been released. This release features lots of API cleanup and a cleaner syntax for most methods.
->
-> It has been designed to be mostly compatible with the previous fluent-ffmpeg version, but there are some incompatibilities, mainly because deprecated APIs in 1.x have been removed.  See [the 2.x migration wiki page](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/wiki/Migrating-from-fluent-ffmpeg-1.x) for information on how to migrate.
->
-> Please take care to update your package.json files if you want to keep using version 1.x:
-> ```js
-{
-  "dependencies": {
-    "fluent-ffmpeg": "~1.7"
-  }
-}
-```
->
+> This is the documentation for fluent-ffmpeg 2.x.
 > You can still access the code and documentation for fluent-ffmpeg 1.7 [here](https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/tree/1.x).
 
 ## Installation
