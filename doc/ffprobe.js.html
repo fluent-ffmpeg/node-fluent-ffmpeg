@@ -36,22 +36,32 @@ function legacyDisposition(key) { return key.match(/^DISPOSITION:/); }
 
 function parseFfprobeOutput(out) {
   var lines = out.split(/\r\n|\r|\n/);
+
+  lines = lines.filter(function (line) {
+    return line.length > 0;
+  });
+
   var data = {
-    streams: []
+    streams: [],
+    format: {},
+    chapters: []
   };
 
-  function parseBlock() {
+  function parseBlock(name) {
     var data = {};
 
     var line = lines.shift();
-    while (line) {
-      if (line.match(/^\[\//)) {
+    while (typeof line !== 'undefined') {
+      if (line.toLowerCase() == '[/'+name+']') {
         return data;
+      } else if (line.match(/^\[/)) {
+        line = lines.shift();
+        continue;
       }
 
       var kv = line.match(/^([^=]+)=(.*)$/);
       if (kv) {
-        if (kv[2].match(/^[0-9]+(.[0-9]+)?$/)) {
+        if (!(kv[1].match(/^TAG:/)) &amp;&amp; kv[2].match(/^[0-9]+(\.[0-9]+)?$/)) {
           data[kv[1]] = Number(kv[2]);
         } else {
           data[kv[1]] = kv[2];
@@ -65,12 +75,15 @@ function parseFfprobeOutput(out) {
   }
 
   var line = lines.shift();
-  while (line) {
-    if (line === '[STREAM]') {
-      var stream = parseBlock();
+  while (typeof line !== 'undefined') {
+    if (line.match(/^\[stream/i)) {
+      var stream = parseBlock('stream');
       data.streams.push(stream);
-    } else if (line === '[FORMAT]') {
-      data.format = parseBlock();
+    } else if (line.match(/^\[chapter/i)) {
+      var chapter = parseBlock('chapter');
+      data.chapters.push(chapter);
+    } else if (line.toLowerCase() === '[format]') {
+      data.format = parseBlock('format');
     }
 
     line = lines.shift();
@@ -102,18 +115,44 @@ module.exports = function(proto) {
    * @method FfmpegCommand#ffprobe
    * @category Metadata
    *
-   * @param {Number} [index] 0-based index of input to probe (defaults to last input)
+   * @param {?Number} [index] 0-based index of input to probe (defaults to last input)
+   * @param {?String[]} [options] array of output options to return
    * @param {FfmpegCommand~ffprobeCallback} callback callback function
    *
    */
-  proto.ffprobe = function(index, callback) {
-    var input;
+  proto.ffprobe = function() {
+    var input, index = null, options = [], callback;
 
-    if (typeof callback === 'undefined') {
-      callback = index;
+    // the last argument should be the callback
+    var callback = arguments[arguments.length - 1];
 
+    var ended = false
+    function handleCallback(err, data) {
+      if (!ended) {
+        ended = true;
+        callback(err, data);
+      }
+    };
+
+    // map the arguments to the correct variable names
+    switch (arguments.length) {
+      case 3:
+        index = arguments[0];
+        options = arguments[1];
+        break;
+      case 2:
+        if (typeof arguments[0] === 'number') {
+          index = arguments[0];
+        } else if (Array.isArray(arguments[0])) {
+          options = arguments[0];
+        }
+        break;
+    }
+
+
+    if (index === null) {
       if (!this._currentInput) {
-        return callback(new Error('No input specified'));
+        return handleCallback(new Error('No input specified'));
       }
 
       input = this._currentInput;
@@ -121,20 +160,16 @@ module.exports = function(proto) {
       input = this._inputs[index];
 
       if (!input) {
-        return callback(new Error('Invalid input index'));
+        return handleCallback(new Error('Invalid input index'));
       }
-    }
-
-    if (!input.isFile) {
-      return callback(new Error('Cannot run ffprobe on non-file input'));
     }
 
     // Find ffprobe
     this._getFfprobePath(function(err, path) {
       if (err) {
-        return callback(err);
+        return handleCallback(err);
       } else if (!path) {
-        return callback(new Error('Cannot find ffprobe'));
+        return handleCallback(new Error('Cannot find ffprobe'));
       }
 
       var stdout = '';
@@ -143,15 +178,28 @@ module.exports = function(proto) {
       var stderrClosed = false;
 
       // Spawn ffprobe
-      var ffprobe = spawn(path, [
-        '-show_streams',
-        '-show_format',
-        input.source
-      ]);
+      var src = input.isStream ? 'pipe:0' : input.source;
+      var ffprobe = spawn(path, ['-show_streams', '-show_format'].concat(options, src));
 
-      ffprobe.on('error', function(err) {
-        callback(err);
-      });
+      if (input.isStream) {
+        // Skip errors on stdin. These get thrown when ffprobe is complete and
+        // there seems to be no way hook in and close stdin before it throws.
+        ffprobe.stdin.on('error', function(err) {
+          if (['ECONNRESET', 'EPIPE'].indexOf(err.code) >= 0) { return; }
+          handleCallback(err);
+        });
+
+        // Once ffprobe's input stream closes, we need no more data from the
+        // input
+        ffprobe.stdin.on('close', function() {
+            input.source.pause();
+            input.source.unpipe(ffprobe.stdin);
+        });
+
+        input.source.pipe(ffprobe.stdin);
+      }
+
+      ffprobe.on('error', callback);
 
       // Ensure we wait for captured streams to end before calling callback
       var exitError = null;
@@ -166,7 +214,7 @@ module.exports = function(proto) {
               exitError.message += '\n' + stderr;
             }
 
-            return callback(exitError);
+            return handleCallback(exitError);
           }
 
           // Process output
@@ -174,30 +222,32 @@ module.exports = function(proto) {
 
           // Handle legacy output with "TAG:x" and "DISPOSITION:x" keys
           [data.format].concat(data.streams).forEach(function(target) {
-            var legacyTagKeys = Object.keys(target).filter(legacyTag);
+            if (target) {
+              var legacyTagKeys = Object.keys(target).filter(legacyTag);
 
-            if (legacyTagKeys.length) {
-              target.tags = target.tags || {};
+              if (legacyTagKeys.length) {
+                target.tags = target.tags || {};
 
-              legacyTagKeys.forEach(function(tagKey) {
-                target.tags[tagKey.substr(4)] = target[tagKey];
-                delete target[tagKey];
-              });
-            }
+                legacyTagKeys.forEach(function(tagKey) {
+                  target.tags[tagKey.substr(4)] = target[tagKey];
+                  delete target[tagKey];
+                });
+              }
 
-            var legacyDispositionKeys = Object.keys(target).filter(legacyDisposition);
+              var legacyDispositionKeys = Object.keys(target).filter(legacyDisposition);
 
-            if (legacyDispositionKeys.length) {
-              target.disposition = target.disposition || {};
+              if (legacyDispositionKeys.length) {
+                target.disposition = target.disposition || {};
 
-              legacyDispositionKeys.forEach(function(dispositionKey) {
-                target.disposition[dispositionKey.substr(12)] = target[dispositionKey];
-                delete target[dispositionKey];
-              });
+                legacyDispositionKeys.forEach(function(dispositionKey) {
+                  target.disposition[dispositionKey.substr(12)] = target[dispositionKey];
+                  delete target[dispositionKey];
+                });
+              }
             }
           });
 
-          callback(null, data);
+          handleCallback(null, data);
         }
       }
 
@@ -236,7 +286,6 @@ module.exports = function(proto) {
     });
   };
 };
-
 </code></pre>
         </article>
     </section>
@@ -253,7 +302,7 @@ module.exports = function(proto) {
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Jul 08 2014 21:22:19 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun May 01 2016 12:10:37 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

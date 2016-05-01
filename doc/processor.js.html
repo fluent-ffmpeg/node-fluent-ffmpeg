@@ -34,6 +34,7 @@ var fs = require('fs');
 var async = require('async');
 var utils = require('./utils');
 
+var nlRegexp = /\r\n|\r|\n/g;
 
 /*
  *! Processor methods
@@ -47,7 +48,7 @@ var utils = require('./utils');
  * @private
  */
 function runFfprobe(command) {
-  command.ffprobe(function(err, data) {
+  command.ffprobe(0, function(err, data) {
     command._ffprobeData = data;
   });
 }
@@ -75,6 +76,13 @@ module.exports = function(proto) {
    */
 
   /**
+   * Emitted when ffmpeg outputs to stderr
+   *
+   * @event FfmpegCommand#stderr
+   * @param {String} line stderr output line
+   */
+
+  /**
    * Emitted when ffmpeg reports input codec data
    *
    * @event FfmpegCommand#codecData
@@ -99,7 +107,8 @@ module.exports = function(proto) {
    * Emitted when a command finishes processing
    *
    * @event FfmpegCommand#end
-   * @param {Array|null} [filenames] generated filenames when taking screenshots, null otherwise
+   * @param {Array|String|null} [filenames|stdout] generated filenames when taking screenshots, ffmpeg stdout when not outputting to a stream, null otherwise
+   * @param {String|null} stderr ffmpeg stderr
    */
 
 
@@ -108,8 +117,9 @@ module.exports = function(proto) {
    *
    * The 'options' argument may contain the following keys:
    * - 'niceness': specify process niceness, ignored on Windows (default: 0)
+   * - `cwd`: change working directory
    * - 'captureStdout': capture stdout and pass it to 'endCB' as its 2nd argument (default: false)
-   * - 'captureStderr': capture stderr and pass it to 'endCB' as its 3rd argument (default: false)
+   * - 'stdoutLines': override command limit (default: use command limit)
    *
    * The 'processCB' callback, if present, is called as soon as the process is created and
    * receives a nodejs ChildProcess object.  It may not be called at all if an error happens
@@ -120,8 +130,8 @@ module.exports = function(proto) {
    * @method FfmpegCommand#_spawnFfmpeg
    * @param {Array} args ffmpeg command line argument list
    * @param {Object} [options] spawn options (see above)
-   * @param {Function} [processCB] callback called with process object when it has been created
-   * @param {Function} endCB callback with signature (err, stdout, stderr)
+   * @param {Function} [processCB] callback called with process object and stdout/stderr ring buffers when process has been created
+   * @param {Function} endCB callback called with error (if applicable) and stdout/stderr ring buffers when process finished
    * @private
    */
   proto._spawnFfmpeg = function(args, options, processCB, endCB) {
@@ -138,6 +148,8 @@ module.exports = function(proto) {
       processCB = function() {};
     }
 
+    var maxLines = 'stdoutLines' in options ? options.stdoutLines : this.options.stdoutLines;
+
     // Find ffmpeg
     this._getFfmpegPath(function(err, command) {
       if (err) {
@@ -152,16 +164,16 @@ module.exports = function(proto) {
         command = 'nice';
       }
 
-      var stdout = null;
+      var stdoutRing = utils.linesRing(maxLines);
       var stdoutClosed = false;
 
-      var stderr = null;
+      var stderrRing = utils.linesRing(maxLines);
       var stderrClosed = false;
 
       // Spawn process
       var ffmpegProc = spawn(command, args, options);
 
-      if (ffmpegProc.stderr &amp;&amp; options.captureStderr) {
+      if (ffmpegProc.stderr) {
         ffmpegProc.stderr.setEncoding('utf8');
       }
 
@@ -176,10 +188,8 @@ module.exports = function(proto) {
           exitError = err;
         }
 
-        if (processExited &amp;&amp;
-          (stdoutClosed || !options.captureStdout) &amp;&amp;
-          (stderrClosed || !options.captureStderr)) {
-          endCB(exitError, stdout, stderr);
+        if (processExited &amp;&amp; (stdoutClosed || !options.captureStdout) &amp;&amp; stderrClosed) {
+          endCB(exitError, stdoutRing, stderrRing);
         }
       }
 
@@ -199,34 +209,30 @@ module.exports = function(proto) {
 
       // Capture stdout if specified
       if (options.captureStdout) {
-        stdout = '';
-
         ffmpegProc.stdout.on('data', function(data) {
-          stdout += data;
+          stdoutRing.append(data);
         });
 
         ffmpegProc.stdout.on('close', function() {
+          stdoutRing.close();
           stdoutClosed = true;
           handleExit();
         });
       }
 
       // Capture stderr if specified
-      if (options.captureStderr) {
-        stderr = '';
+      ffmpegProc.stderr.on('data', function(data) {
+        stderrRing.append(data);
+      });
 
-        ffmpegProc.stderr.on('data', function(data) {
-          stderr += data;
-        });
-
-        ffmpegProc.stderr.on('close', function() {
-          stderrClosed = true;
-          handleExit();
-        });
-      }
+      ffmpegProc.stderr.on('close', function() {
+        stderrRing.close();
+        stderrClosed = true;
+        handleExit();
+      });
 
       // Call process callback
-      processCB(ffmpegProc);
+      processCB(ffmpegProc, stdoutRing, stderrRing);
     });
   };
 
@@ -320,7 +326,7 @@ module.exports = function(proto) {
           return cb();
         }
 
-        self.ffprobe(function(err, data) {
+        self.ffprobe(0, function(err, data) {
           if (!err) {
             self._ffprobeData = data;
           }
@@ -450,14 +456,15 @@ module.exports = function(proto) {
       }
 
       // Run ffmpeg
-      var stdout = null;
-      var stderr = '';
       self._spawnFfmpeg(
         args,
+        {
+          captureStdout: !outputStream,
+          niceness: self.options.niceness,
+          cwd: self.options.cwd
+        },
 
-        { niceness: self.options.niceness },
-
-        function processCB(ffmpegProc) {
+        function processCB(ffmpegProc, stdoutRing, stderrRing) {
           self.ffmpegProc = ffmpegProc;
           self.emit('start', 'ffmpeg ' + args.join(' '));
 
@@ -482,10 +489,11 @@ module.exports = function(proto) {
             processTimer = setTimeout(function() {
               var msg = 'process ran into a timeout (' + self.options.timeout + 's)';
 
-              emitEnd(new Error(msg), stdout, stderr);
+              emitEnd(new Error(msg), stdoutRing.get(), stderrRing.get());
               ffmpegProc.kill();
             }, self.options.timeout * 1000);
           }
+
 
           if (outputStream) {
             // Pipe ffmpeg stdout to output stream
@@ -507,26 +515,33 @@ module.exports = function(proto) {
 
             outputStream.target.on('error', function(err) {
               self.logger.debug('Output stream error, killing ffmpgeg process');
-              emitEnd(new Error('Output stream error: ' + err.message));
+              emitEnd(new Error('Output stream error: ' + err.message), stdoutRing.get(), stderrRing.get());
               ffmpegProc.kill();
-            });
-          } else {
-            // Gather ffmpeg stdout
-            stdout = '';
-            ffmpegProc.stdout.on('data', function (data) {
-              stdout += data;
             });
           }
 
-          // Process ffmpeg stderr data
-          self._codecDataSent = false;
-          ffmpegProc.stderr.on('data', function (data) {
-            stderr += data;
+          // Setup stderr handling
+          if (stderrRing) {
 
-            if (!self._codecDataSent &amp;&amp; self.listeners('codecData').length) {
-              utils.extractCodecData(self, stderr);
+            // 'stderr' event
+            if (self.listeners('stderr').length) {
+              stderrRing.callback(function(line) {
+                self.emit('stderr', line);
+              });
             }
 
+            // 'codecData' event
+            if (self.listeners('codecData').length) {
+              var codecDataSent = false;
+              var codecObject = {};
+
+              stderrRing.callback(function(line) {
+                if (!codecDataSent)
+                  codecDataSent = utils.extractCodecData(self, line, codecObject);
+              });
+            }
+
+            // 'progress' event
             if (self.listeners('progress').length) {
               var duration = 0;
 
@@ -534,21 +549,23 @@ module.exports = function(proto) {
                 duration = Number(self._ffprobeData.format.duration);
               }
 
-              utils.extractProgress(self, stderr, duration);
+              stderrRing.callback(function(line) {
+                utils.extractProgress(self, line, duration);
+              });
             }
-          });
+          }
         },
 
-        function endCB(err) {
+        function endCB(err, stdoutRing, stderrRing) {
           delete self.ffmpegProc;
 
           if (err) {
             if (err.message.match(/ffmpeg exited with code/)) {
               // Add ffmpeg error message
-              err.message += ': ' + utils.extractError(stderr);
+              err.message += ': ' + utils.extractError(stderrRing.get());
             }
 
-            emitEnd(err, stdout, stderr);
+            emitEnd(err, stdoutRing.get(), stderrRing.get());
           } else {
             // Find out which outputs need flv metadata
             var flvmeta = self._outputs.filter(function(output) {
@@ -557,7 +574,10 @@ module.exports = function(proto) {
 
             if (flvmeta.length) {
               self._getFlvtoolPath(function(err, flvtool) {
-                // No possible error here, getFlvtoolPath was already called by _prepare
+                if (err) {
+                  return emitEnd(err);
+                }
+
                 async.each(
                   flvmeta,
                   function(output, cb) {
@@ -582,13 +602,13 @@ module.exports = function(proto) {
                     if (err) {
                       emitEnd(err);
                     } else {
-                      emitEnd(null, stdout, stderr);
+                      emitEnd(null, stdoutRing.get(), stderrRing.get());
                     }
                   }
                 );
               });
             } else {
-              emitEnd(null, stdout, stderr);
+              emitEnd(null, stdoutRing.get(), stderrRing.get());
             }
           }
         }
@@ -655,7 +675,7 @@ module.exports = function(proto) {
    */
   proto.kill = function(signal) {
     if (!this.ffmpegProc) {
-      this.options.logger.warn('No running ffmpeg process, cannot send signal');
+      this.logger.warn('No running ffmpeg process, cannot send signal');
     } else {
       this.ffmpegProc.kill(signal || 'SIGKILL');
     }
@@ -679,7 +699,7 @@ module.exports = function(proto) {
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Jul 08 2014 21:22:19 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun May 01 2016 12:10:37 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>

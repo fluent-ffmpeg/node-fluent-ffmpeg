@@ -94,6 +94,11 @@ module.exports = function recipes(proto) {
 
 
   /**
+   * Generate images from a video
+   *
+   * Note: this method makes the command emit a 'filenames' event with an array of
+   * the generated image filenames.
+   *
    * @method FfmpegCommand#screenshots
    * @category Processing
    * @aliases takeScreenshots,thumbnail,thumbnails,screenshot
@@ -117,6 +122,7 @@ module.exports = function recipes(proto) {
    *   at; each timemark may be a number of seconds, a '[[hh:]mm:]ss[.xxx]' string or a
    *   'XX%' string.  Overrides 'count' if present.
    * @param {Number[]|String[]} [config.timestamps] alias for 'timemarks'
+   * @param {Boolean} [config.fastSeek] use fast seek (less accurate)
    * @param {String} [config.size] screenshot size, with the same syntax as {@link FfmpegCommand#size}
    * @param {String} [folder] output folder (legacy alias for 'config.folder')
    * @return FfmpegCommand
@@ -143,7 +149,9 @@ module.exports = function recipes(proto) {
     }
 
     // Accept 'timestamps' instead of 'timemarks'
-    config.timemarks = config.timemarks || config.timestamps;
+    if ('timestamps' in config) {
+      config.timemarks = config.timestamps;
+    }
 
     // Compute timemarks from count if not present
     if (!('timemarks' in config)) {
@@ -153,7 +161,7 @@ module.exports = function recipes(proto) {
 
       var interval = 100 / (1 + config.count);
       config.timemarks = [];
-      for (var i = 0; i &lt;= config.count; i++) {
+      for (var i = 0; i &lt; config.count; i++) {
         config.timemarks.push((interval * (i + 1)) + '%');
       }
     }
@@ -195,7 +203,23 @@ module.exports = function recipes(proto) {
             if (err) {
               next(err);
             } else {
-              var duration = Number(meta.format.duration);
+              // Select video stream with the highest resolution
+              var vstream = meta.streams.reduce(function(biggest, stream) {
+                if (stream.codec_type === 'video' &amp;&amp; stream.width * stream.height > biggest.width * biggest.height) {
+                  return stream;
+                } else {
+                  return biggest;
+                }
+              }, { width: 0, height: 0 });
+
+              if (vstream.width === 0) {
+                return next(new Error('No video stream in input, cannot take screenshots'));
+              }
+
+              var duration = Number(vstream.duration);
+              if (isNaN(duration)) {
+                duration = Number(meta.format.duration);
+              }
 
               if (isNaN(duration)) {
                 return next(new Error('Could not get input duration, please specify fixed timemarks'));
@@ -217,6 +241,15 @@ module.exports = function recipes(proto) {
         }
       },
 
+      // Turn all timemarks into numbers and sort them
+      function normalizeTimemarks(next) {
+        config.timemarks = config.timemarks.map(function(mark) {
+          return utils.timemarkToSeconds(mark);
+        }).sort(function(a, b) { return a - b; });
+
+        next();
+      },
+
       // Add '_%i' to pattern when requesting multiple screenshots and no variable token is present
       function fixPattern(next) {
         var pattern = config.filename || 'tn.png';
@@ -225,7 +258,7 @@ module.exports = function recipes(proto) {
           pattern += '.png';
         }
 
-        if (config.timemarks.length > 0 &amp;&amp; !pattern.match(/%(s|0*i)/)) {
+        if (config.timemarks.length > 1 &amp;&amp; !pattern.match(/%(s|0*i)/)) {
           var ext = path.extname(pattern);
           pattern = path.join(path.dirname(pattern), path.basename(pattern, ext) + '_%i' + ext);
         }
@@ -286,7 +319,7 @@ module.exports = function recipes(proto) {
               height = height * Number(percentSize[1]) / 100;
             }
 
-            next(null, pattern, width, height);
+            next(null, pattern, Math.round(width / 2) * 2, Math.round(height / 2) * 2);
           });
         } else {
           next(null, pattern, -1, -1);
@@ -314,6 +347,7 @@ module.exports = function recipes(proto) {
             });
         });
 
+        self.emit('filenames', filenames);
         next(null, filenames);
       },
 
@@ -369,18 +403,25 @@ module.exports = function recipes(proto) {
 
         // Remove size filters
         self._currentOutput.sizeFilters.clear();
-
-        // Add stream labels
       }
 
+      var first = 0;
       for (var i = 0; i &lt; count; i++) {
         var stream = 'screen' + i;
         split.outputs.push(stream);
 
+        if (i === 0) {
+          first = config.timemarks[i];
+          self.seekInput(first);
+        }
+
         self.output(path.join(config.folder, filenames[i]))
-          .seek(config.timemarks[i])
           .frames(1)
           .map(stream);
+
+        if (i > 0) {
+          self.seek(config.timemarks[i] - first);
+        }
       }
 
       self.complexFilter(filters);
@@ -405,9 +446,9 @@ module.exports = function recipes(proto) {
   proto.mergeToFile =
   proto.concatenate =
   proto.concat = function(target, options) {
-    // Find out which streams are present in the first file input
+    // Find out which streams are present in the first non-stream input
     var fileInput = this._inputs.filter(function(input) {
-      return input.isFile;
+      return !input.isStream;
     })[0];
 
     var self = this;
@@ -439,7 +480,8 @@ module.exports = function recipes(proto) {
 
     return this;
   };
-};</code></pre>
+};
+</code></pre>
         </article>
     </section>
 
@@ -455,7 +497,7 @@ module.exports = function recipes(proto) {
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha5</a> on Tue Jul 08 2014 21:22:19 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun May 01 2016 12:10:37 GMT+0200 (CEST)
 </footer>
 
 <script> prettyPrint(); </script>
