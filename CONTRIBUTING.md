@@ -25,7 +25,15 @@ ffmpeg('some/input.mp4')
 
 ### Ffmpeg usage
 
-If your command ends up with an ffmpeg error (eg. 'ffmpeg exited with code X : ...'), be sure to try the command manually from command line.
+If your command ends up with an ffmpeg error (eg. 'ffmpeg exited with code X : ...'), be sure to try the command manually from command line.  You can get the ffmpeg command line that is executed for a specific Fluent-ffmpeg command by using the `start` event:
+
+```js
+ffmpeg('some/input.mp4')
+  .on('start', function(cmdline) {
+    console.log('Command line: ' + cmdline);
+  })
+  ...
+```
 
 If it does not work, you most likely have a ffmpeg-related problem that does not fit as a fluent-ffmpeg issue; in that case head to the [ffmpeg documentation](ffmpeg.org/documentation.html) to find out what you did wrong.
 
