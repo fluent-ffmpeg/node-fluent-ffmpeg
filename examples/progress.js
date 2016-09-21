@@ -12,7 +12,7 @@ var proc = ffmpeg(infs)
   .preset('flashvideo')
   // setup event handlers
   .on('progress', function(info) {
-    console.log('progress ' + info.percent + '%');
+    console.log('progress ' + info.percent + '%. Duplicated Frames: '+info.dup+". Dropped Frames: "+info.drop);
   })
   .on('end', function() {
     console.log('done processing input stream');
