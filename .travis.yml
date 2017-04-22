@@ -4,6 +4,8 @@ matrix:
       env: NODE_VERSION=4
     - os: linux
       env: NODE_VERSION=5
+    - os: linux
+      env: NODE_VERSION=6
 script:
   - tools/test-travis.sh
 sudo: false
