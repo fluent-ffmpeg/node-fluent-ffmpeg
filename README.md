@@ -172,6 +172,14 @@ ffmpeg('/path/to/file.avi').loop(134.5);
 ffmpeg('/path/to/file.avi').loop('2:14.500');
 ```
 
+#### inputStreamLength(length): input stream length
+
+**Alias**: `withInputStreamLength()`.
+
+```js
+ffmpeg(fs.createReadStream('/path/to/file.avi')).inputStreamLength(fs.statSync('/path/to/file.avi').size);
+```
+
 #### inputOptions(option...): add custom input options
 
 **Aliases**: `inputOption()`, `addInputOption()`, `addInputOptions()`, `withInputOption()`, `withInputOptions()`.
@@ -821,6 +829,9 @@ The `progress` event is emitted every time ffmpeg reports progress information. 
 * `targetSize`: current size of the target file in kilobytes
 * `timemark`: the timestamp of the current frame in seconds
 * `percent`: an estimation of the progress percentage
+* `inputBytesRead`: number of bytes read from the input stream (only available for input streams)
+* `inputBytesLength`: total number of bytes in the input stream (only available for input streams, if `.inputStreamLength` was called)
+* `inputReadPercent`: input stream read progress percentage (only available for input streams and only present if `inputBytesLength` is also present)
 
 Note that `percent` can be (very) inaccurate, as the only progress information fluent-ffmpeg gets from ffmpeg is the total number of frames written (and the corresponding duration).  To estimate percentage, fluent-ffmpeg has to guess what the total output duration will be, and uses the first input added to the command to do so.  In particular:
 * percentage is not available when using an input stream
