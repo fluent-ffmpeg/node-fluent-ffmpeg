@@ -445,6 +445,73 @@ describe('Processor', function() {
           .saveToFile(testFile);
     });
 
+    it('should report input stream read bytes progress through \'progress\' event', function(done) {
+      this.timeout(60000)
+
+      const testFile = path.join(__dirname, 'assets', 'testOnProgress.avi')
+
+      this.files.push(testFile);
+      
+      const inStream = fs.createReadStream(this.testfilebig)
+      
+      // Listen for read length
+      let readLength = 0
+      inStream.on('data', data => readLength += data.length)
+
+      this.getCommand({ source: inStream, logger: testhelper.logger })
+          .on('progress', function(progress) {
+            assert.ok(progress)
+            progress.inputBytesRead.should.equal(readLength)
+          })
+          .usingPreset('divx')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr)
+            assert.ok(!err)
+          })
+          .on('end', function() {
+            done()
+          })
+          .saveToFile(testFile)
+    })
+
+    it('should report input stream read bytes and length progress through \'progress\' event', function(done) {
+      this.timeout(60000)
+
+      const testFile = path.join(__dirname, 'assets', 'testOnProgress.avi')
+
+      this.files.push(testFile);
+      
+      const inStream = fs.createReadStream(this.testfilebig)
+      const inLength = fs.statSync(this.testfilebig).size
+      
+      // Listen for read length
+      let readLength = 0
+      inStream.on('data', data => readLength += data.length)
+
+      const command = this.getCommand({ source: inStream, logger: testhelper.logger })
+          // Attach and check length
+          .inputStreamLength(inLength)
+      
+      	 .on('progress', function(progress) {
+            assert.ok(progress)
+            progress.inputBytesRead.should.be.exactly(readLength)
+            progress.inputBytesLength.should.be.exactly(inLength)
+            progress.inputReadPercent.should.be.exactly((readLength / inLength) * 100)
+          })
+          .usingPreset('divx')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr)
+            assert.ok(!err)
+          })
+          .on('end', function() {
+            done()
+          })
+          .saveToFile(testFile)
+      
+      // Check length is attached
+      command._inputs.filter(i => { return i.source === inStream }).forEach(i => i._streamLength.should.be.exactly(inLength))
+    })
+
     it('should report start of ffmpeg process through \'start\' event', function(done) {
       this.timeout(60000);
 
