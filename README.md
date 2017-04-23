@@ -848,6 +848,8 @@ ffmpeg('/path/to/file.avi')
 
 The `error` event is emitted when an error occurs when running ffmpeg or when preparing its execution.  It is emitted with an error object as an argument.  If the error happened during ffmpeg execution, listeners will also receive two additional arguments containing ffmpegs stdout and stderr.
 
+If streams are used for input or output, any errors emitted from these streams will be passed through to this event, attached to the `error` as `inputStreamError` and `outputStreamError` for input and output streams respectively.
+
 **Warning**: you should _always_ set a handler for the `error` event, as node's default behaviour when an `error` event without any listeners is emitted is to output the error to the console and _terminate the program_.
 
 ```js

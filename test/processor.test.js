@@ -770,6 +770,48 @@ describe('Processor', function() {
         })
         .saveToFile(testFile);
     });
+    
+    it('should pass input stream errors through to error handler', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertFromStream.avi')
+
+		const readError = new Error('Read Error')
+      const instream = new (require('stream').Readable)({
+        read() {
+  		    process.nextTick(() => this.emit('error', readError))
+		  }
+      })
+      
+      const command = this.getCommand({ source: instream, logger: testhelper.logger })
+
+      let startCalled = false
+      const self = this
+      
+      command
+          .usingPreset('divx')
+          .on('start', function() {
+          	startCalled = true
+            command.ffmpegProc.on('exit', function() {
+            	fs.exists(testFile, (exists) => {
+            		exists.should.be.false()
+						done()
+            	})
+            })
+          })
+          .on('error', function(err, stdout, stderr) {
+            self.saveOutput(stdout, stderr)
+            startCalled.should.be.true()
+            assert.ok(err)
+            err.message.indexOf('Input stream error: ').should.equal(0)
+			   assert.strictEqual(err.inputStreamError, readError)
+          })
+          .on('end', function(stdout, stderr) {
+            testhelper.logOutput(stdout, stderr)
+            console.log('end was called, expected a error')
+            assert.ok(false)
+            done()
+          })
+          .saveToFile(testFile)
+    })
   });
 
   describe('mergeToFile', function() {
@@ -911,6 +953,44 @@ describe('Processor', function() {
         new FfmpegCommand().writeToStream({end: true});
       }).should.throw(/PassThrough stream is not supported on node v0.8/);
     });
+    
+    it('should pass output stream errors through to error handler', function(done) {
+		
+		const writeError = new Error('Write Error')
+      const outstream = new (require('stream').Writable)({
+        write(chunk, encoding, callback) {
+          callback(writeError)
+		  }
+      })
+      
+      const command = this.getCommand({ source: this.testfile, logger: testhelper.logger })
+
+      let startCalled = false
+      const self = this
+      
+      command
+          .usingPreset('divx')
+          .on('start', function() {
+          	startCalled = true
+            command.ffmpegProc.on('exit', function() {
+					done()
+            })
+          })
+          .on('error', function(err, stdout, stderr) {
+            self.saveOutput(stdout, stderr)
+            startCalled.should.be.true()
+            assert.ok(err)
+            err.message.indexOf('Output stream error: ').should.equal(0)
+			   assert.strictEqual(err.outputStreamError, writeError)
+          })
+          .on('end', function(stdout, stderr) {
+            console.log('end was called, expected a error')
+            testhelper.logOutput(stdout, stderr)
+            assert.ok(false)
+            done()
+          })
+          .writeToStream(outstream)
+    })
   });
 
   describe('Outputs', function() {
