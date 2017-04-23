@@ -128,7 +128,7 @@ describe('Capabilities', function() {
       });
     });
 
-    it('should enable checking command arguments for available codecs and formats', function(done) {
+    it('should enable checking command arguments for available codecs, formats and encoders', function(done) {
       async.waterfall([
         // Check with everything available
         function(cb) {
@@ -195,6 +195,38 @@ describe('Capabilities', function() {
             ._checkCapabilities(function(err) {
               assert.ok(!!err);
               err.message.should.match(/Video codec invalid-video-codec is not available/);
+
+              cb();
+            });
+        },
+
+        // Invalid audio encoder
+        function(cb) {
+          new Ffmpeg('/path/to/file.avi')
+            .fromFormat('avi')
+            // Valid codec, but not a valid encoder for audio
+            .audioCodec('png')
+            .videoCodec('png')
+            .toFormat('mp4')
+            ._checkCapabilities(function(err) {
+              assert.ok(!!err);
+              err.message.should.match(/Audio codec png is not available/);
+
+              cb();
+            });
+        },
+
+        // Invalid video encoder
+        function(cb) {
+          new Ffmpeg('/path/to/file.avi')
+            .fromFormat('avi')
+            .audioCodec('pcm_u16le')
+            // Valid codec, but not a valid encoder for video
+            .videoCodec('pcm_u16le')
+            .toFormat('mp4')
+            ._checkCapabilities(function(err) {
+              assert.ok(!!err);
+              err.message.should.match(/Video codec pcm_u16le is not available/);
 
               cb();
             });
