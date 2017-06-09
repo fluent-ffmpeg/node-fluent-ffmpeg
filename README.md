@@ -1101,7 +1101,7 @@ setTimeout(function() {
 You can read metadata from any valid ffmpeg input file with the modules `ffprobe` method.
 
 ```js
-ffmpeg.ffprobe('/path/to/file.avi', function(err, metadata) {
+ffmpeg.ffprobe(['/path/to/file.avi'], function(err, metadata) {
     console.dir(metadata);
 });
 ```
