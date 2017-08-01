@@ -176,7 +176,7 @@ ffmpeg('/path/to/file.avi').loop('2:14.500');
 
 **Aliases**: `inputOption()`, `addInputOption()`, `addInputOptions()`, `withInputOption()`, `withInputOptions()`.
 
-This method allows passing any input-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionnaly with a space-separated parameter:
+This method allows passing any input-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionally with a space-separated parameter:
 
 ```js
 /* Single option */
@@ -629,7 +629,7 @@ ffmpeg('/path/to/file.avi').flvmeta().format('flv');
 
 **Aliases**: `outputOption()`, `addOutputOption()`, `addOutputOptions()`, `withOutputOption()`, `withOutputOptions()`, `addOption()`, `addOptions()`.
 
-This method allows passing any output-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionnaly with a space-separated parameter:
+This method allows passing any output-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionally with a space-separated parameter:
 
 ```js
 /* Single option */
