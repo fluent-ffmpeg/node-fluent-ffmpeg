@@ -1,3 +1,7 @@
+before_install:
+  - sudo add-apt-repository ppa:sauce/ppa -y
+  - sudo apt-get update -q
+  - sudo apt-get install flvtool2 -y
 matrix:
   include:
     - os: linux
@@ -8,11 +12,9 @@ matrix:
       env: NODE_VERSION=6
 script:
   - tools/test-travis.sh
-sudo: false
 addons:
   apt:
     packages:
     - wget
     - tar
     - bzip2
-    - flvtool2
