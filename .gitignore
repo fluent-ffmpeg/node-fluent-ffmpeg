@@ -4,3 +4,5 @@ lib-cov
 *.swp
 .idea
 *.iml
+npm-debug.log
+*.avi
