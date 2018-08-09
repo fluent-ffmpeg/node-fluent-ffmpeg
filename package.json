@@ -19,9 +19,10 @@
   },
   "repository": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
   "devDependencies": {
+    "cross-env": "^5.2.0",
+    "jsdoc": "latest",
     "mocha": "latest",
-    "should": "latest",
-    "jsdoc": "latest"
+    "should": "latest"
   },
   "dependencies": {
     "async": ">=0.2.9",
@@ -32,6 +33,7 @@
   },
   "main": "index",
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "test:npmscript": "cross-env NODE_ENV=test mocha --require should --reporter spec"
   }
 }

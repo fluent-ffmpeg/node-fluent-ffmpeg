@@ -7,7 +7,7 @@ set -e
 
 echo travis_fold:start:Dependencies
 
-wget http://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
+wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.xz
 tar xf ffmpeg-git-64bit-static.tar.xz
 
 mkdir -p $HOME/bin
