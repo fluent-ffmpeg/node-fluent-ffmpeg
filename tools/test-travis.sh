@@ -11,7 +11,7 @@ wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-64bit-static.tar.x
 tar xf ffmpeg-release-64bit-static.tar.xz
 
 mkdir -p $HOME/bin
-cp ffmpeg-*-static/{ffmpeg,ffprobe,ffserver} $HOME/bin
+cp ffmpeg-*-static/{ffmpeg,ffprobe} $HOME/bin
 cp ffmpeg-*-static/{ffmpeg,ffprobe} $(pwd)
 
 export PATH=$(pwd)/bin:$PATH

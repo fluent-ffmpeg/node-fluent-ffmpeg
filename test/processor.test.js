@@ -770,7 +770,7 @@ describe('Processor', function() {
         })
         .saveToFile(testFile);
     });
-    
+
     it('should pass input stream errors through to error handler', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStream.avi')
 
@@ -780,12 +780,12 @@ describe('Processor', function() {
   		    process.nextTick(() => this.emit('error', readError))
 		  }
       })
-      
+
       const command = this.getCommand({ source: instream, logger: testhelper.logger })
 
       let startCalled = false
       const self = this
-      
+
       command
           .usingPreset('divx')
           .on('start', function() {
@@ -953,21 +953,21 @@ describe('Processor', function() {
         new FfmpegCommand().writeToStream({end: true});
       }).should.throw(/PassThrough stream is not supported on node v0.8/);
     });
-    
+
     it('should pass output stream errors through to error handler', function(done) {
-		
+
 		const writeError = new Error('Write Error')
       const outstream = new (require('stream').Writable)({
         write(chunk, encoding, callback) {
           callback(writeError)
 		  }
       })
-      
+
       const command = this.getCommand({ source: this.testfile, logger: testhelper.logger })
 
       let startCalled = false
       const self = this
-      
+
       command
           .usingPreset('divx')
           .on('start', function() {
@@ -1073,123 +1073,6 @@ describe('Processor', function() {
           });
         })
         .saveToFile(testFile);
-    });
-  });
-
-  describe('Remote I/O', function() {
-    this.timeout(60000);
-
-    var ffserver;
-
-    before(function(done) {
-      testhelper.logger.debug('spawning ffserver');
-      ffserver = spawn(
-        'ffserver',
-        ['-d','-f', path.join(__dirname, 'assets', 'ffserver.conf')],
-        { cwd: path.join(__dirname, 'assets') }
-      );
-
-      // Wait for ffserver to be ready
-      var isready = false;
-      function ready() {
-        if (!isready) {
-          testhelper.logger.debug('ffserver is ready');
-          isready = true;
-          done();
-        }
-      }
-
-      ffserver.stdout.on('data', function(d) {
-        if (d.toString().match(/server started/i)) {
-          ready();
-        }
-      });
-
-      ffserver.stderr.on('data', function(d) {
-        if (d.toString().match(/server started/i)) {
-          ready();
-        }
-      });
-
-    });
-
-    beforeEach(function(done) {
-      setTimeout(done, 5000);
-    });
-
-    after(function(done) {
-      ffserver.kill();
-      setTimeout(done, 1000);
-    });
-
-    it('should take input from a RTSP stream', function(done) {
-      var testFile = path.join(__dirname, 'assets', 'testRTSPInput.avi');
-      this.files.push(testFile);
-
-      this.getCommand({ source: encodeURI(testRTSP), logger: testhelper.logger, timeout: 0 })
-        .takeFrames(10)
-        .usingPreset('divx')
-        .withSize('320x240')
-        .on('error', function(err, stdout, stderr) {
-          testhelper.logError(err, stdout, stderr);
-          assert.ok(!err);
-        })
-        .on('end', function() {
-          fs.exists(testFile, function(exist) {
-            exist.should.equal(true);
-            // check filesize to make sure conversion actually worked
-            fs.stat(testFile, function(err, stats) {
-              assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
-
-              done();
-            });
-          });
-        })
-        .saveToFile(testFile);
-    });
-
-    it('should take input from an URL', function(done) {
-      var testFile = path.join(__dirname, 'assets', 'testURLInput.avi');
-      this.files.push(testFile);
-
-      this.getCommand({ source: testHTTP, logger: testhelper.logger, timeout: 0 })
-        .takeFrames(5)
-        .usingPreset('divx')
-        .withSize('320x240')
-        .on('error', function(err, stdout, stderr) {
-          testhelper.logError(err, stdout, stderr);
-          assert.ok(!err);
-        })
-        .on('end', function() {
-          fs.exists(testFile, function(exist) {
-            exist.should.equal(true);
-            // check filesize to make sure conversion actually worked
-            fs.stat(testFile, function(err, stats) {
-              assert.ok(!err && stats);
-              stats.size.should.above(0);
-              stats.isFile().should.equal(true);
-
-              done();
-            });
-          });
-        })
-        .saveToFile(testFile);
-    });
-
-    it('should output to a RTP stream', function(done) {
-      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
-        .videoCodec('libx264')
-        .audioCodec('copy')
-        .on('error', function(err, stdout, stderr) {
-          testhelper.logError(err, stdout, stderr);
-          assert.ok(!err);
-        })
-        .on('end', function() {
-          done();
-        })
-        .save(testRTPOut);
     });
   });
 
