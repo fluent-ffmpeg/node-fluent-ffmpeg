@@ -1277,6 +1277,11 @@ Ffmpeg.getAvailableFilters(function(err, filters) {
   console.dir(filters);
 });
 
+Ffmpeg.getAvailableDevices(function(err, devices) {
+  console.log("Available devices:");
+  console.dir(devices);
+});
+
 // Those methods can also be called on commands
 new Ffmpeg({ source: '/path/to/file.avi' })
   .getAvailableCodecs(...);
