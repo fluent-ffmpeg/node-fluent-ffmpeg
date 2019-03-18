@@ -117,6 +117,30 @@ ffmpeg()
   .mergeAdd('/path/to/input2.avi');
 ```
 
+### HTTP/S Headers
+
+If you need to configure the process with Authorization headers or some other custom header for remote storage locations such as Google Cloud Storage or AWS S3, you can pass those to the `headers()` method. This method accepts a string or array of strings representing HTTP/S headers. You can call this as many times as you'd like, it will just concatenate the entries. Headers are currently applied to all inputs within a command invocation. This method translates to the `--headers` flag on `ffmpeg` and `ffprobe`.
+
+Example usage with `ffmpeg` to save a file from Google Cloud Storage.
+
+```js
+ffmpeg()
+  .input('https://www.googleapis.com/storage/v1/b/my-private-bucket/o/my-file.mp4?alt=media')
+  .headers('Authorization: Bearer xyz123...')
+  .headers('X-My-Custom-Header: 1234')
+  .output('path/to/saved/file.mp4');
+```
+
+This feature is also available when probing a file with `ffprobe`.
+
+```js
+ffmpeg()
+  .input('https://www.googleapis.com/storage/v1/b/my-private-bucket/o/my-file.mp4?alt=media')
+  .headers(['Authorization: Bearer xyz123...', 'X-My-Custom-Header: 1234'])
+  .ffprobe((err, res) => {
+    ...
+  });
+```
 
 ### Input options
 

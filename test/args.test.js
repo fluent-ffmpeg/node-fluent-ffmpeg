@@ -236,6 +236,34 @@ describe('Command', function() {
     });
   });
 
+  describe('headers', function() {
+    it ('should apply a single string as headers argument', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .headers('Authorization: Bearer xyz123')
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+          var indexOfInput = args.indexOf('-i');
+          args.indexOf('-headers').should.above(-1).and.below(indexOfInput);
+          args.indexOf('Authorization: Bearer xyz123').should.above(-1).and.below(indexOfInput);
+          done();
+      });
+    });
+
+    it ('should apply an array of strings as headers argument', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .headers(['Authorization: Bearer xyz123', 'X-My-Custom-Heasder: 1234'])
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+          var indexOfInput = args.indexOf('-i');
+          args.indexOf('-headers').should.above(-1).and.below(indexOfInput);
+          args.indexOf('Authorization: Bearer xyz123\r\nX-My-Custom-Heasder: 1234').should.above(-1).and.below(indexOfInput);
+          done();
+      });
+    });
+  });
+
   describe('withInputFPS', function() {
     it('should apply the rate argument', function(done) {
       new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
