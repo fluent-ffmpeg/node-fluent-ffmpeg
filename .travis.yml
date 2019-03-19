@@ -5,16 +5,16 @@ before_install:
 matrix:
   include:
     - os: linux
-      env: NODE_VERSION=4
+      env: NODE_VERSION=8
     - os: linux
-      env: NODE_VERSION=5
+      env: NODE_VERSION=10
     - os: linux
-      env: NODE_VERSION=6
+      env: NODE_VERSION=11
 script:
   - tools/test-travis.sh
 addons:
   apt:
     packages:
-    - wget
-    - tar
-    - bzip2
+      - wget
+      - tar
+      - bzip2
