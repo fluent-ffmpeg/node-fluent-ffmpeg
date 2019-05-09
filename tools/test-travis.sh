@@ -7,12 +7,12 @@ set -e
 
 echo travis_fold:start:Dependencies
 
-wget http://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz
-tar xf ffmpeg-git-64bit-static.tar.xz
+wget https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+tar xf ffmpeg-release-amd64-static.tar.xz
 
 mkdir -p $HOME/bin
-cp ffmpeg-git-*-static/{ffmpeg,ffprobe,ffserver} $HOME/bin
-cp ffmpeg-git-*-static/{ffmpeg,ffprobe} $(pwd)
+cp ffmpeg-*-static/{ffmpeg,ffprobe} $HOME/bin
+cp ffmpeg-*-static/{ffmpeg,ffprobe} $(pwd)
 
 export PATH=$(pwd)/bin:$PATH
 export ALT_FFMPEG_PATH=$(pwd)/ffmpeg

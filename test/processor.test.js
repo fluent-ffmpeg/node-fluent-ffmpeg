@@ -770,7 +770,7 @@ describe('Processor', function() {
         })
         .saveToFile(testFile);
     });
-    
+
     it('should pass input stream errors through to error handler', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testConvertFromStream.avi')
 
@@ -780,12 +780,12 @@ describe('Processor', function() {
   		    process.nextTick(() => this.emit('error', readError))
 		  }
       })
-      
+
       const command = this.getCommand({ source: instream, logger: testhelper.logger })
 
       let startCalled = false
       const self = this
-      
+
       command
           .usingPreset('divx')
           .on('start', function() {
@@ -953,21 +953,21 @@ describe('Processor', function() {
         new FfmpegCommand().writeToStream({end: true});
       }).should.throw(/PassThrough stream is not supported on node v0.8/);
     });
-    
+
     it('should pass output stream errors through to error handler', function(done) {
-		
+
 		const writeError = new Error('Write Error')
       const outstream = new (require('stream').Writable)({
         write(chunk, encoding, callback) {
           callback(writeError)
 		  }
       })
-      
+
       const command = this.getCommand({ source: this.testfile, logger: testhelper.logger })
 
       let startCalled = false
       const self = this
-      
+
       command
           .usingPreset('divx')
           .on('start', function() {
@@ -1076,7 +1076,7 @@ describe('Processor', function() {
     });
   });
 
-  describe('Remote I/O', function() {
+  describe.skip('Remote I/O', function() {
     this.timeout(60000);
 
     var ffserver;
