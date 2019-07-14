@@ -1250,6 +1250,10 @@ It will contain information about the container (as a `format` key) and an array
 }
 ```
 
+By setting `json: true` on the ffprobe config object (`.ffprobe({json: true})`),
+you can force the client to return the metadata in [ffprobe json `print_format`](https://ffmpeg.org/ffprobe.html#json) format.
+Note: depending on your ffmpeg version it is possible that the json `print_format` isn't working (ffprobe added json output in [version 0.9](https://github.com/FFmpeg/FFmpeg/blob/c8419035f48f0a1b7fdbf934314ce27187fcd0d9/Changelog#L695)).
+
 ### Querying ffmpeg capabilities
 
 fluent-ffmpeg enables you to query your installed ffmpeg version for supported formats, codecs, encoders and filters.
