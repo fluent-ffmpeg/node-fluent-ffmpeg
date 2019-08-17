@@ -9,7 +9,7 @@ matrix:
     - os: linux
       env: NODE_VERSION=10
     - os: linux
-      env: NODE_VERSION=11
+      env: NODE_VERSION=12
 script:
   - tools/test-travis.sh
 addons:
