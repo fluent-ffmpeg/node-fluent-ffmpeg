@@ -88,6 +88,7 @@ The following options are available:
 * `niceness` or `priority`: ffmpeg niceness value, between -20 and 20; ignored on Windows platforms (defaults to 0)
 * `logger`: logger object with `debug()`, `info()`, `warn()` and `error()` methods (defaults to no logging)
 * `stdoutLines`: maximum number of lines from ffmpeg stdout/stderr to keep in memory (defaults to 100, use 0 for unlimited storage)
+* `readMetadata`: a boolean indicates whether to read metadata of inputs using ffprobe; video format and duration will not be available if this option is set to false (defaults to true)
 
 
 ### Specifying inputs
