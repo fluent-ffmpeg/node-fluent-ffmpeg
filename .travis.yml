@@ -1,17 +1,20 @@
+
+
 before_install:
-  - sudo add-apt-repository ppa:sauce/ppa -y
-  - sudo apt-get update -q
-  - sudo apt-get install flvtool2 -y
-matrix:
+  - gem install flvtool2
+
+jobs:
   include:
     - os: linux
       env: NODE_VERSION=8
     - os: linux
       env: NODE_VERSION=10
     - os: linux
-      env: NODE_VERSION=11
+      env: NODE_VERSION=12
+
 script:
   - tools/test-travis.sh
+  
 addons:
   apt:
     packages:
