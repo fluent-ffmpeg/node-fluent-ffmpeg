@@ -280,6 +280,18 @@ describe('Processor', function() {
           .saveToFile(testFile);
     });
 
+    it('should not keep node process running on completion', function(done) {
+      var script = `
+        var ffmpeg = require('.');
+        ffmpeg('${this.testfilebig}', { timeout: 60 })
+          .addOption('-t', 1)
+          .addOption('-f', 'null')
+          .saveToFile('/dev/null');
+      `;
+
+      exec(`node -e "${script}"`, { timeout: 1000 }, done);
+    });
+
     it('should kill the process with .kill', function(done) {
       var testFile = path.join(__dirname, 'assets', 'testProcessKill.avi');
       this.files.push(testFile);
