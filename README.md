@@ -37,6 +37,8 @@ fluent-ffmpeg requires ffmpeg >= 0.9 to work.  It may work with previous version
 
 If the `FFMPEG_PATH` environment variable is set, fluent-ffmpeg will use it as the full path to the `ffmpeg` executable.  Otherwise, it will attempt to call `ffmpeg` directly (so it should be in your `PATH`).  You must also have ffprobe installed (it comes with ffmpeg in most distributions).  Similarly, fluent-ffmpeg will use the `FFPROBE_PATH` environment variable if it is set, otherwise it will attempt to call it in the `PATH`.
 
+You can use the [`ffmpeg-static` npm package](https://npmjs.com/package/ffmpeg-static) as a standalone, portable way to get an `ffmpeg` executable independent of the operating system.
+
 Most features should work when using avconv and avprobe instead of ffmpeg and ffprobe, but they are not officially supported at the moment.
 
 **Windows users**: most probably ffmpeg and ffprobe will _not_ be in your `%PATH`, so you _must_ set `%FFMPEG_PATH` and `%FFPROBE_PATH`.
