@@ -365,6 +365,38 @@ describe('Processor', function() {
     });
   });
 
+
+  it('should gracefully quit the process with .quit', function(done) {
+    var testFile = path.join(__dirname, 'assets', 'testProcessQuit.avi');
+    this.files.push(testFile);
+
+    var ffmpegJob = this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+        .usingPreset('divx');
+
+    var startCalled = false;
+    var errorCalled = false;
+
+    ffmpegJob
+        .on('start', function() {
+          startCalled = true;
+          setTimeout(function() { ffmpegJob.quit(); }, 500);
+          ffmpegJob.ffmpegProc.on('exit', function() {
+            setTimeout(function() {
+              errorCalled.should.equal(false);
+              done();
+            }, 1000);
+          });
+        })
+        .on('error', function(err) {
+          errorCalled = true;
+        })
+        .on('end', function() {
+          console.log('end was called');
+          done();
+        })
+        .saveToFile(testFile);
+  });
+
   describe('Events', function() {
     it('should report codec data through \'codecData\' event', function(done) {
       this.timeout(60000);
