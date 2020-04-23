@@ -375,6 +375,7 @@ describe('Processor', function() {
 
     var startCalled = false;
     var errorCalled = false;
+    var endCalled = false;
 
     ffmpegJob
         .on('start', function() {
@@ -383,6 +384,7 @@ describe('Processor', function() {
           ffmpegJob.ffmpegProc.on('exit', function() {
             setTimeout(function() {
               errorCalled.should.equal(false);
+              endCalled.should.equal(true);
               done();
             }, 1000);
           });
@@ -391,8 +393,7 @@ describe('Processor', function() {
           errorCalled = true;
         })
         .on('end', function() {
-          console.log('end was called');
-          done();
+          endCalled = true;
         })
         .saveToFile(testFile);
   });
