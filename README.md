@@ -1402,6 +1402,21 @@ command.clone()
 command.save('/path/to/output-original-size.mp4');
 ```
 
+### Child Process Options
+
+You can pass child-process options to the spawn method.
+See [child_process.spawn](https://nodejs.org/api/child_process.html#child_process_child_process_spawn_command_args_options).
+
+```js
+// Create a detached process command to convert source.avi to MP4
+var command = ffmpeg('/path/to/source.avi')
+  .withProcessOptions({
+    detached: true
+  })
+  .format('mp4')
+  .save('/path/to/output.mp4');
+```
+
 
 ## Contributing
 
