@@ -41,35 +41,58 @@
 
 
     <section>
-        <article><h1>Fluent ffmpeg-API for node.js <a href="http://travis-ci.org/fluent-ffmpeg/node-fluent-ffmpeg"><img src="https://secure.travis-ci.org/fluent-ffmpeg/node-fluent-ffmpeg.svg?branch=master" alt="Build Status"></a></h1><p>This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have <a href="http://www.ffmpeg.org">ffmpeg</a> installed on your system (including all necessary encoding libraries like libmp3lame or libx264).</p>
+        <article><h1>Fluent ffmpeg-API for node.js <a href="http://travis-ci.org/fluent-ffmpeg/node-fluent-ffmpeg"><img src="https://secure.travis-ci.org/fluent-ffmpeg/node-fluent-ffmpeg.svg?branch=master" alt="Build Status"></a></h1>
+<p><a href="https://app.fossa.io/projects/git%2Bgithub.com%2Ffluent-ffmpeg%2Fnode-fluent-ffmpeg?ref=badge_shield"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffluent-ffmpeg%2Fnode-fluent-ffmpeg.svg?type=shield" alt="FOSSA Status"></a></p>
+<blockquote>
+<p><strong>Fluent-ffmpeg is looking for new maintainers</strong>
+More details <a href="https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/wiki/Looking-for-a-new-maintainer">on the wiki</a></p>
+</blockquote>
+<p>This library abstracts the complex command-line usage of ffmpeg into a fluent, easy to use node.js module. In order to be able to use this module, make sure you have <a href="http://www.ffmpeg.org">ffmpeg</a> installed on your system (including all necessary encoding libraries like libmp3lame or libx264).</p>
 <blockquote>
 <p>This is the documentation for fluent-ffmpeg 2.x.
 You can still access the code and documentation for fluent-ffmpeg 1.7 <a href="https://github.com/fluent-ffmpeg/node-fluent-ffmpeg/tree/1.x">here</a>.</p>
 </blockquote>
-<a name="installation"></a><h2>Installation</h2><p>Via npm:</p>
-<pre class="prettyprint source lang-sh"><code>$ npm install fluent-ffmpeg</code></pre><p>Or as a submodule:</p>
-<pre class="prettyprint source lang-sh"><code>$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git vendor/fluent-ffmpeg</code></pre><a name="usage"></a><h2>Usage</h2><p>You will find a lot of usage examples (including a real-time streaming example using <a href="http://www.flowplayer.org">flowplayer</a> and <a href="https://github.com/visionmedia/express">express</a>!) in the <code>examples</code> folder.</p>
-<a name="prerequisites"></a><h3>Prerequisites</h3><h4>ffmpeg and ffprobe</h4><p>fluent-ffmpeg requires ffmpeg &gt;= 0.9 to work.  It may work with previous versions but several features won't be available (and the library is not tested with lower versions anylonger).</p>
+<a name="installation"></a><h2>Installation</h2>
+<p>Via npm:</p>
+<pre class="prettyprint source lang-sh"><code>$ npm install fluent-ffmpeg
+</code></pre>
+<p>Or as a submodule:</p>
+<pre class="prettyprint source lang-sh"><code>$ git submodule add git://github.com/schaermu/node-fluent-ffmpeg.git vendor/fluent-ffmpeg
+</code></pre>
+<a name="usage"></a><h2>Usage</h2>
+<p>You will find a lot of usage examples (including a real-time streaming example using <a href="http://www.flowplayer.org">flowplayer</a> and <a href="https://github.com/visionmedia/express">express</a>!) in the <code>examples</code> folder.</p>
+<a name="prerequisites"></a><h3>Prerequisites</h3>
+<h4>ffmpeg and ffprobe</h4>
+<p>fluent-ffmpeg requires ffmpeg &gt;= 0.9 to work.  It may work with previous versions but several features won't be available (and the library is not tested with lower versions anylonger).</p>
 <p>If the <code>FFMPEG_PATH</code> environment variable is set, fluent-ffmpeg will use it as the full path to the <code>ffmpeg</code> executable.  Otherwise, it will attempt to call <code>ffmpeg</code> directly (so it should be in your <code>PATH</code>).  You must also have ffprobe installed (it comes with ffmpeg in most distributions).  Similarly, fluent-ffmpeg will use the <code>FFPROBE_PATH</code> environment variable if it is set, otherwise it will attempt to call it in the <code>PATH</code>.</p>
 <p>Most features should work when using avconv and avprobe instead of ffmpeg and ffprobe, but they are not officially supported at the moment.</p>
 <p><strong>Windows users</strong>: most probably ffmpeg and ffprobe will <em>not</em> be in your <code>%PATH</code>, so you <em>must</em> set <code>%FFMPEG_PATH</code> and <code>%FFPROBE_PATH</code>.</p>
-<p><strong>Debian/Ubuntu users</strong>: the official repositories have the ffmpeg/ffprobe executable in the <code>libav-tools</code> package, and they are actually rebranded avconv/avprobe executables (avconv is a fork of ffmpeg).  They should be mostly compatible, but should you encounter any issue, you may want to use the real ffmpeg instead.  You can either compile it from source or find a pre-built .deb package at https://ffmpeg.org/download.html (For Ubuntu, the <code>ppa:jon-severinsson/ffmpeg</code> PPA provides recent builds).</p>
-<h4>flvtool2 or flvmeta</h4><p>If you intend to encode FLV videos, you must have either flvtool2 or flvmeta installed and in your <code>PATH</code> or fluent-ffmpeg won't be able to produce streamable output files.  If you set either the <code>FLVTOOL2_PATH</code> or <code>FLVMETA_PATH</code>, fluent-ffmpeg will try to use it instead of searching in the <code>PATH</code>.</p>
-<h4>Setting binary paths manually</h4><p>Alternatively, you may set the ffmpeg, ffprobe and flvtool2/flvmeta binary paths manually by using the following API commands:</p>
+<p><strong>Debian/Ubuntu users</strong>: the official repositories have the ffmpeg/ffprobe executable in the <code>libav-tools</code> package, and they are actually rebranded avconv/avprobe executables (avconv is a fork of ffmpeg).  They should be mostly compatible, but should you encounter any issue, you may want to use the real ffmpeg instead.  You can either compile it from source or find a pre-built .deb package at https://ffmpeg.org/download.html (For Ubuntu, the <code>ppa:mc3man/trusty-media</code> PPA provides recent builds).</p>
+<h4>flvtool2 or flvmeta</h4>
+<p>If you intend to encode FLV videos, you must have either flvtool2 or flvmeta installed and in your <code>PATH</code> or fluent-ffmpeg won't be able to produce streamable output files.  If you set either the <code>FLVTOOL2_PATH</code> or <code>FLVMETA_PATH</code>, fluent-ffmpeg will try to use it instead of searching in the <code>PATH</code>.</p>
+<h4>Setting binary paths manually</h4>
+<p>Alternatively, you may set the ffmpeg, ffprobe and flvtool2/flvmeta binary paths manually by using the following API commands:</p>
 <ul>
 <li><strong>Ffmpeg.setFfmpegPath(path)</strong> Argument <code>path</code> is a string with the full path to the ffmpeg binary.</li>
 <li><strong>Ffmpeg.setFfprobePath(path)</strong> Argument <code>path</code> is a string with the full path to the ffprobe binary.</li>
 <li><strong>Ffmpeg.setFlvtoolPath(path)</strong> Argument <code>path</code> is a string with the full path to the flvtool2 or flvmeta binary.</li>
 </ul>
-<a name="creating-an-ffmpeg-command"></a><h3>Creating an FFmpeg command</h3><p>The fluent-ffmpeg module returns a constructor that you can use to instanciate FFmpeg commands.</p>
+<a name="creating-an-ffmpeg-command"></a><h3>Creating an FFmpeg command</h3>
+<p>The fluent-ffmpeg module returns a constructor that you can use to instanciate FFmpeg commands.</p>
 <pre class="prettyprint source lang-js"><code>var FfmpegCommand = require('fluent-ffmpeg');
-var command = new FfmpegCommand();</code></pre><p>You can also use the constructor without the <code>new</code> operator.</p>
+var command = new FfmpegCommand();
+</code></pre>
+<p>You can also use the constructor without the <code>new</code> operator.</p>
 <pre class="prettyprint source lang-js"><code>var ffmpeg = require('fluent-ffmpeg');
-var command = ffmpeg();</code></pre><p>You may pass an input file name or readable stream, a configuration object, or both to the constructor.</p>
+var command = ffmpeg();
+</code></pre>
+<p>You may pass an input file name or readable stream, a configuration object, or both to the constructor.</p>
 <pre class="prettyprint source lang-js"><code>var command = ffmpeg('/path/to/file.avi');
 var command = ffmpeg(fs.createReadStream('/path/to/file.avi'));
 var command = ffmpeg({ option: &quot;value&quot;, ... });
-var command = ffmpeg('/path/to/file.avi', { option: &quot;value&quot;, ... });</code></pre><p>The following options are available:</p>
+var command = ffmpeg('/path/to/file.avi', { option: &quot;value&quot;, ... });
+</code></pre>
+<p>The following options are available:</p>
 <ul>
 <li><code>source</code>: input file name or readable stream (ignored if an input file is passed to the constructor)</li>
 <li><code>timeout</code>: ffmpeg timeout in seconds (defaults to no timeout)</li>
@@ -78,7 +101,8 @@ var command = ffmpeg('/path/to/file.avi', { option: &quot;value&quot;, ... });</
 <li><code>logger</code>: logger object with <code>debug()</code>, <code>info()</code>, <code>warn()</code> and <code>error()</code> methods (defaults to no logging)</li>
 <li><code>stdoutLines</code>: maximum number of lines from ffmpeg stdout/stderr to keep in memory (defaults to 100, use 0 for unlimited storage)</li>
 </ul>
-<a name="specifying-inputs"></a><h3>Specifying inputs</h3><p>You can add any number of inputs to an Ffmpeg command.  An input can be:</p>
+<a name="specifying-inputs"></a><h3>Specifying inputs</h3>
+<p>You can add any number of inputs to an Ffmpeg command.  An input can be:</p>
 <ul>
 <li>a file name (eg. <code>/path/to/file.avi</code>);</li>
 <li>an image pattern (eg. <code>/path/to/frame%03d.png</code>);</li>
@@ -101,57 +125,102 @@ ffmpeg()
 
 ffmpeg()
   .mergeAdd('/path/to/input1.avi')
-  .mergeAdd('/path/to/input2.avi');</code></pre><a name="input-options"></a><h3>Input options</h3><p>The following methods enable passing input-related options to ffmpeg.  Each of these methods apply on the last input added (including the one passed to the constructor, if any).  You must add an input before calling those, or an error will be thrown.</p>
-<h4>inputFormat(format): specify input format</h4><p><strong>Aliases</strong>: <code>fromFormat()</code>, <code>withInputFormat()</code>.</p>
+  .mergeAdd('/path/to/input2.avi');
+</code></pre>
+<a name="input-options"></a><h3>Input options</h3>
+<p>The following methods enable passing input-related options to ffmpeg.  Each of these methods apply on the last input added (including the one passed to the constructor, if any).  You must add an input before calling those, or an error will be thrown.</p>
+<h4>inputFormat(format): specify input format</h4>
+<p><strong>Aliases</strong>: <code>fromFormat()</code>, <code>withInputFormat()</code>.</p>
 <p>This is only useful for raw inputs, as ffmpeg can determine the input format automatically.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg()
   .input('/dev/video0')
   .inputFormat('mov')
   .input('/path/to/file.avi')
-  .inputFormat('avi');</code></pre><p>Fluent-ffmpeg checks for format availability before actually running the command, and throws an error when a specified input format is not available.</p>
-<h4>inputFPS(fps): specify input framerate</h4><p><strong>Aliases</strong>: <code>withInputFps()</code>, <code>withInputFPS()</code>, <code>withFpsInput()</code>, <code>withFPSInput()</code>, <code>inputFps()</code>, <code>fpsInput()</code>, <code>FPSInput()</code>.</p>
+  .inputFormat('avi');
+</code></pre>
+<p>Fluent-ffmpeg checks for format availability before actually running the command, and throws an error when a specified input format is not available.</p>
+<h4>inputFPS(fps): specify input framerate</h4>
+<p><strong>Aliases</strong>: <code>withInputFps()</code>, <code>withInputFPS()</code>, <code>withFpsInput()</code>, <code>withFPSInput()</code>, <code>inputFps()</code>, <code>fpsInput()</code>, <code>FPSInput()</code>.</p>
 <p>This is only valid for raw inputs, as ffmpeg can determine the input framerate automatically.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/dev/video0').inputFPS(29.7);</code></pre><h4>native(): read input at native framerate</h4><p><strong>Aliases</strong>: <code>nativeFramerate()</code>, <code>withNativeFramerate()</code>.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').native();</code></pre><h4>seekInput(time): set input start time</h4><p><strong>Alias</strong>: <code>setStartTime()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/dev/video0').inputFPS(29.7);
+</code></pre>
+<h4>native(): read input at native framerate</h4>
+<p><strong>Aliases</strong>: <code>nativeFramerate()</code>, <code>withNativeFramerate()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').native();
+</code></pre>
+<h4>seekInput(time): set input start time</h4>
+<p><strong>Alias</strong>: <code>setStartTime()</code>.</p>
 <p>Seeks an input and only start decoding at given time offset.  The <code>time</code> argument may be a number (in seconds) or a timestamp string (with format <code>[[hh:]mm:]ss[.xxx]</code>).</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').seekInput(134.5);
-ffmpeg('/path/to/file.avi').seekInput('2:14.500');</code></pre><h4>loop([duration]): loop over input</h4><pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').loop();
+ffmpeg('/path/to/file.avi').seekInput('2:14.500');
+</code></pre>
+<h4>loop([duration]): loop over input</h4>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').loop();
 ffmpeg('/path/to/file.avi').loop(134.5);
-ffmpeg('/path/to/file.avi').loop('2:14.500');</code></pre><h4>inputOptions(option...): add custom input options</h4><p><strong>Aliases</strong>: <code>inputOption()</code>, <code>addInputOption()</code>, <code>addInputOptions()</code>, <code>withInputOption()</code>, <code>withInputOptions()</code>.</p>
-<p>This method allows passing any input-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionnaly with a space-separated parameter:</p>
+ffmpeg('/path/to/file.avi').loop('2:14.500');
+</code></pre>
+<h4>inputOptions(option...): add custom input options</h4>
+<p><strong>Aliases</strong>: <code>inputOption()</code>, <code>addInputOption()</code>, <code>addInputOptions()</code>, <code>withInputOption()</code>, <code>withInputOptions()</code>.</p>
+<p>This method allows passing any input-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionally with a space-separated parameter:</p>
 <pre class="prettyprint source lang-js"><code>/* Single option */
 ffmpeg('/path/to/file.avi').inputOptions('-someOption');
 
 /* Single option with parameter */
-ffmpeg('/dev/video0').inputOptions('-r 24');</code></pre><p>You may also pass multiple options at once by passing an array to the method:</p>
+ffmpeg('/dev/video0').inputOptions('-r 24');
+</code></pre>
+<p>You may also pass multiple options at once by passing an array to the method:</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').inputOptions([
   '-option1',
   '-option2 param2',
   '-option3',
   '-option4 param4'
-]);</code></pre><p>Finally, you may also directly pass command line tokens as separate arguments to the method:</p>
+]);
+</code></pre>
+<p>Finally, you may also directly pass command line tokens as separate arguments to the method:</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').inputOptions(
   '-option1',
   '-option2', 'param2',
   '-option3',
   '-option4', 'param4'
-);</code></pre><a name="audio-options"></a><h3>Audio options</h3><p>The following methods change the audio stream(s) in the produced output.</p>
-<h4>noAudio(): disable audio altogether</h4><p><strong>Aliases</strong>: <code>withNoAudio()</code>.</p>
+);
+</code></pre>
+<a name="audio-options"></a><h3>Audio options</h3>
+<p>The following methods change the audio stream(s) in the produced output.</p>
+<h4>noAudio(): disable audio altogether</h4>
+<p><strong>Aliases</strong>: <code>withNoAudio()</code>.</p>
 <p>Disables audio in the output and remove any previously set audio option.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').noAudio();</code></pre><h4>audioCodec(codec): set audio codec</h4><p><strong>Aliases</strong>: <code>withAudioCodec()</code>.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').audioCodec('libmp3lame');</code></pre><p>Fluent-ffmpeg checks for codec availability before actually running the command, and throws an error when a specified audio codec is not available.</p>
-<h4>audioBitrate(bitrate): set audio bitrate</h4><p><strong>Aliases</strong>: <code>withAudioBitrate()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').noAudio();
+</code></pre>
+<h4>audioCodec(codec): set audio codec</h4>
+<p><strong>Aliases</strong>: <code>withAudioCodec()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').audioCodec('libmp3lame');
+</code></pre>
+<p>Fluent-ffmpeg checks for codec availability before actually running the command, and throws an error when a specified audio codec is not available.</p>
+<h4>audioBitrate(bitrate): set audio bitrate</h4>
+<p><strong>Aliases</strong>: <code>withAudioBitrate()</code>.</p>
 <p>Sets the audio bitrate in kbps.  The <code>bitrate</code> parameter may be a number or a string with an optional <code>k</code> suffix.  This method is used to enforce a constant bitrate; use <code>audioQuality()</code> to encode using a variable bitrate.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').audioBitrate(128);
 ffmpeg('/path/to/file.avi').audioBitrate('128');
-ffmpeg('/path/to/file.avi').audioBitrate('128k');</code></pre><h4>audioChannels(count): set audio channel count</h4><p><strong>Aliases</strong>: <code>withAudioChannels()</code>.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').audioChannels(2);</code></pre><h4>audioFrequency(freq): set audio frequency</h4><p><strong>Aliases</strong>: <code>withAudioFrequency()</code>.</p>
+ffmpeg('/path/to/file.avi').audioBitrate('128k');
+</code></pre>
+<h4>audioChannels(count): set audio channel count</h4>
+<p><strong>Aliases</strong>: <code>withAudioChannels()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').audioChannels(2);
+</code></pre>
+<h4>audioFrequency(freq): set audio frequency</h4>
+<p><strong>Aliases</strong>: <code>withAudioFrequency()</code>.</p>
 <p>The <code>freq</code> parameter specifies the audio frequency in Hz.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').audioFrequency(22050);</code></pre><h4>audioQuality(quality): set audio quality</h4><p><strong>Aliases</strong>: <code>withAudioQuality()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').audioFrequency(22050);
+</code></pre>
+<h4>audioQuality(quality): set audio quality</h4>
+<p><strong>Aliases</strong>: <code>withAudioQuality()</code>.</p>
 <p>This method fixes a quality factor for the audio codec (VBR encoding).  The quality scale depends on the actual codec used.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
   .audioCodec('libmp3lame')
-  .audioQuality(0);</code></pre><h4>audioFilters(filter...): add custom audio filters</h4><p><strong>Aliases</strong>: <code>audioFilter()</code>, <code>withAudioFilter()</code>, <code>withAudioFilters()</code>.</p>
+  .audioQuality(0);
+</code></pre>
+<h4>audioFilters(filter...): add custom audio filters</h4>
+<p><strong>Aliases</strong>: <code>audioFilter()</code>, <code>withAudioFilter()</code>, <code>withAudioFilters()</code>.</p>
 <p>This method enables adding custom audio filters.  You may add multiple filters at once by passing either several arguments or an array.  See the Ffmpeg documentation for available filters and their syntax.</p>
 <p>Each filter pased to this method can be either a filter string (eg. <code>volume=0.5</code>) or a filter specification object with the following keys:</p>
 <ul>
@@ -190,18 +259,31 @@ ffmpeg('/path/to/file.avi')
       filter: 'silencedetect',
       options: { n: '-50dB', d: 5 }
     }
-  ]);</code></pre><a name="video-options"></a><h3>Video options</h3><p>The following methods change the video stream(s) in the produced output.</p>
-<h4>noVideo(): disable video altogether</h4><p><strong>Aliases</strong>: <code>withNoVideo()</code>.</p>
+  ]);
+</code></pre>
+<a name="video-options"></a><h3>Video options</h3>
+<p>The following methods change the video stream(s) in the produced output.</p>
+<h4>noVideo(): disable video altogether</h4>
+<p><strong>Aliases</strong>: <code>withNoVideo()</code>.</p>
 <p>This method disables video output and removes any previously set video option.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').noVideo();</code></pre><h4>videoCodec(codec): set video codec</h4><p><strong>Aliases</strong>: <code>withVideoCodec()</code>.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').videoCodec('libx264');</code></pre><p>Fluent-ffmpeg checks for codec availability before actually running the command, and throws an error when a specified video codec is not available.</p>
-<h4>videoBitrate(bitrate[, constant=false]): set video bitrate</h4><p><strong>Aliases</strong>: <code>withVideoBitrate()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').noVideo();
+</code></pre>
+<h4>videoCodec(codec): set video codec</h4>
+<p><strong>Aliases</strong>: <code>withVideoCodec()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').videoCodec('libx264');
+</code></pre>
+<p>Fluent-ffmpeg checks for codec availability before actually running the command, and throws an error when a specified video codec is not available.</p>
+<h4>videoBitrate(bitrate[, constant=false]): set video bitrate</h4>
+<p><strong>Aliases</strong>: <code>withVideoBitrate()</code>.</p>
 <p>Sets the target video bitrate in kbps.  The <code>bitrate</code> argument may be a number or a string with an optional <code>k</code> suffix.  The <code>constant</code> argument specifies whether a constant bitrate should be enforced (defaults to false).</p>
 <p>Keep in mind that, depending on the codec used, enforcing a constant bitrate often comes at the cost of quality.  The best way to have a constant video bitrate without losing too much quality is to use 2-pass encoding (see Fffmpeg documentation).</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').videoBitrate(1000);
 ffmpeg('/path/to/file.avi').videoBitrate('1000');
 ffmpeg('/path/to/file.avi').videoBitrate('1000k');
-ffmpeg('/path/to/file.avi').videoBitrate('1000k', true);</code></pre><h4>videoFilters(filter...): add custom video filters</h4><p><strong>Aliases</strong>: <code>videoFilter()</code>, <code>withVideoFilter()</code>, <code>withVideoFilters()</code>.</p>
+ffmpeg('/path/to/file.avi').videoBitrate('1000k', true);
+</code></pre>
+<h4>videoFilters(filter...): add custom video filters</h4>
+<p><strong>Aliases</strong>: <code>videoFilter()</code>, <code>withVideoFilter()</code>, <code>withVideoFilters()</code>.</p>
 <p>This method enables adding custom video filters.  You may add multiple filters at once by passing either several arguments or an array.  See the Ffmpeg documentation for available filters and their syntax.</p>
 <p>Each filter pased to this method can be either a filter string (eg. <code>fade=in:0:30</code>) or a filter specification object with the following keys:</p>
 <ul>
@@ -240,11 +322,21 @@ ffmpeg('/path/to/file.avi')
       filter: 'filter2',
       options: { w: 640, h: 480, x: 0, y: 40, color: 'violet' }
     }
-  );</code></pre><h4>fps(fps): set output framerate</h4><p><strong>Aliases</strong>: <code>withOutputFps()</code>, <code>withOutputFPS()</code>, <code>withFpsOutput()</code>, <code>withFPSOutput()</code>, <code>withFps()</code>, <code>withFPS()</code>, <code>outputFPS()</code>, <code>outputFps()</code>, <code>fpsOutput()</code>, <code>FPSOutput()</code>, <code>FPS()</code>.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').fps(29.7);</code></pre><h4>frames(count): specify frame count</h4><p><strong>Aliases</strong>: <code>takeFrames()</code>, <code>withFrames()</code>.</p>
+  );
+</code></pre>
+<h4>fps(fps): set output framerate</h4>
+<p><strong>Aliases</strong>: <code>withOutputFps()</code>, <code>withOutputFPS()</code>, <code>withFpsOutput()</code>, <code>withFPSOutput()</code>, <code>withFps()</code>, <code>withFPS()</code>, <code>outputFPS()</code>, <code>outputFps()</code>, <code>fpsOutput()</code>, <code>FPSOutput()</code>, <code>FPS()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').fps(29.7);
+</code></pre>
+<h4>frames(count): specify frame count</h4>
+<p><strong>Aliases</strong>: <code>takeFrames()</code>, <code>withFrames()</code>.</p>
 <p>Set ffmpeg to only encode a certain number of frames.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').frames(240);</code></pre><a name="video-frame-size-options"></a><h3>Video frame size options</h3><p>The following methods enable resizing the output video frame size.  They all work together to generate the appropriate video filters.</p>
-<h4>size(size): set output frame size</h4><p><strong>Aliases</strong>: <code>videoSize()</code>, <code>withSize()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').frames(240);
+</code></pre>
+<a name="video-frame-size-options"></a><h3>Video frame size options</h3>
+<p>The following methods enable resizing the output video frame size.  They all work together to generate the appropriate video filters.</p>
+<h4>size(size): set output frame size</h4>
+<p><strong>Aliases</strong>: <code>videoSize()</code>, <code>withSize()</code>.</p>
 <p>This method sets the output frame size.  The <code>size</code> argument may have one of the following formats:</p>
 <ul>
 <li><code>640x480</code>: set a fixed output frame size.  Unless <code>autopad()</code> is called, this may result in the video being stretched or squeezed to fit the requested size.</li>
@@ -256,11 +348,17 @@ ffmpeg('/path/to/file.avi')
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').size('640x480');
 ffmpeg('/path/to/file.avi').size('640x?');
 ffmpeg('/path/to/file.avi').size('640x?').aspect('4:3');
-ffmpeg('/path/to/file.avi').size('50%');</code></pre><h4>aspect(aspect): set output frame aspect ratio</h4><p><strong>Aliases</strong>: <code>withAspect()</code>, <code>withAspectRatio()</code>, <code>setAspect()</code>, <code>setAspectRatio()</code>, <code>aspectRatio()</code>.</p>
+ffmpeg('/path/to/file.avi').size('50%');
+</code></pre>
+<h4>aspect(aspect): set output frame aspect ratio</h4>
+<p><strong>Aliases</strong>: <code>withAspect()</code>, <code>withAspectRatio()</code>, <code>setAspect()</code>, <code>setAspectRatio()</code>, <code>aspectRatio()</code>.</p>
 <p>This method enforces a specific output aspect ratio.  The <code>aspect</code> argument may either be a number or a <code>X:Y</code> string.</p>
 <p>Note that calls to <code>aspect()</code> are ignored when <code>size()</code> has been called with a fixed width and height or a percentage, and also when <code>size()</code> has not been called at all.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').size('640x?').aspect('4:3');
-ffmpeg('/path/to/file.avi').size('640x?').aspect(1.33333);</code></pre><h4>autopad([color='black']): enable auto-padding the output video</h4><p><strong>Aliases</strong>: <code>applyAutopadding()</code>, <code>applyAutoPadding()</code>, <code>applyAutopad()</code>, <code>applyAutoPad()</code>, <code>withAutopadding()</code>, <code>withAutoPadding()</code>, <code>withAutopad()</code>, <code>withAutoPad()</code>, <code>autoPad()</code>.</p>
+ffmpeg('/path/to/file.avi').size('640x?').aspect(1.33333);
+</code></pre>
+<h4>autopad([color='black']): enable auto-padding the output video</h4>
+<p><strong>Aliases</strong>: <code>applyAutopadding()</code>, <code>applyAutoPadding()</code>, <code>applyAutopad()</code>, <code>applyAutoPad()</code>, <code>withAutopadding()</code>, <code>withAutoPadding()</code>, <code>withAutopad()</code>, <code>withAutoPad()</code>, <code>autoPad()</code>.</p>
 <p>This method enables applying auto-padding to the output video.  The <code>color</code> parameter specifies which color to use for padding, and must be a color code or name supported by ffmpeg (defaults to 'black').</p>
 <p>The behaviour of this method depends on calls made to other video size methods:</p>
 <ul>
@@ -301,11 +399,20 @@ ffmpeg('/path/to/file.avi').size('640x?').aspect('4:3').autopad('#35A5FF');
 // Calling .size('?x480').aspect('4:3') is similar to calling .size('640x480')
 ffmpeg('/path/to/file.avi').size('?x480').aspect('4:3').autopad();
 ffmpeg('/path/to/file.avi').size('?x480').aspect('4:3').autopad('white');
-ffmpeg('/path/to/file.avi').size('?x480').aspect('4:3').autopad('#35A5FF');</code></pre><p>For compatibility with previous fluent-ffmpeg versions, this method also accepts an additional boolean first argument, which specifies whether to apply auto-padding.</p>
+ffmpeg('/path/to/file.avi').size('?x480').aspect('4:3').autopad('#35A5FF');
+</code></pre>
+<p>For compatibility with previous fluent-ffmpeg versions, this method also accepts an additional boolean first argument, which specifies whether to apply auto-padding.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').size('640x480').autopad(true);
-ffmpeg('/path/to/file.avi').size('640x480').autopad(true, 'pink');</code></pre><h4>keepDAR(): force keeping display aspect ratio</h4><p><strong>Aliases</strong>: <code>keepPixelAspect()</code>, <code>keepDisplayAspect()</code>, <code>keepDisplayAspectRatio()</code>.</p>
+ffmpeg('/path/to/file.avi').size('640x480').autopad(true, 'pink');
+</code></pre>
+<h4>keepDAR(): force keeping display aspect ratio</h4>
+<p><strong>Aliases</strong>: <code>keepPixelAspect()</code>, <code>keepDisplayAspect()</code>, <code>keepDisplayAspectRatio()</code>.</p>
 <p>This method is useful when converting an input with non-square pixels to an output format that does not support non-square pixels (eg. most image formats).  It rescales the input so that the display aspect ratio is the same.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').keepDAR();</code></pre><a name="specifying-multiple-outputs"></a><h3>Specifying multiple outputs</h3><h4>output(target[, options]): add an output to the command</h4><p><strong>Aliases</strong>: <code>addOutput()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').keepDAR();
+</code></pre>
+<a name="specifying-multiple-outputs"></a><h3>Specifying multiple outputs</h3>
+<h4>output(target[, options]): add an output to the command</h4>
+<p><strong>Aliases</strong>: <code>addOutput()</code>.</p>
 <p>Adds an output to the command.  The <code>target</code> argument may be an output filename or a writable stream (but at most one output stream may be used with a single command).</p>
 <p>When <code>target</code> is a stream, an additional <code>options</code> object may be passed.  If it is present, it will be passed ffmpeg output stream <code>pipe()</code> method.</p>
 <p>Adding an output switches the &quot;current output&quot; of the command, so that any fluent-ffmpeg method that applies to an output is indeed applied to the last output added.  For backwards compatibility reasons, you may as well call those methods <em>before</em> adding the first output (in which case they will apply to the first output when it is added).  Methods that apply to an output are all non-input-related methods, except for <code>complexFilter()</code>, which is global.</p>
@@ -339,10 +446,17 @@ ffmpeg('/path/to/file.avi')
   .on('end', function() {
     console.log('Finished processing');
   })
-  .run();</code></pre><a name="output-options"></a><h3>Output options</h3><h4>duration(time): set output duration</h4><p><strong>Aliases</strong>: <code>withDuration()</code>, <code>setDuration()</code>.</p>
+  .run();
+</code></pre>
+<a name="output-options"></a><h3>Output options</h3>
+<h4>duration(time): set output duration</h4>
+<p><strong>Aliases</strong>: <code>withDuration()</code>, <code>setDuration()</code>.</p>
 <p>Forces ffmpeg to stop transcoding after a specific output duration.  The <code>time</code> parameter may be a number (in seconds) or a timestamp string (with format <code>[[hh:]mm:]ss[.xxx]</code>).</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').duration(134.5);
-ffmpeg('/path/to/file.avi').duration('2:14.500');</code></pre><h4>seek(time): seek output</h4><p><strong>Aliases</strong>: <code>seekOutput()</code>.</p>
+ffmpeg('/path/to/file.avi').duration('2:14.500');
+</code></pre>
+<h4>seek(time): seek output</h4>
+<p><strong>Aliases</strong>: <code>seekOutput()</code>.</p>
 <p>Seeks streams before encoding them into the output.  This is different from calling <code>seekInput()</code> in that the offset will only apply to one output.  This is also slower, as skipped frames will still be decoded (but dropped).</p>
 <p>The <code>time</code> argument may be a number (in seconds) or a timestamp string (with format <code>[[hh:]mm:]ss[.xxx]</code>).</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
@@ -352,34 +466,53 @@ ffmpeg('/path/to/file.avi').duration('2:14.500');</code></pre><h4>seek(time): se
   .seek(30)
 
   .output('from-1m40s.avi')
-  .seek('0:40');</code></pre><h4>format(format): set output format</h4><p><strong>Aliases</strong>: <code>withOutputFormat()</code>, <code>toFormat()</code>, <code>outputFormat()</code>.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').format('flv');</code></pre><h4>flvmeta(): update FLV metadata after transcoding</h4><p><strong>Aliases</strong>: <code>updateFlvMetadata()</code>.</p>
+  .seek('0:40');
+</code></pre>
+<h4>format(format): set output format</h4>
+<p><strong>Aliases</strong>: <code>withOutputFormat()</code>, <code>toFormat()</code>, <code>outputFormat()</code>.</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').format('flv');
+</code></pre>
+<h4>flvmeta(): update FLV metadata after transcoding</h4>
+<p><strong>Aliases</strong>: <code>updateFlvMetadata()</code>.</p>
 <p>Calling this method makes fluent-ffmpeg run <code>flvmeta</code> or <code>flvtool2</code> on the output file to add FLV metadata and make files streamable.  It does not work when outputting to a stream, and is only useful when outputting to FLV format.</p>
-<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').flvmeta().format('flv');</code></pre><h4>outputOptions(option...): add custom output options</h4><p><strong>Aliases</strong>: <code>outputOption()</code>, <code>addOutputOption()</code>, <code>addOutputOptions()</code>, <code>withOutputOption()</code>, <code>withOutputOptions()</code>, <code>addOption()</code>, <code>addOptions()</code>.</p>
-<p>This method allows passing any output-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionnaly with a space-separated parameter:</p>
+<pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').flvmeta().format('flv');
+</code></pre>
+<h4>outputOptions(option...): add custom output options</h4>
+<p><strong>Aliases</strong>: <code>outputOption()</code>, <code>addOutputOption()</code>, <code>addOutputOptions()</code>, <code>withOutputOption()</code>, <code>withOutputOptions()</code>, <code>addOption()</code>, <code>addOptions()</code>.</p>
+<p>This method allows passing any output-related option to ffmpeg.  You can call it with a single argument to pass a single option, optionally with a space-separated parameter:</p>
 <pre class="prettyprint source lang-js"><code>/* Single option */
 ffmpeg('/path/to/file.avi').outputOptions('-someOption');
 
 /* Single option with parameter */
-ffmpeg('/dev/video0').outputOptions('-r 24');</code></pre><p>You may also pass multiple options at once by passing an array to the method:</p>
+ffmpeg('/dev/video0').outputOptions('-r 24');
+</code></pre>
+<p>You may also pass multiple options at once by passing an array to the method:</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').outputOptions([
   '-option1',
   '-option2 param2',
   '-option3',
   '-option4 param4'
-]);</code></pre><p>Finally, you may also directly pass command line tokens as separate arguments to the method:</p>
+]);
+</code></pre>
+<p>Finally, you may also directly pass command line tokens as separate arguments to the method:</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi').outputOptions(
   '-option1',
   '-option2', 'param2',
   '-option3',
   '-option4', 'param4'
-);</code></pre><a name="miscellaneous-options"></a><h3>Miscellaneous options</h3><h4>preset(preset): use fluent-ffmpeg preset</h4><p><strong>Aliases</strong>: <code>usingPreset()</code>.</p>
+);
+</code></pre>
+<a name="miscellaneous-options"></a><h3>Miscellaneous options</h3>
+<h4>preset(preset): use fluent-ffmpeg preset</h4>
+<p><strong>Aliases</strong>: <code>usingPreset()</code>.</p>
 <p>There are two kinds of presets supported by fluent-ffmpeg.  The first one is preset modules; to use those, pass the preset name as the <code>preset</code> argument.  Preset modules are loaded from the directory specified by the <code>presets</code> constructor option (defaults to the <code>lib/presets</code> fluent-ffmpeg subdirectory).</p>
 <pre class="prettyprint source lang-js"><code>// Uses &lt;path-to-fluent-ffmpeg>/lib/presets/divx.js
 ffmpeg('/path/to/file.avi').preset('divx');
 
 // Uses /my/presets/foo.js
-ffmpeg('/path/to/file.avi', { presets: '/my/presets' }).preset('foo');</code></pre><p>Preset modules must export a <code>load()</code> function that takes an FfmpegCommand as an argument.   fluent-ffmpeg comes with the following preset modules preinstalled:</p>
+ffmpeg('/path/to/file.avi', { presets: '/my/presets' }).preset('foo');
+</code></pre>
+<p>Preset modules must export a <code>load()</code> function that takes an FfmpegCommand as an argument.   fluent-ffmpeg comes with the following preset modules preinstalled:</p>
 <ul>
 <li><code>divx</code></li>
 <li><code>flashvideo</code></li>
@@ -396,12 +529,17 @@ ffmpeg('/path/to/file.avi', { presets: '/my/presets' }).preset('foo');</code></p
     .audioChannels(2)
     .audioCodec('libmp3lame')
     .outputOptions(['-vtag DIVX']);
-};</code></pre><p>The second kind of preset is preset functions.  To use those, pass a function which takes an FfmpegCommand as a parameter.</p>
+};
+</code></pre>
+<p>The second kind of preset is preset functions.  To use those, pass a function which takes an FfmpegCommand as a parameter.</p>
 <pre class="prettyprint source lang-js"><code>function myPreset(command) {
   command.format('avi').size('720x?');
 }
 
-ffmpeg('/path/to/file.avi').preset(myPreset);</code></pre><h4>complexFilter(filters[, map]): set complex filtergraph</h4><p><strong>Aliases</strong>: <code>filterGraph()</code></p>
+ffmpeg('/path/to/file.avi').preset(myPreset);
+</code></pre>
+<h4>complexFilter(filters[, map]): set complex filtergraph</h4>
+<p><strong>Aliases</strong>: <code>filterGraph()</code></p>
 <p>The <code>complexFilter()</code> method enables setting a complex filtergraph for a command.  It expects a filter specification (or a filter specification array) and an optional output mapping parameter as arguments.</p>
 <p>Filter specifications may be either plain ffmpeg filter strings (eg. <code>split=3[a][b][c]</code>) or objects with the following keys:</p>
 <ul>
@@ -460,12 +598,19 @@ ffmpeg('/path/to/file.avi').preset(myPreset);</code></pre><h4>complexFilter(filt
       filter: 'overlay', options: { x: '2*w', y: 0 },
       inputs: ['redgreen', 'blue'], outputs: 'output'
     },
-  ], 'output');</code></pre><a name="setting-event-handlers"></a><h3>Setting event handlers</h3><p>Before actually running a command, you may want to set event listeners on it to be notified when it's done.  The following events are available:</p>
-<h4>'start': ffmpeg process started</h4><p>The <code>start</code> event is emitted just after ffmpeg has been spawned.  It is emitted with the full command line used as an argument.</p>
+  ], 'output');
+</code></pre>
+<a name="setting-event-handlers"></a><h3>Setting event handlers</h3>
+<p>Before actually running a command, you may want to set event listeners on it to be notified when it's done.  The following events are available:</p>
+<h4>'start': ffmpeg process started</h4>
+<p>The <code>start</code> event is emitted just after ffmpeg has been spawned.  It is emitted with the full command line used as an argument.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
   .on('start', function(commandLine) {
     console.log('Spawned Ffmpeg with command: ' + commandLine);
-  });</code></pre><h4>'codecData': input codec data available</h4><p>The <code>codecData</code> event is emitted when ffmpeg outputs codec information about its input streams.  It is emitted with an object argument with the following keys:</p>
+  });
+</code></pre>
+<h4>'codecData': input codec data available</h4>
+<p>The <code>codecData</code> event is emitted when ffmpeg outputs codec information about its input streams.  It is emitted with an object argument with the following keys:</p>
 <ul>
 <li><code>format</code>: input format</li>
 <li><code>duration</code>: input duration</li>
@@ -478,7 +623,10 @@ ffmpeg('/path/to/file.avi').preset(myPreset);</code></pre><h4>complexFilter(filt
   .on('codecData', function(data) {
     console.log('Input is ' + data.audio + ' audio ' +
       'with ' + data.video + ' video');
-  });</code></pre><h4>'progress': transcoding progress information</h4><p>The <code>progress</code> event is emitted every time ffmpeg reports progress information.  It is emitted with an object argument with the following keys:</p>
+  });
+</code></pre>
+<h4>'progress': transcoding progress information</h4>
+<p>The <code>progress</code> event is emitted every time ffmpeg reports progress information.  It is emitted with an object argument with the following keys:</p>
 <ul>
 <li><code>frames</code>: total processed frame count</li>
 <li><code>currentFps</code>: framerate at which FFmpeg is currently processing</li>
@@ -495,21 +643,35 @@ ffmpeg('/path/to/file.avi').preset(myPreset);</code></pre><h4>complexFilter(filt
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
   .on('progress', function(progress) {
     console.log('Processing: ' + progress.percent + '% done');
-  });</code></pre><h4>'stderr': FFmpeg output</h4><p>The <code>stderr</code> event is emitted every time FFmpeg outputs a line to <code>stderr</code>.  It is emitted with a string containing the line of stderr (minus trailing new line characters).</p>
+  });
+</code></pre>
+<h4>'stderr': FFmpeg output</h4>
+<p>The <code>stderr</code> event is emitted every time FFmpeg outputs a line to <code>stderr</code>.  It is emitted with a string containing the line of stderr (minus trailing new line characters).</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
   .on('stderr', function(stderrLine) {
     console.log('Stderr output: ' + stderrLine);
-  });</code></pre><h4>'error': transcoding error</h4><p>The <code>error</code> event is emitted when an error occurs when running ffmpeg or when preparing its execution.  It is emitted with an error object as an argument.  If the error happened during ffmpeg execution, listeners will also receive two additional arguments containing ffmpegs stdout and stderr.</p>
+  });
+</code></pre>
+<h4>'error': transcoding error</h4>
+<p>The <code>error</code> event is emitted when an error occurs when running ffmpeg or when preparing its execution.  It is emitted with an error object as an argument.  If the error happened during ffmpeg execution, listeners will also receive two additional arguments containing ffmpegs stdout and stderr.</p>
+<p>If streams are used for input or output, any errors emitted from these streams will be passed through to this event, attached to the <code>error</code> as <code>inputStreamError</code> and <code>outputStreamError</code> for input and output streams respectively.</p>
 <p><strong>Warning</strong>: you should <em>always</em> set a handler for the <code>error</code> event, as node's default behaviour when an <code>error</code> event without any listeners is emitted is to output the error to the console and <em>terminate the program</em>.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
   .on('error', function(err, stdout, stderr) {
     console.log('Cannot process video: ' + err.message);
-  });</code></pre><h4>'end': processing finished</h4><p>The <code>end</code> event is emitted when processing has finished.  Listeners receive ffmpeg standard output and standard error as arguments, except when generating thumbnails (see below), in which case they receive an array of the generated filenames.</p>
+  });
+</code></pre>
+<h4>'end': processing finished</h4>
+<p>The <code>end</code> event is emitted when processing has finished.  Listeners receive ffmpeg standard output and standard error as arguments, except when generating thumbnails (see below), in which case they receive an array of the generated filenames.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
   .on('end', function(stdout, stderr) {
     console.log('Transcoding succeeded !');
-  });</code></pre><p><code>stdout</code> is empty when the command outputs to a stream.  Both <code>stdout</code> and <code>stderr</code> are limited by the <code>stdoutLines</code> option (defaults to 100 lines).</p>
-<a name="starting-ffmpeg-processing"></a><h3>Starting FFmpeg processing</h3><h4>save(filename): save the output to a file</h4><p><strong>Aliases</strong>: <code>saveToFile()</code></p>
+  });
+</code></pre>
+<p><code>stdout</code> is empty when the command outputs to a stream.  Both <code>stdout</code> and <code>stderr</code> are limited by the <code>stdoutLines</code> option (defaults to 100 lines).</p>
+<a name="starting-ffmpeg-processing"></a><h3>Starting FFmpeg processing</h3>
+<h4>save(filename): save the output to a file</h4>
+<p><strong>Aliases</strong>: <code>saveToFile()</code></p>
 <p>Starts ffmpeg processing and saves the output to a file.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
   .videoCodec('libx264')
@@ -521,8 +683,11 @@ ffmpeg('/path/to/file.avi').preset(myPreset);</code></pre><h4>complexFilter(filt
   .on('end', function() {
     console.log('Processing finished !');
   })
-  .save('/path/to/output.mp4');</code></pre><p>Note: the <code>save()</code> method is actually syntactic sugar for calling both <code>output()</code> and <code>run()</code>.</p>
-<h4>pipe([stream], [options]): pipe the output to a writable stream</h4><p><strong>Aliases</strong>: <code>stream()</code>, <code>writeToStream()</code>.</p>
+  .save('/path/to/output.mp4');
+</code></pre>
+<p>Note: the <code>save()</code> method is actually syntactic sugar for calling both <code>output()</code> and <code>run()</code>.</p>
+<h4>pipe([stream], [options]): pipe the output to a writable stream</h4>
+<p><strong>Aliases</strong>: <code>stream()</code>, <code>writeToStream()</code>.</p>
 <p>Starts processing and pipes ffmpeg output to a writable stream.  The <code>options</code> argument, if present, is passed to ffmpeg output stream's <code>pipe()</code> method (see nodejs documentation).</p>
 <pre class="prettyprint source lang-js"><code>var outStream = fs.createWriteStream('/path/to/output.mp4');
 
@@ -536,7 +701,9 @@ ffmpeg('/path/to/file.avi')
   .on('end', function() {
     console.log('Processing finished !');
   })
-  .pipe(outStream, { end: true });</code></pre><p>When no <code>stream</code> argument is present, the <code>pipe()</code> method returns a PassThrough stream, which you can pipe to somewhere else (or just listen to events on).</p>
+  .pipe(outStream, { end: true });
+</code></pre>
+<p>When no <code>stream</code> argument is present, the <code>pipe()</code> method returns a PassThrough stream, which you can pipe to somewhere else (or just listen to events on).</p>
 <p><strong>Note</strong>: this is only available with node &gt;= 0.10.</p>
 <pre class="prettyprint source lang-js"><code>var command = ffmpeg('/path/to/file.avi')
   .videoCodec('libx264')
@@ -552,8 +719,11 @@ ffmpeg('/path/to/file.avi')
 var ffstream = command.pipe();
 ffstream.on('data', function(chunk) {
   console.log('ffmpeg just wrote ' + chunk.length + ' bytes');
-});</code></pre><p>Note: the <code>stream()</code> method is actually syntactic sugar for calling both <code>output()</code> and <code>run()</code>.</p>
-<h4>run(): start processing</h4><p><strong>Aliases</strong>: <code>exec()</code>, <code>execute()</code>.</p>
+});
+</code></pre>
+<p>Note: the <code>stream()</code> method is actually syntactic sugar for calling both <code>output()</code> and <code>run()</code>.</p>
+<h4>run(): start processing</h4>
+<p><strong>Aliases</strong>: <code>exec()</code>, <code>execute()</code>.</p>
 <p>This method is mainly useful when producing multiple outputs (otherwise the <code>save()</code> or <code>stream()</code> methods are more straightforward).  It starts processing with the specified outputs.</p>
 <p><strong>Warning</strong>: do not use <code>run()</code> when calling other processing methods (eg. <code>save()</code>, <code>pipe()</code> or <code>screenshots()</code>).</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file.avi')
@@ -575,7 +745,11 @@ ffstream.on('data', function(chunk) {
   .on('end', function() {
     console.log('Processing finished !');
   })
-  .run();</code></pre><h4>mergeToFile(filename, tmpdir): concatenate multiple inputs</h4><p>Use the <code>input</code> and <code>mergeToFile</code> methods on a command to concatenate multiple inputs to a single output file.  The <code>mergeToFile</code> needs a temporary folder as its second argument.</p>
+  .run();
+</code></pre>
+<h4>concat(filename[, options]): concatenate multiple inputs</h4>
+<p><strong>Aliases</strong>: <code>concatenate()</code>, <code>mergeToFile()</code>.</p>
+<p>Use the <code>input</code> and <code>concat</code> methods on a command to concatenate multiple inputs to a single output file.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/part1.avi')
   .input('/path/to/part2.avi')
   .input('/path/to/part2.avi')
@@ -585,7 +759,10 @@ ffstream.on('data', function(chunk) {
   .on('end', function() {
     console.log('Merging finished !');
   })
-  .mergeToFile('/path/to/merged.avi', '/path/to/tempDir');</code></pre><h4>screenshots(options[, dirname]): generate thumbnails</h4><p><strong>Aliases</strong>: <code>thumbnail()</code>, <code>thumbnails()</code>, <code>screenshot()</code>, <code>takeScreenshots()</code>.</p>
+  .concat('/path/to/merged.avi');
+</code></pre>
+<h4>screenshots(options[, dirname]): generate thumbnails</h4>
+<p><strong>Aliases</strong>: <code>thumbnail()</code>, <code>thumbnails()</code>, <code>screenshot()</code>, <code>takeScreenshots()</code>.</p>
 <p>Use the <code>screenshots</code> method to extract one or several thumbnails and save them as PNG files.  There are a few caveats with this implementation, though:</p>
 <ul>
 <li>It will not work on input streams.</li>
@@ -631,7 +808,11 @@ ffmpeg('/path/to/video.avi')
     filename: 'thumbnail-at-%s-seconds.png',
     folder: '/path/to/output',
     size: '320x240'
-  });</code></pre><a name="controlling-the-ffmpeg-process"></a><h3>Controlling the FFmpeg process</h3><h4>kill([signal='SIGKILL']): kill any running ffmpeg process</h4><p>This method sends <code>signal</code> (defaults to 'SIGKILL') to the ffmpeg process.  It only has sense when processing has started.  Sending a signal that terminates the process will result in the <code>error</code> event being emitted.</p>
+  });
+</code></pre>
+<a name="controlling-the-ffmpeg-process"></a><h3>Controlling the FFmpeg process</h3>
+<h4>kill([signal='SIGKILL']): kill any running ffmpeg process</h4>
+<p>This method sends <code>signal</code> (defaults to 'SIGKILL') to the ffmpeg process.  It only has sense when processing has started.  Sending a signal that terminates the process will result in the <code>error</code> event being emitted.</p>
 <pre class="prettyprint source lang-js"><code>var command = ffmpeg('/path/to/video.avi')
   .videoCodec('libx264')
   .audioCodec('libmp3lame')
@@ -653,7 +834,10 @@ setTimeout(function() {
   });
 
   command.kill();
-}, 60000);</code></pre><h4>renice([niceness=0]): change ffmpeg process priority</h4><p>This method alters the niceness (priority) value of any running ffmpeg process (if any) and any process spawned in the future.  The <code>niceness</code> parameter may range from -20 (highest priority) to 20 (lowest priority) and defaults to 0 (which is the default process niceness on most *nix systems).</p>
+}, 60000);
+</code></pre>
+<h4>renice([niceness=0]): change ffmpeg process priority</h4>
+<p>This method alters the niceness (priority) value of any running ffmpeg process (if any) and any process spawned in the future.  The <code>niceness</code> parameter may range from -20 (highest priority) to 20 (lowest priority) and defaults to 0 (which is the default process niceness on most *nix systems).</p>
 <p><strong>Note</strong>: this method is ineffective on Windows platforms.</p>
 <pre class="prettyprint source lang-js"><code>// Set startup niceness
 var command = ffmpeg('/path/to/file.avi')
@@ -663,10 +847,15 @@ var command = ffmpeg('/path/to/file.avi')
 // Command takes too long, raise its priority
 setTimeout(function() {
   command.renice(-5);
-}, 60000);</code></pre><a name="reading-video-metadata"></a><h3>Reading video metadata</h3><p>You can read metadata from any valid ffmpeg input file with the modules <code>ffprobe</code> method.</p>
+}, 60000);
+</code></pre>
+<a name="reading-video-metadata"></a><h3>Reading video metadata</h3>
+<p>You can read metadata from any valid ffmpeg input file with the modules <code>ffprobe</code> method.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg.ffprobe('/path/to/file.avi', function(err, metadata) {
     console.dir(metadata);
-});</code></pre><p>You may also call the ffprobe method on an FfmpegCommand to probe one of its input.  You may pass a 0-based input number as a first argument to specify which input to read metadata from, otherwise the method will probe the last added input.</p>
+});
+</code></pre>
+<p>You may also call the ffprobe method on an FfmpegCommand to probe one of its input.  You may pass a 0-based input number as a first argument to specify which input to read metadata from, otherwise the method will probe the last added input.</p>
 <pre class="prettyprint source lang-js"><code>ffmpeg('/path/to/file1.avi')
   .input('/path/to/file2.avi')
   .ffprobe(function(err, data) {
@@ -679,9 +868,13 @@ ffmpeg('/path/to/file1.avi')
   .ffprobe(0, function(err, data) {
     console.log('file1 metadata:');
     console.dir(data);
-  });</code></pre><p><strong>Warning:</strong> ffprobe may be called with an input stream, but in this case <em>it will consume data from the stream</em>, and this data will no longer be available for ffmpeg.  Using both ffprobe and a transcoding command on the same input stream will most likely fail unless the stream is a live stream.  Only do this if you know what you're doing.</p>
+  });
+</code></pre>
+<p><strong>Warning:</strong> ffprobe may be called with an input stream, but in this case <em>it will consume data from the stream</em>, and this data will no longer be available for ffmpeg.  Using both ffprobe and a transcoding command on the same input stream will most likely fail unless the stream is a live stream.  Only do this if you know what you're doing.</p>
 <p>The returned object is the same that is returned by running the following command from your shell (depending on your ffmpeg version you may have to replace <code>-of</code> with <code>-print_format</code>) :</p>
-<pre class="prettyprint source lang-sh"><code>$ ffprobe -of json -show_streams -show_format /path/to/file.avi</code></pre><p>It will contain information about the container (as a <code>format</code> key) and an array of streams (as a <code>stream</code> key).  The format object and each stream object also contains metadata tags, depending on the format:</p>
+<pre class="prettyprint source lang-sh"><code>$ ffprobe -of json -show_streams -show_format /path/to/file.avi
+</code></pre>
+<p>It will contain information about the container (as a <code>format</code> key) and an array of streams (as a <code>stream</code> key).  The format object and each stream object also contains metadata tags, depending on the format:</p>
 <pre class="prettyprint source lang-js"><code>{
   &quot;streams&quot;: [
     {
@@ -790,7 +983,10 @@ ffmpeg('/path/to/file1.avi')
       &quot;encoder&quot;: &quot;Lavf52.14.0&quot;
     }
   }
-}</code></pre><a name="querying-ffmpeg-capabilities"></a><h3>Querying ffmpeg capabilities</h3><p>fluent-ffmpeg enables you to query your installed ffmpeg version for supported formats, codecs, encoders and filters.</p>
+}
+</code></pre>
+<a name="querying-ffmpeg-capabilities"></a><h3>Querying ffmpeg capabilities</h3>
+<p>fluent-ffmpeg enables you to query your installed ffmpeg version for supported formats, codecs, encoders and filters.</p>
 <pre class="prettyprint source lang-js"><code>
 var Ffmpeg = require('fluent-ffmpeg');
 
@@ -816,7 +1012,9 @@ Ffmpeg.getAvailableFilters(function(err, filters) {
 
 // Those methods can also be called on commands
 new Ffmpeg({ source: '/path/to/file.avi' })
-  .getAvailableCodecs(...);</code></pre><p>These methods pass an object to their callback with keys for each available format, codec or filter.</p>
+  .getAvailableCodecs(...);
+</code></pre>
+<p>These methods pass an object to their callback with keys for each available format, codec or filter.</p>
 <p>The returned object for formats looks like:</p>
 <pre class="prettyprint source lang-js"><code>{
   ...
@@ -826,7 +1024,9 @@ new Ffmpeg({ source: '/path/to/file.avi' })
     canMux: true
   },
   ...
-}</code></pre><ul>
+}
+</code></pre>
+<ul>
 <li><code>canDemux</code> indicates whether ffmpeg is able to extract streams from (demux) this format</li>
 <li><code>canMux</code> indicates whether ffmpeg is able to write streams into (mux) this format</li>
 </ul>
@@ -843,7 +1043,9 @@ new Ffmpeg({ source: '/path/to/file.avi' })
     isLossless: false
   },
   ...
-}</code></pre><ul>
+}
+</code></pre>
+<ul>
 <li><code>type</code> indicates the codec type, either &quot;audio&quot;, &quot;video&quot; or &quot;subtitle&quot;</li>
 <li><code>canDecode</code> tells whether ffmpeg is able to decode streams using this codec</li>
 <li><code>canEncode</code> tells whether ffmpeg is able to encode streams using this codec</li>
@@ -869,7 +1071,9 @@ new Ffmpeg({ source: '/path/to/file.avi' })
     directRendering: false
   },
   ...
-}</code></pre><ul>
+}
+</code></pre>
+<ul>
 <li><code>type</code> indicates the encoder type, either &quot;audio&quot;, &quot;video&quot; or &quot;subtitle&quot;</li>
 <li><code>experimental</code> indicates whether the encoder is experimental.  When using such a codec, fluent-ffmpeg automatically adds the '-strict experimental' flag.</li>
 </ul>
@@ -884,13 +1088,16 @@ new Ffmpeg({ source: '/path/to/file.avi' })
     multipleOutputs: false
   },
   ...
-}</code></pre><ul>
+}
+</code></pre>
+<ul>
 <li><code>input</code> tells the input type this filter operates on, one of &quot;audio&quot;, &quot;video&quot; or &quot;none&quot;.  When &quot;none&quot;, the filter likely generates output from nothing</li>
 <li><code>multipleInputs</code> tells whether the filter can accept multiple inputs</li>
 <li><code>output</code> tells the output type this filter generates, one of &quot;audio&quot;, &quot;video&quot; or &quot;none&quot;.  When &quot;none&quot;, the filter has no output (sink only)</li>
 <li><code>multipleInputs</code> tells whether the filter can generate multiple outputs</li>
 </ul>
-<a name="cloning-an-ffmpegcommand"></a><h3>Cloning an FfmpegCommand</h3><p>You can create clones of an FfmpegCommand instance by calling the <code>clone()</code> method.  The clone will be an exact copy of the original at the time it has been called (same inputs, same options, same event handlers, etc.).  This is mainly useful when you want to apply different processing options on the same input.</p>
+<a name="cloning-an-ffmpegcommand"></a><h3>Cloning an FfmpegCommand</h3>
+<p>You can create clones of an FfmpegCommand instance by calling the <code>clone()</code> method.  The clone will be an exact copy of the original at the time it has been called (same inputs, same options, same event handlers, etc.).  This is mainly useful when you want to apply different processing options on the same input.</p>
 <p>Setting options, adding inputs or event handlers on a clone will not affect the original command.</p>
 <pre class="prettyprint source lang-js"><code>// Create a command to convert source.avi to MP4
 var command = ffmpeg('/path/to/source.avi')
@@ -909,12 +1116,18 @@ command.clone()
   .save('/path/to/output-medium.mp4');
 
 // Save a converted version with the original size
-command.save('/path/to/output-original-size.mp4');</code></pre><a name="contributing"></a><h2>Contributing</h2><p>Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!</p>
-<a name="code-contributions"></a><h3>Code contributions</h3><p>If you want to add new features or change the API, please submit an issue first to make sure no one else is already working on the same thing and discuss the implementation and API details with maintainers and users by creating an issue.  When everything is settled down, you can submit a pull request.</p>
+command.save('/path/to/output-original-size.mp4');
+</code></pre>
+<a name="contributing"></a><h2>Contributing</h2>
+<p>Contributions in any form are highly encouraged and welcome! Be it new or improved presets, optimized streaming code or just some cleanup. So start forking!</p>
+<a name="code-contributions"></a><h3>Code contributions</h3>
+<p>If you want to add new features or change the API, please submit an issue first to make sure no one else is already working on the same thing and discuss the implementation and API details with maintainers and users by creating an issue.  When everything is settled down, you can submit a pull request.</p>
 <p>When fixing bugs, you can directly submit a pull request.</p>
 <p>Make sure to add tests for your features and bugfixes and update the documentation (see below) before submitting your code!</p>
-<a name="documentation-contributions"></a><h3>Documentation contributions</h3><p>You can directly submit pull requests for documentation changes.  Make sure to regenerate the documentation before submitting (see below).</p>
-<a name="updating-the-documentation"></a><h3>Updating the documentation</h3><p>When contributing API changes (new methods for example), be sure to update the README file and JSDoc comments in the code.  fluent-ffmpeg comes with a plugin that enables two additional JSDoc tags:</p>
+<a name="documentation-contributions"></a><h3>Documentation contributions</h3>
+<p>You can directly submit pull requests for documentation changes.  Make sure to regenerate the documentation before submitting (see below).</p>
+<a name="updating-the-documentation"></a><h3>Updating the documentation</h3>
+<p>When contributing API changes (new methods for example), be sure to update the README file and JSDoc comments in the code.  fluent-ffmpeg comes with a plugin that enables two additional JSDoc tags:</p>
 <ul>
 <li><code>@aliases</code>: document method aliases</li>
 </ul>
@@ -922,18 +1135,30 @@ command.save('/path/to/output-original-size.mp4');</code></pre><a name="contribu
  * ...
  * @method FfmpegCommand#myMethod
  * @aliases myMethodAlias,myOtherMethodAlias
- */</code></pre><ul>
+ */
+</code></pre>
+<ul>
 <li><code>@category</code>: set method category</li>
 </ul>
 <pre class="prettyprint source lang-js"><code>/**
  * ...
  * @category Audio
- */</code></pre><p>You can regenerate the JSDoc documentation by running the following command:</p>
-<pre class="prettyprint source lang-sh"><code>$ make doc</code></pre><p>To avoid polluting the commit history, make sure to only commit the regenerated JSDoc once and in a specific commit.</p>
-<a name="running-tests"></a><h3>Running tests</h3><p>To run unit tests, first make sure you installed npm dependencies (run <code>npm install</code>).</p>
-<pre class="prettyprint source lang-sh"><code>$ make test</code></pre><p>If you want to re-generate the test coverage report (filed under test/coverage.html), run</p>
-<pre class="prettyprint source lang-sh"><code>$ make test-cov</code></pre><p>Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.</p>
-<a name="main-contributors"></a><h2>Main contributors</h2><ul>
+ */
+</code></pre>
+<p>You can regenerate the JSDoc documentation by running the following command:</p>
+<pre class="prettyprint source lang-sh"><code>$ make doc
+</code></pre>
+<p>To avoid polluting the commit history, make sure to only commit the regenerated JSDoc once and in a specific commit.</p>
+<a name="running-tests"></a><h3>Running tests</h3>
+<p>To run unit tests, first make sure you installed npm dependencies (run <code>npm install</code>).</p>
+<pre class="prettyprint source lang-sh"><code>$ make test
+</code></pre>
+<p>If you want to re-generate the test coverage report (filed under test/coverage.html), run</p>
+<pre class="prettyprint source lang-sh"><code>$ make test-cov
+</code></pre>
+<p>Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.</p>
+<a name="main-contributors"></a><h2>Main contributors</h2>
+<ul>
 <li><a href="http://github.com/enobrev">enobrev</a></li>
 <li><a href="http://github.com/njoyard">njoyard</a></li>
 <li><a href="http://github.com/sadikzzz">sadikzzz</a></li>
@@ -943,11 +1168,13 @@ command.save('/path/to/output-original-size.mp4');</code></pre><a name="contribu
 <li><a href="http://github.com/tommadema">tommadema</a></li>
 <li><a href="http://github.com/Weltschmerz">Weltschmerz</a></li>
 </ul>
-<a name="license"></a><h2>License</h2><p>(The MIT License)</p>
+<a name="license"></a><h2>License</h2>
+<p>(The MIT License)</p>
 <p>Copyright (c) 2011 Stefan Schaermeli &lt;schaermu@gmail.com&gt;</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
 <p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
-<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p></article>
+<p>THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+<p><a href="https://app.fossa.io/projects/git%2Bgithub.com%2Ffluent-ffmpeg%2Fnode-fluent-ffmpeg?ref=badge_large"><img src="https://app.fossa.io/api/projects/git%2Bgithub.com%2Ffluent-ffmpeg%2Fnode-fluent-ffmpeg.svg?type=large" alt="FOSSA Status"></a></p></article>
     </section>
 
 
@@ -964,7 +1191,7 @@ command.save('/path/to/output-original-size.mp4');</code></pre><a name="contribu
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun May 01 2016 12:10:37 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Wed Nov 04 2020 14:12:44 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>

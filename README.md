@@ -978,9 +978,11 @@ ffmpeg('/path/to/file.avi')
   .run();
 ```
 
-#### mergeToFile(filename, tmpdir): concatenate multiple inputs
+#### concat(filename[, options]): concatenate multiple inputs
 
-Use the `input` and `mergeToFile` methods on a command to concatenate multiple inputs to a single output file.  The `mergeToFile` needs a temporary folder as its second argument.
+**Aliases**: `concatenate()`, `mergeToFile()`.
+
+Use the `input` and `concat` methods on a command to concatenate multiple inputs to a single output file.
 
 ```js
 ffmpeg('/path/to/part1.avi')
@@ -992,7 +994,7 @@ ffmpeg('/path/to/part1.avi')
   .on('end', function() {
     console.log('Merging finished !');
   })
-  .mergeToFile('/path/to/merged.avi', '/path/to/tempDir');
+  .concat('/path/to/merged.avi');
 ```
 
 #### screenshots(options[, dirname]): generate thumbnails

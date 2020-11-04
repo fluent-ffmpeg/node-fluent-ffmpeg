@@ -34,8 +34,6 @@ var fs = require('fs');
 var async = require('async');
 var utils = require('./utils');
 
-var nlRegexp = /\r\n|\r|\n/g;
-
 /*
  *! Processor methods
  */
@@ -48,7 +46,12 @@ var nlRegexp = /\r\n|\r|\n/g;
  * @private
  */
 function runFfprobe(command) {
-  command.ffprobe(0, function(err, data) {
+  const inputProbeIndex = 0;
+  if (command._inputs[inputProbeIndex].isStream) {
+    // Don't probe input streams as this will consume them
+    return;
+  }
+  command.ffprobe(inputProbeIndex, function(err, data) {
     command._ffprobeData = data;
   });
 }
@@ -98,7 +101,7 @@ module.exports = function(proto) {
    * Emitted when an error happens when preparing or running a command
    *
    * @event FfmpegCommand#error
-   * @param {Error} error error object
+   * @param {Error} error error object, with optional properties 'inputStreamError' / 'outputStreamError' for errors on their respective streams
    * @param {String|null} stdout ffmpeg stdout, unless outputting to a stream
    * @param {String|null} stderr ffmpeg stderr
    */
@@ -461,8 +464,9 @@ module.exports = function(proto) {
         {
           captureStdout: !outputStream,
           niceness: self.options.niceness,
-          cwd: self.options.cwd
-        },
+          cwd: self.options.cwd,
+          windowsHide: true
+        }, 
 
         function processCB(ffmpegProc, stdoutRing, stderrRing) {
           self.ffmpegProc = ffmpegProc;
@@ -471,7 +475,9 @@ module.exports = function(proto) {
           // Pipe input stream if any
           if (inputStream) {
             inputStream.source.on('error', function(err) {
-              emitEnd(new Error('Input stream error: ' + err.message));
+              var reportingErr = new Error('Input stream error: ' + err.message);
+              reportingErr.inputStreamError = err;
+              emitEnd(reportingErr);
               ffmpegProc.kill();
             });
 
@@ -484,9 +490,8 @@ module.exports = function(proto) {
           }
 
           // Setup timeout if requested
-          var processTimer;
           if (self.options.timeout) {
-            processTimer = setTimeout(function() {
+            self.processTimer = setTimeout(function() {
               var msg = 'process ran into a timeout (' + self.options.timeout + 's)';
 
               emitEnd(new Error(msg), stdoutRing.get(), stderrRing.get());
@@ -501,7 +506,7 @@ module.exports = function(proto) {
 
             // Handle output stream events
             outputStream.target.on('close', function() {
-              self.logger.debug('Output stream closed, scheduling kill for ffmpgeg process');
+              self.logger.debug('Output stream closed, scheduling kill for ffmpeg process');
 
               // Don't kill process yet, to give a chance to ffmpeg to
               // terminate successfully first  This is necessary because
@@ -514,9 +519,11 @@ module.exports = function(proto) {
             });
 
             outputStream.target.on('error', function(err) {
-              self.logger.debug('Output stream error, killing ffmpgeg process');
-              emitEnd(new Error('Output stream error: ' + err.message), stdoutRing.get(), stderrRing.get());
-              ffmpegProc.kill();
+              self.logger.debug('Output stream error, killing ffmpeg process');
+              var reportingErr = new Error('Output stream error: ' + err.message);
+              reportingErr.outputStreamError = err;
+              emitEnd(reportingErr, stdoutRing.get(), stderrRing.get());
+              ffmpegProc.kill('SIGKILL');
             });
           }
 
@@ -543,20 +550,15 @@ module.exports = function(proto) {
 
             // 'progress' event
             if (self.listeners('progress').length) {
-              var duration = 0;
-
-              if (self._ffprobeData &amp;&amp; self._ffprobeData.format &amp;&amp; self._ffprobeData.format.duration) {
-                duration = Number(self._ffprobeData.format.duration);
-              }
-
               stderrRing.callback(function(line) {
-                utils.extractProgress(self, line, duration);
+                utils.extractProgress(self, line);
               });
             }
           }
         },
 
         function endCB(err, stdoutRing, stderrRing) {
+          clearTimeout(self.processTimer);
           delete self.ffmpegProc;
 
           if (err) {
@@ -581,7 +583,7 @@ module.exports = function(proto) {
                 async.each(
                   flvmeta,
                   function(output, cb) {
-                    spawn(flvtool, ['-U', output.target])
+                    spawn(flvtool, ['-U', output.target], {windowsHide: true})
                       .on('error', function(err) {
                         cb(new Error('Error running ' + flvtool + ' on ' + output.target + ': ' + err.message));
                       })
@@ -614,6 +616,8 @@ module.exports = function(proto) {
         }
       );
     });
+
+    return this;
   };
 
 
@@ -642,7 +646,7 @@ module.exports = function(proto) {
       if (this.ffmpegProc) {
         var logger = this.logger;
         var pid = this.ffmpegProc.pid;
-        var renice = spawn('renice', [niceness, '-p', pid]);
+        var renice = spawn('renice', [niceness, '-p', pid], {windowsHide: true});
 
         renice.on('error', function(err) {
           logger.warn('could not renice process ' + pid + ': ' + err.message);
@@ -699,7 +703,7 @@ module.exports = function(proto) {
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sun May 01 2016 12:10:37 GMT+0200 (CEST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.6</a> on Wed Nov 04 2020 14:12:44 GMT-0500 (Eastern Standard Time)
 </footer>
 
 <script> prettyPrint(); </script>
