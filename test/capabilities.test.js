@@ -530,7 +530,7 @@ describe('Capabilities', function() {
     var FLVTOOL2_PATH;
     var ALT_FLVTOOL_PATH;
     var skipAltTest = false;
-    var skipTest = false;
+    var skipTest = true;
 
     // Skip test if we know travis failed to instal flvtool2
     if (process.env.FLVTOOL2_PRESENT === 'no') {
