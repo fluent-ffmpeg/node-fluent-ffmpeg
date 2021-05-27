@@ -70,7 +70,8 @@ describe('Command', function() {
         });
     });
 
-    it('should properly generate the command for the requested preset in custom folder', function(done) {
+    // this branch does not allow loading presets from custom modules
+    it.skip('should properly generate the command for the requested preset in custom folder', function(done) {
       new Ffmpeg({ source: this.testfile, nolog: true, preset: path.join(__dirname, 'assets', 'presets') })
         .usingPreset('custompreset')
         ._test_getArgs(function(args) {
@@ -112,12 +113,6 @@ describe('Command', function() {
         new Ffmpeg({ source: self.testfile, logger: testhelper.logger })
           .usingPreset('NOTFOUND');
       }).should.throw(/NOTFOUND could not be loaded/);
-    });
-
-    it('should throw an exception when a preset has no load function', function() {
-      (function() {
-        new Ffmpeg({ presets: '../../lib' }).usingPreset('utils');
-      }).should.throw(/has no load\(\) function/);
     });
   });
 

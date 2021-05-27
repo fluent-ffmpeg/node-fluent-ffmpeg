@@ -186,8 +186,8 @@ describe('Processor', function() {
     // Skip all niceness tests on windows
     var skipNiceness = os.match(/win(32|64)/);
 
-    // Skip renice test on OSX + travis (not enough permissions to renice)
-    var skipRenice = process.env.TRAVIS && os.match(/darwin/);
+    // Skip renice test on OSX + CI (not enough permissions to renice)
+    var skipRenice = process.env.CI && os.match(/darwin/);
 
     (skipNiceness ? it.skip : it)('should properly limit niceness', function() {
       this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
@@ -326,7 +326,9 @@ describe('Processor', function() {
           .saveToFile(testFile);
     });
 
-    it('should send the process custom signals with .kill(signal)', function(done) {
+    var skipSignals = os.match(/win(32|64)/);
+
+    (skipSignals ? it.skip : it)('should send the process custom signals with .kill(signal)', function(done) {
       this.timeout(60000);
 
       var testFile = path.join(__dirname, 'assets', 'testProcessKillCustom.avi');
@@ -715,7 +717,7 @@ describe('Processor', function() {
     });
 
     it('should save an output file with special characters properly to disk', function(done) {
-      var testFile = path.join(__dirname, 'assets', 'te[s]t video \' " .avi');
+      var testFile = path.join(__dirname, 'assets', 'te[s]t video \' .avi');
       this.files.push(testFile);
 
       this.getCommand({ source: this.testfile, logger: testhelper.logger })
@@ -730,7 +732,9 @@ describe('Processor', function() {
         .saveToFile(testFile);
     });
 
-    it('should save output files with special characters', function(done) {
+    var skipAsteriskAndDoubleQuote = os.match(/win(32|64)/);
+
+    (skipAsteriskAndDoubleQuote ? it.skip : it)('should save output files with special characters', function(done) {
       var testFile = path.join(__dirname, 'assets', '[test "special \' char*cters \n.avi');
       this.files.push(testFile);
 

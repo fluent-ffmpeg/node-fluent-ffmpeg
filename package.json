@@ -1,6 +1,6 @@
 {
   "name": "@descript/fluent-ffmpeg",
-  "version": "2.1.2-descript.1",
+  "version": "2.1.2-descript.4",
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
     "ffmpeg"
@@ -19,19 +19,20 @@
   },
   "repository": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
   "devDependencies": {
-    "mocha": "latest",
-    "should": "latest",
-    "jsdoc": "latest"
+    "mocha": "^8.4.0",
+    "should": "^13.2.3",
+    "jsdoc": "^3.6.7"
   },
   "dependencies": {
-    "async": ">=0.2.9",
+    "async": "^3.2.0",
     "which": "^1.1.1"
   },
   "engines": {
-    "node": ">=0.8.0"
+    "node": ">=12"
   },
   "main": "index",
   "scripts": {
     "test": "make test"
-  }
+  },
+  "types": "index.d.ts"
 }

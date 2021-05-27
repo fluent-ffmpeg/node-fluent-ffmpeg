@@ -6,7 +6,7 @@ var Ffmpeg = require('../index'),
   path = require('path'),
   assert = require('assert'),
   testhelper = require('./helpers'),
-  async = require('async');
+  waterfall = require('async/waterfall');
 
 // delimiter fallback for node 0.8
 var PATH_DELIMITER = path.delimiter || (require('os').platform().match(/win(32|64)/) ? ';' : ':');
@@ -129,7 +129,7 @@ describe('Capabilities', function() {
     });
 
     it('should enable checking command arguments for available codecs, formats and encoders', function(done) {
-      async.waterfall([
+      waterfall([
         // Check with everything available
         function(cb) {
           new Ffmpeg('/path/to/file.avi')
