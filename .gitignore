@@ -1,6 +1,8 @@
 *.project
+package-lock.json
 node_modules
 lib-cov
 *.swp
 .idea
 *.iml
+.nyc_output/*

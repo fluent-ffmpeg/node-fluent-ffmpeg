@@ -19,9 +19,10 @@
   },
   "repository": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
   "devDependencies": {
+    "jsdoc": "latest",
     "mocha": "latest",
-    "should": "latest",
-    "jsdoc": "latest"
+    "nyc": "^15.1.0",
+    "should": "latest"
   },
   "dependencies": {
     "async": ">=0.2.9",
