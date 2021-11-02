@@ -18,7 +18,7 @@ app.get('/video/:filename', function(req, res) {
     .preset('flashvideo')
     // setup event handlers
     .on('end', function() {
-      console.log('file has been converted succesfully');
+      console.log('file has been converted successfully');
     })
     .on('error', function(err) {
       console.log('an error happened: ' + err.message);
