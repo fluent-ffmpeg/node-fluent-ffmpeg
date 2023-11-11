@@ -186,8 +186,7 @@ describe('Processor', function() {
     // Skip all niceness tests on windows
     var skipNiceness = os.match(/win(32|64)/);
 
-    // Skip renice test on OSX + travis (not enough permissions to renice)
-    var skipRenice = process.env.TRAVIS && os.match(/darwin/);
+    var skipRenice = false;
 
     (skipNiceness ? it.skip : it)('should properly limit niceness', function() {
       this.getCommand({ source: this.testfile, logger: testhelper.logger, timeout: 0.02 })
