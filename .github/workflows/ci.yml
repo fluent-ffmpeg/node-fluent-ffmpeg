@@ -1,0 +1,24 @@
+name: CI Testing
+on: pull_request
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [18, 20, 21]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install flvtool2
+        run: sudo gem install flvtool2
+      - name: Install ffmpeg
+        run: sudo apt update && sudo apt install -y ffmpeg
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: yarn
+      - name: Install dependencies
+        run: yarn
+      - name: Run tests
+        run: yarn test
