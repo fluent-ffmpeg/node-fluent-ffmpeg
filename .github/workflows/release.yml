@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  release:
+    types:
+      - released
+
+jobs:
+  publish:
+    name: Publish package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract version from package.json
+        run: |
+          PACKAGE_JSON_VERSION=$(cat package.json | jq .version)
+          echo "PACKAGE_JSON_VERSION=$PACKAGE_JSON_VERSION" >> $GITHUB_ENV
+          echo "EXPECTED_REF=refs/tags/v$PACKAGE_JSON_VERSION" >> $GITHUB_ENV
+
+      - name: Check version matches tag
+        if: ${{ env.EXPECTED_REF != github.ref }}
+        run: |
+          echo "Tag ${{ github.ref }} does not match package.json version ${{ env.PACKAGE_JSON_VERSION }}"
+          exit 1
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn build
+
+      - name: Publish
+        run: yarn publish --new-version ${{ env.PACKAGE_JSON_VERSION }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,55 +1,141 @@
-name: CI Testing
+name: Continuous integration
+
 on:
-  pull_request:
   push:
     branches:
       - master
+  pull_request:
+
 jobs:
-  test:
-    name: Run tests
+  lint:
+    name: Lint source files
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [18, 20, 21]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install flvtool2
-        run: sudo gem install flvtool2
-      - name: Install ffmpeg
-        run: sudo apt install -y ffmpeg
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Lint source files
+        run: yarn lint
+
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn build
+
+      - name: Run unit tests
+        run: yarn test tests/unit
+
+      - name: Upload coverage
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel: true
+
+  integration-tests:
+    strategy:
+      matrix:
+        node:
+          - 18
+          - 20
+    name: Integration tests on Node ${{ matrix.node }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup node
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
           cache: yarn
+
       - name: Install dependencies
         run: yarn
+
+      - name: Build
+        run: yarn build
+
       - name: Run tests
-        run: yarn test
-      - name: Generate coverage report
-        run: yarn coverage
-      - name: Store coveralls coverage
+        run: yarn test tests/integration
+
+      - name: Upload coverage
         uses: coverallsapp/github-action@v2
         with:
-          flag-name: linux-node-${{ matrix.node }}
           parallel: true
-      - name: Upload to codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        with:
-          files: coverage/lcov.info
-          name: ubuntu-latest-node-${{ matrix.node }}
 
-  upload-coverage:
-    name: Upload coverage
-    needs: test
+  acceptance-tests:
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        node:
+          - 18
+          - 20
+    name: Acceptance with Node ${{ matrix.node }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          cache: yarn
+
+      - name: Install ffmpeg
+        uses: ConorMacBride/install-package@v1
+        with:
+          apt: ffmpeg
+          brew: ffmpeg
+          choco: ffmpeg
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Build
+        run: yarn build
+
+      - name: Run tests
+        run: yarn test tests/acceptance
+
+      - name: Upload coverage
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel: true
+
+  finish-coverage:
+    name: Finalize coverage
+    needs:
+      - unit-tests
+      - integration-tests
+      - acceptance-tests
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Upload to coveralls
+      - name: Finalize coverage
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
-          carryforward: "linux-node-18,linux-node-20,linux-node-21"

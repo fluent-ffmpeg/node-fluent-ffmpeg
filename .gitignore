@@ -1,7 +1,10 @@
-*.project
 node_modules
+
+# Test output
 .nyc_output
-*.swp
-.idea
-*.iml
 coverage
+
+# Build output
+build
+docs
+types

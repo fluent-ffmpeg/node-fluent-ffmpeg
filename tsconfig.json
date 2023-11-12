@@ -1,0 +1,10 @@
+{
+  "extends": "@tsconfig/node18/tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "declaration": true,
+    "declarationDir": "types",
+    "outDir": "build"
+  },
+  "include": ["src/**/*", "tests/**/*"]
+}
