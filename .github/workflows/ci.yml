@@ -1,5 +1,9 @@
 name: CI Testing
-on: pull_request
+on:
+  pull_request:
+  push:
+    branches:
+      - master
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -12,7 +16,7 @@ jobs:
       - name: Install flvtool2
         run: sudo gem install flvtool2
       - name: Install ffmpeg
-        run: sudo apt update && sudo apt install -y ffmpeg
+        run: sudo apt install -y ffmpeg
       - name: Setup node
         uses: actions/setup-node@v3
         with:
@@ -22,3 +26,21 @@ jobs:
         run: yarn
       - name: Run tests
         run: yarn test
+      - name: Generate coverage report
+        run: yarn coverage
+      - name: Store coverage
+        uses: coverallsapp/github-action@v2
+        with:
+          flag-name: linux-node-${{ matrix.node }}
+          parallel: true
+
+  finish:
+    needs: test
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@v2
+        with:
+          parallel-finished: true
+          carryforward: "linux-node-18,linux-node-20,linux-node-21"
