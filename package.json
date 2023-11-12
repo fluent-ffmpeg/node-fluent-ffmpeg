@@ -19,9 +19,10 @@
   },
   "repository": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
   "devDependencies": {
+    "jsdoc": "^4.0.0",
     "mocha": "^10.0.0",
-    "should": "^13.0.0",
-    "jsdoc": "^4.0.0"
+    "nyc": "^15.1.0",
+    "should": "^13.0.0"
   },
   "dependencies": {
     "async": "^0.2.9",
@@ -32,6 +33,7 @@
   },
   "main": "index",
   "scripts": {
-    "test": "make test"
+    "test": "NODE_ENV=test nyc mocha --require should --reporter spec",
+    "coverage": "nyc report --reporter=lcov"
   }
 }

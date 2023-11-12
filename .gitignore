@@ -1,6 +1,7 @@
 *.project
 node_modules
-lib-cov
+.nyc_output
 *.swp
 .idea
 *.iml
+coverage

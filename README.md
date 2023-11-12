@@ -1459,12 +1459,6 @@ To run unit tests, first make sure you installed npm dependencies (run `npm inst
 $ make test
 ```
 
-If you want to re-generate the test coverage report (filed under test/coverage.html), run
-
-```sh
-$ make test-cov
-```
-
 Make sure your ffmpeg installation is up-to-date to prevent strange assertion errors because of missing codecs/bugfixes.
 
 ## Main contributors
