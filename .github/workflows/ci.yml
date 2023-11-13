@@ -34,6 +34,11 @@ jobs:
         with:
           flag-name: linux-node-${{ matrix.node }}
           parallel: true
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+        with:
+          files: coverage/lcov.info
+          name: ubuntu-latest-node-${{ matrix.node }}
 
   upload-coverage:
     name: Upload coverage
