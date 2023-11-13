@@ -29,13 +29,15 @@ jobs:
         run: yarn test
       - name: Generate coverage report
         run: yarn coverage
-      - name: Store coverage
+      - name: Store coveralls coverage
         uses: coverallsapp/github-action@v2
         with:
           flag-name: linux-node-${{ matrix.node }}
           parallel: true
-      - name: Upload coverage
+      - name: Upload to codecov
         uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         with:
           files: coverage/lcov.info
           name: ubuntu-latest-node-${{ matrix.node }}
@@ -46,7 +48,7 @@ jobs:
     if: ${{ always() }}
     runs-on: ubuntu-latest
     steps:
-      - name: Coveralls Finished
+      - name: Upload to coveralls
         uses: coverallsapp/github-action@v2
         with:
           parallel-finished: true
