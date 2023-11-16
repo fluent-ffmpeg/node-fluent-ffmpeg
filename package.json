@@ -1,12 +1,16 @@
 {
   "name": "fluent-ffmpeg",
-  "version": "2.1.2",
-  "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
+  "version": "3.0.0-alpha.1",
+  "description": "ffmpeg wrapper for Node.js",
   "keywords": [
     "ffmpeg"
   ],
-  "author": "Stefan Schaermeli <schaermu@gmail.com>",
+  "author": "Nicolas Joyard <nicolas-github@njoyard.fr>",
   "contributors": [
+    {
+      "name": "Stefan Schaermeli",
+      "email": "schaermu@gmail.com"
+    },
     {
       "name": "Felix Fichte",
       "email": "spruce@space-ships.de"
@@ -14,26 +18,71 @@
   ],
   "license": "MIT",
   "bugs": {
-    "mail": "schaermu@gmail.com",
     "url": "http://github.com/fluent-ffmpeg/node-fluent-ffmpeg/issues"
   },
   "repository": "git://github.com/fluent-ffmpeg/node-fluent-ffmpeg.git",
   "devDependencies": {
-    "jsdoc": "^4.0.0",
-    "mocha": "^10.0.0",
-    "nyc": "^15.1.0",
-    "should": "^13.0.0"
+    "@ava/typescript": "^4.1.0",
+    "@tsconfig/node18": "^18.2.2",
+    "@types/node": "^20.9.0",
+    "@types/sinon": "^17.0.1",
+    "ava": "^5.3.1",
+    "c8": "^8.0.1",
+    "prettier": "^3.1.0",
+    "sinon": "^17.0.1",
+    "typedoc": "^0.25.3",
+    "typescript": "^5.2.2"
   },
-  "dependencies": {
-    "async": "^0.2.9",
-    "which": "^1.1.1"
-  },
+  "dependencies": {},
   "engines": {
     "node": ">=18"
   },
-  "main": "index",
+  "main": "build/src/main.js",
+  "types": "types/main.d.ts",
   "scripts": {
-    "test": "NODE_ENV=test nyc mocha --require should --reporter spec",
-    "coverage": "nyc report --reporter=lcov"
+    "build": "tsc",
+    "build:doc": "typedoc",
+    "test": "c8 ava",
+    "lint": "prettier --check ."
+  },
+  "ava": {
+    "files": [
+      "tests/**/*",
+      "!tests/assets/*",
+      "!tests/helpers/*"
+    ],
+    "typescript": {
+      "rewritePaths": {
+        "src/": "build/src/",
+        "tests/": "build/tests/"
+      },
+      "compile": false
+    }
+  },
+  "c8": {
+    "all": true,
+    "src": [
+      "src"
+    ],
+    "reporter": [
+      "text",
+      "lcov"
+    ]
+  },
+  "typedocOptions": {
+    "categorizeByGroup": true,
+    "entryPoints": [
+      "src/main.ts"
+    ],
+    "out": "docs/",
+    "navigationLinks": {
+      "Github": "https://github.com/fluent-ffmpeg/node-fluent-ffmpeg"
+    },
+    "navigation": {
+      "includeCategories": true
+    },
+    "sidebarLinks": {
+      "Github": "https://github.com/fluent-ffmpeg/node-fluent-ffmpeg"
+    }
   }
 }
