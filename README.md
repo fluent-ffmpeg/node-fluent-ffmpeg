@@ -229,6 +229,17 @@ Disables audio in the output and remove any previously set audio option.
 ffmpeg('/path/to/file.avi').noAudio();
 ```
 
+#### audioSpeed(): change audio speed
+
+**Aliases**: `withAudioSpeed()`.
+
+Speed Up/Down audio
+
+```js
+ffmpeg('/path/to/file.avi').audioSpeed(3);
+ffmpeg('/path/to/file.avi').audioSpeed(0.4);
+```
+
 #### audioCodec(codec): set audio codec
 
 **Aliases**: `withAudioCodec()`.
@@ -340,6 +351,17 @@ This method disables video output and removes any previously set video option.
 
 ```js
 ffmpeg('/path/to/file.avi').noVideo();
+```
+
+#### videoSpeed(): change video speed
+
+**Aliases**: `withVideoSpeed()`.
+
+Speed Up/Down video
+
+```js
+ffmpeg('/path/to/file.avi').videoSpeed(3);
+ffmpeg('/path/to/file.avi').videoSpeed(0.4);
 ```
 
 #### videoCodec(codec): set video codec
