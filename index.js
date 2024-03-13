@@ -1,1 +1,3 @@
-module.exports = require('./lib/fluent-ffmpeg');
+import FfmpegCommand from "./lib/fluent-ffmpeg.js";
+
+export default FfmpegCommand;

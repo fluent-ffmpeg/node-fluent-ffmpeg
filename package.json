@@ -31,7 +31,8 @@
   "engines": {
     "node": ">=18"
   },
-  "main": "index",
+  "type": "module",
+  "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test nyc mocha --require should --reporter spec",
     "coverage": "nyc report --reporter=lcov"
