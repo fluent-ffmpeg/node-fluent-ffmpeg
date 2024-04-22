@@ -114,6 +114,18 @@ describe('Utilities', function() {
     });
   });
 
+  describe('Codec data handling', function() {
+    it('should itemize codec details on outer commas', function() {
+      const video_details = ['h264 (Constrained Baseline) (avc1 / 0x31637661)', 'yuv420p(tv, bt709)', '1280x720', '1000 kb/s', '30 fps', '30 tbr', '90k tbn', '60 tbc (default)'];
+      const videoString = 'Video: ' + video_details.join(', ');
+      const stderrLine = 'Stream #0:0(und): ' + videoString;
+      const codecsObject = {inputStack: [{}], inputIndex: 0, inInput: true};
+      utils.extractCodecData(undefined, stderrLine, codecsObject);
+      codecsObject.inputStack[0].video.should.equal(video_details[0]);
+      codecsObject.inputStack[0].video_details.should.eql(video_details);
+    });
+  });
+
   describe('Lines ring buffer', function() {
     it('should append lines', function() {
       var ring = utils.linesRing(100);
