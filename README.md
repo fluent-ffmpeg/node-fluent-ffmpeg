@@ -934,6 +934,7 @@ var command = ffmpeg('/path/to/file.avi')
   .videoCodec('libx264')
   .audioCodec('libmp3lame')
   .size('320x240')
+  .format('flv')
   .on('error', function(err) {
     console.log('An error occurred: ' + err.message);
   })
