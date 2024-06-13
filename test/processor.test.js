@@ -456,6 +456,31 @@ describe('Processor', function() {
           .saveToFile(testFile);
     });
 
+    it('should report progress through \'progress\' event when \'-loglevel +level\' flag is used', function(done) {
+      this.timeout(60000);
+
+      var testFile = path.join(__dirname, 'assets', 'testOnProgress.avi');
+      var gotProgress = false;
+
+      this.files.push(testFile);
+
+      this.getCommand({ source: this.testfilebig, logger: testhelper.logger })
+          .on('progress', function() {
+            gotProgress = true;
+          })
+          .usingPreset('divx')
+          .addOption('-loglevel +level')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr);
+            assert.ok(!err);
+          })
+          .on('end', function() {
+            gotProgress.should.equal(true);
+            done();
+          })
+          .saveToFile(testFile);
+    });
+
     it('should report start of ffmpeg process through \'start\' event', function(done) {
       this.timeout(60000);
 
