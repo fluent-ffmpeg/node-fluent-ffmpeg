@@ -14,6 +14,8 @@ var proc = ffmpeg('/path/to/your_movie.avi')
   .fps(24)
   // set audio bitrate
   .audioBitrate('128k')
+  // set audio sample size
+  .audioFrequency(48000)
   // set audio codec
   .audioCodec('libmp3lame')
   // set number of audio channels
