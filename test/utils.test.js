@@ -203,4 +203,26 @@ describe('Utilities', function() {
       ring.get().should.equal('foo\nbar\nbazfoo\nbar');
     });
   });
+
+  describe('Format number for call', function() {
+    it('formats decimal notation number as string', function() {
+      utils.formatNumberForCall(0).should.equal('0');
+      utils.formatNumberForCall(1).should.equal('1');
+      utils.formatNumberForCall(1.5).should.equal('1.5');
+      utils.formatNumberForCall(-1.5).should.equal('-1.5');
+    });
+
+    it('truncates numbers to 10 decimal places', function() {
+      utils.formatNumberForCall(234222.2333333333334).should.equal('234222.2333333333');
+      utils.formatNumberForCall(234222.2337777777774).should.equal('234222.2337777778');
+    })
+
+    it('formats scientific notation number as decimal', function() {
+      utils.formatNumberForCall(1e2).should.equal('100');
+      utils.formatNumberForCall(1e-5).should.equal('0.00001');
+      utils.formatNumberForCall(-1e-5).should.equal('-0.00001');
+      utils.formatNumberForCall(5.684341886080802e-14).should.equal('0');
+      utils.formatNumberForCall(-5.684341886080802e-14).should.equal('-0');
+    });
+  })
 });

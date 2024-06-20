@@ -432,7 +432,7 @@ describe('Command', function() {
 
           if(args.indexOf('-loop') != -1 || args.indexOf('-loop_output') != -1){
             args.indexOf('-t').should.above(-1);
-            args.indexOf(120).should.above(-1);
+            args.indexOf('120').should.above(-1);
             done();
           }
           else{
@@ -607,6 +607,28 @@ describe('Command', function() {
           done();
         });
     });
+
+    it('should apply start time converted from scientific notation (0)', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .setStartTime(1e-15)
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+          args.indexOf('-ss').should.equal(args.indexOf('0') - 1);
+          done();
+        });
+    });
+
+    it('should apply start time converted from scientific notation (nonzero)', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .setStartTime(1.234567e-9)
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+          args.indexOf('-ss').should.equal(args.indexOf('0.0000000012') - 1);
+          done();
+        });
+    });
   });
 
   describe('setDuration', function() {
@@ -618,7 +640,29 @@ describe('Command', function() {
           assert.ok(!err);
 
           args.indexOf('-t').should.above(-1);
-          args.indexOf(10).should.above(-1);
+          args.indexOf('10').should.above(-1);
+          done();
+        });
+    });
+
+    it('should apply duration converted from scientific notation (0)', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .setDuration(1e-15)
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+          args.indexOf('-t').should.equal(args.indexOf('0') - 1);
+          done();
+        });
+    });
+
+    it('should apply duration converted from scientific notation (nonzero)', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .setDuration(1.234567e-9)
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+          args.indexOf('-t').should.equal(args.indexOf('0.0000000012') - 1);
           done();
         });
     });
