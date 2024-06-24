@@ -2,3 +2,9 @@
 .git*
 test/
 examples/
+.vscode/
+OLD/
+coverage/
+doc/
+tools/
+Makefile
