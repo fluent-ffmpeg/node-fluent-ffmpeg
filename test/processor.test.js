@@ -1239,5 +1239,35 @@ describe('Processor', function() {
         })
         .saveToFile('/will/not/be/created/anyway');
     });
+
+    it('should report ffmpeg errors when converting after changing ffmpeg path after successful conversion', function(done) {
+      var testFile = path.join(__dirname, 'assets', 'testConvertToFile.avi');
+      this.files.push(testFile);
+      
+      const myPromise = new Promise((resolve, reject) => {
+        this.getCommand({ source: this.testfile, logger: testhelper.logger })
+          .usingPreset('divx')
+          .on('error', function(err, stdout, stderr) {
+            testhelper.logError(err, stdout, stderr);
+            assert.ok(!err);
+            reject(err);
+          })
+          .on('end', function() {
+            resolve();
+          })
+          .saveToFile(testFile);
+      });
+
+      myPromise.then(() => {
+        this.getCommand({ source: this.testfile, logger: testhelper.logger })
+          .usingPreset('divx')
+          .setFfmpegPath('wrong-path')
+          .on('error', function(err) {
+            setTimeout(done, 1000);
+            err.message.should.match(/spawn wrong-path ENOENT/);
+          })
+          .saveToFile(testFile);
+      })
+    });
   });
 });
