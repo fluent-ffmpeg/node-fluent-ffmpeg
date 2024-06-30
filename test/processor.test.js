@@ -1244,7 +1244,7 @@ describe('Processor', function() {
       var testFile = path.join(__dirname, 'assets', 'testConvertToFile.avi');
       this.files.push(testFile);
       
-      const myPromise = new Promise((resolve, reject) => {
+      const conversionPromise = new Promise((resolve, reject) => {
         this.getCommand({ source: this.testfile, logger: testhelper.logger })
           .usingPreset('divx')
           .on('error', function(err, stdout, stderr) {
@@ -1258,7 +1258,7 @@ describe('Processor', function() {
           .saveToFile(testFile);
       });
 
-      myPromise.then(() => {
+      conversionPromise.then(() => {
         this.getCommand({ source: this.testfile, logger: testhelper.logger })
           .usingPreset('divx')
           .setFfmpegPath('wrong-path')
