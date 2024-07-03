@@ -178,7 +178,7 @@ declare namespace Ffmpeg {
         size?: number;
         bit_rate?: number;
         probe_score?: number;
-        tags?: any[];
+        tags?: Record<string, unknown>;
     }
 
     interface ScreenshotsConfig {
