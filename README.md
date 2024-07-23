@@ -85,7 +85,8 @@ var command = ffmpeg('/path/to/file.avi', { option: "value", ... });
 
 The following options are available:
 * `source`: input file name or readable stream (ignored if an input file is passed to the constructor)
-* `timeout`: ffmpeg timeout in seconds (defaults to no timeout)
+* `timeout`: ffmpeg process timeout in seconds (defaults to no timeout)
+* `terminateTimeout`: ffmpeg terminate timeout in milliseconds (defaults to 20 milliseconds)
 * `preset` or `presets`: directory to load module presets from (defaults to the `lib/presets` directory in fluent-ffmpeg tree)
 * `niceness` or `priority`: ffmpeg niceness value, between -20 and 20; ignored on Windows platforms (defaults to 0)
 * `logger`: logger object with `debug()`, `info()`, `warn()` and `error()` methods (defaults to no logging)
