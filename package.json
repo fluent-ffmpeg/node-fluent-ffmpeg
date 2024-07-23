@@ -1,6 +1,6 @@
 {
   "name": "@descript/fluent-ffmpeg",
-  "version": "2.1.2-descript.5",
+  "version": "2.1.3-descript.1",
   "description": "A fluent API to FFMPEG (http://www.ffmpeg.org)",
   "keywords": [
     "ffmpeg"

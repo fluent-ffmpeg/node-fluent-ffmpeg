@@ -72,6 +72,14 @@ describe('Capabilities', function() {
         ('canDemux' in formats.wav).should.equal(true);
         (typeof formats.wav.canDemux).should.equal('boolean');
 
+        ('lavfi' in formats).should.equal(true);
+        ('description' in formats.lavfi).should.equal(true);
+        (typeof formats.lavfi.description).should.equal('string');
+        ('canMux' in formats.lavfi).should.equal(true);
+        (typeof formats.lavfi.canMux).should.equal('boolean');
+        ('canDemux' in formats.lavfi).should.equal(true);
+        (typeof formats.lavfi.canDemux).should.equal('boolean');
+
         done();
       });
     });
