@@ -232,7 +232,6 @@ describe('Processor', function() {
           .on('end', function() {
             console.log('end was called, expected a timeout');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
     });
@@ -365,7 +364,6 @@ describe('Processor', function() {
           .on('end', function() {
             console.log('end was called, expected an error');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
     });
@@ -402,7 +400,6 @@ describe('Processor', function() {
           .on('end', function() {
             console.log('end was called, expected a timeout');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
 
