@@ -232,7 +232,6 @@ describe('Processor', function() {
           .on('end', function() {
             console.log('end was called, expected a timeout');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
     });
@@ -279,6 +278,51 @@ describe('Processor', function() {
           .saveToFile(testFile);
     });
 
+    it('should kill the process on terminate timeout (terminateTimeout option)', function(done) {
+      this.timeout(60000);
+
+      var testFile = path.join(__dirname, 'assets', 'testTerminateTimeout.avi');
+      this.files.push(testFile);
+
+      const terminateTimeout = 1000 // set terminateTimeout to 1000 ms
+      var command = this.getCommand({
+        source: this.testfilebig,
+        logger: testhelper.logger,
+        terminateTimeout: terminateTimeout
+      });
+
+      var startCalled = false;
+      var outputStreamClosed = false;
+
+      // Mock output stream
+      var outputStream = new stream.PassThrough();
+      outputStream.close = function() {
+        outputStreamClosed = true;
+        this.emit('close');
+      };
+
+      command
+          .usingPreset('divx')
+          .output(outputStream)
+          .on('start', function() {
+            startCalled = true;
+            setTimeout(function() { outputStream.close(); }, 500); // close the output stream after 500ms (emit 'close' event on output stream before 'exit' event, to simulate a under load system)
+          })
+          .on('error', function(err) {
+            command.kill();
+            assert.ok(startCalled);
+            assert.ok(outputStreamClosed);
+            assert.equal(err.message, 'Output stream closed, try increasing terminateTimeout option (' + terminateTimeout + ' ms)');
+            // Wait for kill completation before to call done()
+            setTimeout(function() { done(); }, 500);
+          })
+          .on('end', function() {
+            console.log('end was called, expected an error');
+            assert.ok(false);
+          })
+          .saveToFile(testFile);
+    });
+
     it('should not keep node process running on completion', function(done) {
       var script = `
         var ffmpeg = require('.');
@@ -320,7 +364,6 @@ describe('Processor', function() {
           .on('end', function() {
             console.log('end was called, expected an error');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
     });
@@ -357,7 +400,6 @@ describe('Processor', function() {
           .on('end', function() {
             console.log('end was called, expected a timeout');
             assert.ok(false);
-            done();
           })
           .saveToFile(testFile);
 
