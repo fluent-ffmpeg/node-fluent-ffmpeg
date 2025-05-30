@@ -1119,4 +1119,21 @@ describe('Command', function() {
       });
     });
   });
+  describe('activationBytes', function() {
+    it('should apply activation bytes to input', function(done) {
+      new Ffmpeg({ source: this.testfile, logger: testhelper.logger })
+        .activationBytes('12345678')
+        ._test_getArgs(function(args, err) {
+          testhelper.logArgError(err);
+          assert.ok(!err);
+  
+          // Check if the '-activation_bytes' option is correctly applied
+          const activationBytesIndex = args.indexOf('-activation_bytes');
+          assert.ok(activationBytesIndex !== -1, 'Activation bytes option not found');
+          assert.strictEqual(args[activationBytesIndex + 1], '12345678', 'Activation bytes value does not match');
+  
+          done();
+        });
+    });
+  });
 });
