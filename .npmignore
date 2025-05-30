@@ -2,3 +2,5 @@
 .git*
 test/
 examples/
+coverage/
+.vscode/
