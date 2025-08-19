@@ -30,4 +30,6 @@ var proc = ffmpeg('/path/to/your_movie.avi')
     console.log('an error happened: ' + err.message);
   })
   // save to file
-  .save('/path/to/your_target.avi');
+  .save('/path/to/your_target.avi')
+  // take screenshots
+  .takeScreenshots({ count: 2, timemarks: [ '00:00:02.000', '6' ], size: '150x100' }, '/path/to/thumbnail/folder');
